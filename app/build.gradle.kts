@@ -1,6 +1,9 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -18,23 +21,50 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        // 修改apk, aab 輸出名稱
+        setProperty("archivesBaseName", "${applicationId}-v${versionName}(${versionCode})")
+    }
+
+    signingConfigs {
+        create("release") {
+            keyAlias = "joycom"
+            keyPassword = "joycom"
+            storeFile = file("../gradle/jks/joycom.jks")
+            storePassword = "joycom"
+        }
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isShrinkResources = true
+            isMinifyEnabled = true
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
+        debug {
+            isShrinkResources = false
+            isMinifyEnabled = false
+        }
     }
+//    flavorDimensions += "env"
+//    productFlavors {
+//        create("prod") {
+//            dimension = "env"
+//        }
+//        create("qat") {
+//            dimension = "env"
+//            applicationIdSuffix = ".qat"
+//        }
+//    }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
@@ -50,7 +80,6 @@ android {
 }
 
 dependencies {
-
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.activity:activity-compose:1.8.1")
@@ -67,4 +96,29 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    val lifecycle_version = "2.6.2"
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version")
+
+
+    val okhttp_version = "4.12.0"
+    implementation("com.squareup.okhttp3:okhttp:$okhttp_version")
+    implementation("com.squareup.okhttp3:logging-interceptor:$okhttp_version")
+
+    val retrofit_version = "2.9.0"
+    implementation("com.squareup.retrofit2:retrofit:$retrofit_version")
+    implementation("com.squareup.retrofit2:converter-moshi:$retrofit_version")
+
+    val moshi_version = "1.15.0"
+    implementation("com.squareup.moshi:moshi:$moshi_version")
+    implementation("com.squareup.moshi:moshi-kotlin:$moshi_version")
+    ksp("com.squareup.moshi:moshi-kotlin-codegen:$moshi_version")
+
+    val coil_version = "2.4.0"
+    implementation("io.coil-kt:coil-compose:$coil_version")
+
+    val hilt_version by extra { "2.48.1" }
+    implementation("com.google.dagger:hilt-android:$hilt_version")
+    kapt("com.google.dagger:hilt-compiler:$hilt_version")
 }
