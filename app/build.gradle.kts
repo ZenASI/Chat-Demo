@@ -68,6 +68,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
@@ -88,6 +89,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.core:core-ktx:+")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -124,4 +126,10 @@ dependencies {
 
     val nav_version = "2.7.5"
     implementation("androidx.navigation:navigation-compose:$nav_version")
+
+    val timber_version = "5.0.1"
+    implementation("com.jakewharton.timber:timber:$timber_version")
+
+    val compose_permission_version = "0.32.0"
+    implementation("com.google.accompanist:accompanist-permissions:$compose_permission_version")
 }

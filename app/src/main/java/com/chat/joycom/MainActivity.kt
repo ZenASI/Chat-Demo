@@ -1,34 +1,43 @@
 package com.chat.joycom
 
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Badge
+import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.chat.joycom.ui.scene.JoyComScene
 import com.chat.joycom.ui.theme.JoyComTheme
+import com.chat.joycom.ui.theme.NoRippleTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -39,40 +48,24 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val scope = rememberCoroutineScope()
-            val joyComScenesList = JoyComScene.values().toList()
-            val pagerState = rememberPagerState(initialPage = 0) { joyComScenesList.size }
-            var currentScene by rememberSaveable {
-                // init scene
-                mutableStateOf(JoyComScene.ChatList)
+            val joyComScenesList by rememberSaveable {
+                mutableStateOf(JoyComScene.values().toList())
             }
-            LaunchedEffect(pagerState) {
-                snapshotFlow { pagerState.currentPage }
-                    .distinctUntilChanged()
-                    .collect { page ->
-                        currentScene = when (page) {
-                            0 -> JoyComScene.ChatList
-                            1 -> JoyComScene.Contact
-                            2 -> JoyComScene.My
-                            else -> JoyComScene.ChatList
-                        }
-                    }
-            }
+            val pagerState = rememberPagerState { joyComScenesList.size }
             JoyComTheme() {
                 Scaffold(
                     bottomBar = {
-                        MainBottomTabs(currentScene,
-                            onClick = { scene ->
-                                scope.launch { pagerState.animateScrollToPage(scene.ordinal) }
+                        MainBottomTabs(joyComScenesList[pagerState.currentPage],
+                            onClick = { ordinal ->
+                                scope.launch { pagerState.animateScrollToPage(ordinal) }
                             })
                     }
                 ) { paddingValues ->
                     HorizontalPager(
                         contentPadding = paddingValues,
                         state = pagerState
-                    ) {
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            currentScene.body.invoke()
-                        }
+                    ) { pos ->
+                        joyComScenesList[pos].body.invoke()
                     }
                 }
             }
@@ -82,23 +75,72 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainBottomTabs(currentScene: JoyComScene, onClick: (JoyComScene) -> Unit) {
+fun MainBottomTabs(currentScene: JoyComScene, onClick: (Int) -> Unit) {
     val joyComScenesList = JoyComScene.values().toList()
-    NavigationBar {
+    Row(
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
+            .fillMaxWidth()
+            .height(80.dp)
+    ) {
         joyComScenesList.forEach { item ->
-            NavigationBarItem(
-                label = { Text(text = item.sceneName) },
-                selected = currentScene.name == item.name,
-                onClick = { onClick.invoke(item) },
+            val select = currentScene.name == item.name
+            val textColor = if (select) Color(0xFF9CCC65) else Color.DarkGray
+            val iconColor = if (select) Color(0xFF9CCC65) else Color.DarkGray
+            MainTabItem(
+                modifier = Modifier.weight(1f),
+                label = { Text(text = item.sceneName, color = textColor) },
+                onClick = { onClick.invoke(item.ordinal) },
                 icon = {
                     BadgedBox(badge = {
-                        Badge {
-                            Text(text = "888")
-                        }
+//                        Badge {
+//                            Text(text = "0")
+//                        }
                     }) {
-                        Icon(imageVector = item.icon, contentDescription = "")
+                        Icon(imageVector = item.icon, contentDescription = "", tint = iconColor)
                     }
-                })
+                }
+            )
         }
+    }
+}
+
+@Composable
+fun MainTabItem(
+    modifier: Modifier = Modifier,
+    label: @Composable () -> Unit = {},
+    icon: @Composable () -> Unit = {},
+    onClick: () -> Unit,
+) {
+    // disable click ripple
+    CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
+        Column(
+            modifier = modifier
+                .fillMaxHeight()
+                .clickable() {
+                    onClick.invoke()
+                },
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            icon()
+            label()
+        }
+    }
+}
+
+@Preview(uiMode = UI_MODE_NIGHT_YES)
+@Composable
+fun MainBottomTabItem_Preview_Night() {
+    JoyComTheme {
+        MainBottomTabs(currentScene = JoyComScene.ChatList, onClick = {})
+    }
+}
+
+@Preview(uiMode = UI_MODE_NIGHT_NO)
+@Composable
+fun MainBottomTabItem_Preview_Light() {
+    JoyComTheme {
+        MainBottomTabs(currentScene = JoyComScene.Contact, onClick = {})
     }
 }

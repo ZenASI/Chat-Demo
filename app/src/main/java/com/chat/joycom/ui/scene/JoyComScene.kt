@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 enum class JoyComScene(
     val sceneName: String,
     val icon: ImageVector,
-    val body: @Composable () -> Unit
+    val body: @Composable () -> Unit,
 ) {
     ChatList(sceneName = "ChatList", icon = Icons.Filled.AccountCircle, body = { ChatListScene() }),
     Contact(sceneName = "Contact", icon = Icons.Filled.AccountCircle, body = { ContactScene() }),

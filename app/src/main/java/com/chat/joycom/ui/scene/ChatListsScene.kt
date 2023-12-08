@@ -7,9 +7,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.chat.joycom.MainActivityViewModel
 
 @Composable
 fun ChatListScene() {
+
+    val viewModel: MainActivityViewModel = viewModel()
+
     Box(modifier = Modifier.fillMaxSize()) {
         Text(
             text = "ChatList", textAlign = TextAlign.Center, modifier = Modifier.align(

@@ -1,0 +1,57 @@
+package com.chat.joycom.module
+
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
+import timber.log.Timber
+import java.util.concurrent.TimeUnit
+import javax.inject.Singleton
+
+@Module
+@InstallIn(SingletonComponent::class)
+class NetWorkModule {
+
+    @Singleton
+    @Provides
+    fun provideHttpLog(): HttpLoggingInterceptor =
+        HttpLoggingInterceptor(HttpLoggingInterceptor.Logger {
+            Timber.d(it)
+        }).setLevel(HttpLoggingInterceptor.Level.BODY)
+
+    @Singleton
+    @Provides
+    fun provideMoshiConvert(): MoshiConverterFactory = MoshiConverterFactory.create()
+
+    @Singleton
+    @Provides
+    fun provideApiServices(retrofit: Retrofit): AppApiService =
+        retrofit.create(AppApiService::class.java)
+
+
+    @Singleton
+    @Provides
+    fun provideOkHttp(
+        httpLoggingInterceptor: HttpLoggingInterceptor,
+    ): OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(httpLoggingInterceptor)
+        .connectTimeout(5, TimeUnit.SECONDS)
+        .readTimeout(5, TimeUnit.SECONDS)
+        .writeTimeout(5, TimeUnit.SECONDS)
+        .build()
+
+    @Singleton
+    @Provides
+    fun provideRetrofit(
+        moshiConverterFactory: MoshiConverterFactory,
+        okHttpClient: OkHttpClient
+    ): Retrofit = Retrofit.Builder()
+        .baseUrl("")
+        .addConverterFactory(moshiConverterFactory)
+        .client(okHttpClient)
+        .build()
+}
