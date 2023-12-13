@@ -1,5 +1,6 @@
-package com.chat.joycom
+package com.chat.joycom.ui.main
 
+import android.content.Intent
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Bundle
@@ -34,7 +35,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.chat.joycom.ui.scene.JoyComScene
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.chat.joycom.ui.UiEvent
+import com.chat.joycom.ui.login.LoginActivity
 import com.chat.joycom.ui.theme.JoyComTheme
 import com.chat.joycom.ui.theme.NoRippleTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,8 +49,12 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 @OptIn(ExperimentalFoundationApi::class)
 class MainActivity : ComponentActivity() {
+
+    private lateinit var viewModel: MainActivityViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        viewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
 
         setContent {
             val scope = rememberCoroutineScope()
@@ -66,6 +76,21 @@ class MainActivity : ComponentActivity() {
                         state = pagerState
                     ) { pos ->
                         joyComScenesList[pos].body.invoke()
+                    }
+                }
+            }
+        }
+
+        initCollect()
+    }
+
+    private fun initCollect() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect {
+                    if (it is UiEvent.GoLoginActEvent) {
+                        startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                        finish()
                     }
                 }
             }

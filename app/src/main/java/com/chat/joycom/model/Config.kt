@@ -5,12 +5,12 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class Config(
-    @field:Json(name = "userid") val userid: Int?,
-    @field:Json(name = "cookie") val cookie: String,
-    @field:Json(name = "api") val api: Api,
-    @field:Json(name = "websocket") val websocket: Websocket,
-    @field:Json(name = "signal") val signal: Signal,
-    @field:Json(name = "relay") val relay: Relay,
+    @field:Json(name = "userid") val userid: Int? = 0,
+    @field:Json(name = "cookie") var cookie: String = "",
+    @field:Json(name = "api") val api: Api? = null,
+    @field:Json(name = "websocket") val websocket: Websocket? = null,
+    @field:Json(name = "signal") val signal: Signal? = null,
+    @field:Json(name = "relay") val relay: Relay? = null,
 )
 
 @JsonClass(generateAdapter = true)
@@ -21,9 +21,9 @@ data class Api(
     @field:Json(name = "Port1") val port1: String?,
     @field:Json(name = "Port2") val port2: String?,
     @field:Json(name = "Uri") val uri: String?,
-){
+) {
     //https://120.79.151.1:3389
-    fun getDomainUrl():String = "https://120.79.151.1:3389" + uri
+    fun getDomainUrl(): String = "https://120.79.151.1:3389" + uri
 //    fun getDomainUrl():String = protocol + domain + uri
 }
 

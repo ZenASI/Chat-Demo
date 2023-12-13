@@ -135,4 +135,10 @@ dependencies {
 
     val ccp_version = "1.0.5"
     implementation ("com.github.UtkuGlsvn:ComposeCountryCodePicker:${ccp_version}")
+
+    val datastore_version = "1.0.0"
+    implementation ("androidx.datastore:datastore-preferences:$datastore_version")
+    implementation ("androidx.datastore:datastore-preferences-core:$datastore_version")
+    implementation ("androidx.datastore:datastore:$datastore_version")
+    implementation ("androidx.datastore:datastore-core:$datastore_version")
 }

@@ -1,4 +1,4 @@
-package com.chat.joycom.ui.scene
+package com.chat.joycom.ui.main
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle

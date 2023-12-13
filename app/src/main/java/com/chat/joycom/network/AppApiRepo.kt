@@ -15,6 +15,10 @@ import javax.inject.Singleton
 @Singleton
 class AppApiRepo @Inject constructor(private val appApiService: AppApiService) {
 
+    suspend fun logout(): ApiResult<String> = withContext(Dispatchers.IO) {
+        handleResponse { appApiService.logout(UrlPath.LOGOUT) }
+    }
+
     suspend fun queryMember(
         countryCode: String,
         phoneNumber: String,

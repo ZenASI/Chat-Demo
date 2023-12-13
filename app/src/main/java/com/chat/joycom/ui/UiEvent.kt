@@ -13,4 +13,6 @@ sealed class UiEvent {
     data class LoginSuccessEvent(val userInfo: UserInfo) : UiEvent()
 
     data class GetConfigSuccessEvent(val config: Config) : UiEvent()
+
+    object GoLoginActEvent : UiEvent()
 }

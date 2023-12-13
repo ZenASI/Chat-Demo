@@ -8,6 +8,7 @@ import retrofit2.Response
 import retrofit2.http.FieldMap
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.QueryMap
 import retrofit2.http.Url
@@ -21,7 +22,7 @@ interface AppApiService {
     @POST
     suspend fun login(
         @Url url: String,
-        @FieldMap data: Map<String, String>
+        @FieldMap data : Map<String, String>
     ): Response<BaseResponse<UserInfo>>
 
     @FormUrlEncoded
@@ -43,4 +44,10 @@ interface AppApiService {
         @Url url: String,
         @FieldMap data: Map<String, String>
     ): Response<BaseResponse<UserInfo>>
+
+    @FormUrlEncoded
+    @POST
+    suspend fun logout(
+        @Url url: String,
+    ): Response<BaseResponse<String>>
 }

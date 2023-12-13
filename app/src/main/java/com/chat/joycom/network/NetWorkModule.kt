@@ -37,10 +37,10 @@ class NetWorkModule {
     @Provides
     fun provideOkHttp(
         httpLoggingInterceptor: HttpLoggingInterceptor,
-        cusCookieJar: CusCookieJar,
+        netCookieJar: NetCookieJar,
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(httpLoggingInterceptor)
-        .cookieJar(cusCookieJar)
+        .cookieJar(netCookieJar)
         .connectTimeout(5, TimeUnit.SECONDS)
         .readTimeout(5, TimeUnit.SECONDS)
         .writeTimeout(5, TimeUnit.SECONDS)

@@ -16,6 +16,10 @@ object UrlPath {
 
     const val REGISTER = "/user/register"
 
+    const val CONFIG = "/user/getRegionConfig"
+
+    const val LOGOUT = "/member/logout"
+
     fun String.getFullUrlPath(): String {
         return if (config != null) {
             return config?.api?.getDomainUrl() + this

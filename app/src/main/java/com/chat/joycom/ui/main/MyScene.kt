@@ -1,4 +1,4 @@
-package com.chat.joycom.ui.scene
+package com.chat.joycom.ui.main
 
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
@@ -40,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.chat.joycom.MainActivityViewModel
 import com.chat.joycom.R
 import com.chat.joycom.flow.AccountFlow
 import com.chat.joycom.network.UrlPath
@@ -60,7 +59,8 @@ fun MyScene() {
 
 @Composable
 fun UserInfo() {
-    val userInfo = AccountFlow.stateFlow.collectAsState(initial = null).value
+    val viewModel: MainActivityViewModel = viewModel()
+    val member = viewModel.memberInfo.collectAsState(initial = null).value
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -70,7 +70,7 @@ fun UserInfo() {
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(UrlPath.GET_FILE.getFileFullUrl() + userInfo?.profile?.avatar)
+                .data(UrlPath.GET_FILE.getFileFullUrl() + member?.avatar)
                 .crossfade(true).build(),
             contentDescription = "",
             modifier = Modifier
@@ -88,9 +88,9 @@ fun UserInfo() {
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Center
         ) {
-            Text(text = userInfo?.profile?.nickname ?: "")
+            Text(text = member?.nickname ?: "")
             Spacer(modifier = Modifier.size(15.dp))
-            Text(text = userInfo?.profile?.userId ?: "")
+            Text(text = member?.userId.toString())
         }
     }
 }
@@ -113,6 +113,7 @@ fun UserInfo_Preview_Night() {
 
 @Composable
 fun UserOperateFeature() {
+    val viewModel: MainActivityViewModel = viewModel()
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -129,7 +130,7 @@ fun UserOperateFeature() {
 
         })
         OperateItem(Icons.Outlined.ExitToApp, "退出登入", modifier = Modifier.clickable {
-
+            viewModel.logout()
         })
     }
 }
