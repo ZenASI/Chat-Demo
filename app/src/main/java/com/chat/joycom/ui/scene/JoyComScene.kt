@@ -10,7 +10,8 @@ enum class JoyComScene(
     val icon: ImageVector,
     val body: @Composable () -> Unit,
 ) {
-    ChatList(sceneName = "ChatList", icon = Icons.Filled.AccountCircle, body = { ChatListScene() }),
+    Conversation(sceneName = "Conversation", icon = Icons.Filled.AccountCircle, body = { ConversationScene() }),
+    Call(sceneName = "Call", icon = Icons.Filled.AccountCircle, body = { CallScene() }),
     Contact(sceneName = "Contact", icon = Icons.Filled.AccountCircle, body = { ContactScene() }),
     My(sceneName = "My", icon = Icons.Filled.AccountCircle, body = { MyScene() })
 }

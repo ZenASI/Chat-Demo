@@ -133,7 +133,7 @@ fun MainTabItem(
 @Composable
 fun MainBottomTabItem_Preview_Night() {
     JoyComTheme {
-        MainBottomTabs(currentScene = JoyComScene.ChatList, onClick = {})
+        MainBottomTabs(currentScene = JoyComScene.Conversation, onClick = {})
     }
 }
 

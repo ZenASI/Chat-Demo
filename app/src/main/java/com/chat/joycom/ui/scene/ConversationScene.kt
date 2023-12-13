@@ -11,13 +11,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chat.joycom.MainActivityViewModel
 
 @Composable
-fun ChatListScene() {
+fun ConversationScene() {
 
     val viewModel: MainActivityViewModel = viewModel()
 
     Box(modifier = Modifier.fillMaxSize()) {
         Text(
-            text = "ChatList", textAlign = TextAlign.Center, modifier = Modifier.align(
+            text = "Conversation", textAlign = TextAlign.Center, modifier = Modifier.align(
                 Alignment.Center
             )
         )

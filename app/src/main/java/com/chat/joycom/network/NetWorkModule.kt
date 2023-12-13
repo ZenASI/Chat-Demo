@@ -1,4 +1,4 @@
-package com.chat.joycom.module
+package com.chat.joycom.network
 
 import dagger.Module
 import dagger.Provides
@@ -37,8 +37,10 @@ class NetWorkModule {
     @Provides
     fun provideOkHttp(
         httpLoggingInterceptor: HttpLoggingInterceptor,
+        cusCookieJar: CusCookieJar,
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(httpLoggingInterceptor)
+        .cookieJar(cusCookieJar)
         .connectTimeout(5, TimeUnit.SECONDS)
         .readTimeout(5, TimeUnit.SECONDS)
         .writeTimeout(5, TimeUnit.SECONDS)
@@ -50,7 +52,7 @@ class NetWorkModule {
         moshiConverterFactory: MoshiConverterFactory,
         okHttpClient: OkHttpClient
     ): Retrofit = Retrofit.Builder()
-        .baseUrl("")
+        .baseUrl("https://120.79.151.1:3389")
         .addConverterFactory(moshiConverterFactory)
         .client(okHttpClient)
         .build()

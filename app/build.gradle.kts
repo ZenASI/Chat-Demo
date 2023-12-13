@@ -132,4 +132,7 @@ dependencies {
 
     val compose_permission_version = "0.32.0"
     implementation("com.google.accompanist:accompanist-permissions:$compose_permission_version")
+
+    val ccp_version = "1.0.5"
+    implementation ("com.github.UtkuGlsvn:ComposeCountryCodePicker:${ccp_version}")
 }

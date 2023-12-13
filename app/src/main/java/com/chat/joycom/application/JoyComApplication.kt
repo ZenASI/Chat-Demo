@@ -1,8 +1,10 @@
-package com.chat.joycom
+package com.chat.joycom.application
 
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
+import com.chat.joycom.BuildConfig
+import com.chat.joycom.model.Config
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 
@@ -10,6 +12,8 @@ import timber.log.Timber
 class JoyComApplication : Application() {
 
     private val TAG = this::class.java.simpleName
+
+    var config: Config? = null
 
     override fun onCreate() {
         super.onCreate()

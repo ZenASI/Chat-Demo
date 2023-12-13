@@ -1,7 +1,6 @@
-package com.chat.joycom.module
+package com.chat.joycom.application
 
 import android.content.Context
-import com.chat.joycom.JoyComApplication
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
