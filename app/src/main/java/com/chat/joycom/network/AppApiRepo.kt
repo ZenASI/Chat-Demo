@@ -16,7 +16,7 @@ import javax.inject.Singleton
 class AppApiRepo @Inject constructor(private val appApiService: AppApiService) {
 
     suspend fun logout(): ApiResult<String> = withContext(Dispatchers.IO) {
-        handleResponse { appApiService.logout(UrlPath.LOGOUT) }
+        handleResponse { appApiService.logout(UrlPath.LOGOUT.getFullUrlPath()) }
     }
 
     suspend fun queryMember(

@@ -8,6 +8,7 @@ import com.chat.joycom.flow.AccountFlow
 import com.chat.joycom.network.ApiResult
 import com.chat.joycom.network.AppApiRepo
 import com.chat.joycom.network.UrlPath
+import com.chat.joycom.room.RoomUtils
 import com.chat.joycom.ui.UiEvent
 import com.chat.joycom.utils.DataStoreUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +21,8 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val appApiRepo: AppApiRepo,
-    private val dataStoreUtils: DataStoreUtils
+    private val dataStoreUtils: DataStoreUtils,
+    private val roomUtils: RoomUtils,
 ) : BaseViewModel() {
     init {
         viewModelScope.launch {
@@ -45,7 +47,7 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result = appApiRepo.sendSms(countryCode.substring(1), phone)) {
                 is ApiResult.OnSuccess -> {
-
+                    // TODO: maybe send ui event notice user?
                 }
 
                 is ApiResult.OnFail -> {
@@ -69,6 +71,8 @@ class LoginViewModel @Inject constructor(
                         countryCode
                     )
                     AccountFlow.updateValue(result.data)
+                    roomUtils.insertContact(result.data.contacts)
+                    roomUtils.insertGroup(result.data.groups)
                     sendState(UiEvent.LoginSuccessEvent(result.data))
                 }
 

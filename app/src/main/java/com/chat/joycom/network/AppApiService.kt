@@ -45,7 +45,6 @@ interface AppApiService {
         @FieldMap data: Map<String, String>
     ): Response<BaseResponse<UserInfo>>
 
-    @FormUrlEncoded
     @POST
     suspend fun logout(
         @Url url: String,

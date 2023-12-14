@@ -13,8 +13,6 @@ class JoyComApplication : Application() {
 
     private val TAG = this::class.java.simpleName
 
-    var config: Config? = null
-
     override fun onCreate() {
         super.onCreate()
         if (BuildConfig.DEBUG) {

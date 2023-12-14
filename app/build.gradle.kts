@@ -71,7 +71,7 @@ android {
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.5.3"
     }
     packaging {
         resources {
@@ -141,4 +141,11 @@ dependencies {
     implementation ("androidx.datastore:datastore-preferences-core:$datastore_version")
     implementation ("androidx.datastore:datastore:$datastore_version")
     implementation ("androidx.datastore:datastore-core:$datastore_version")
+
+    val room_version = "2.6.1"
+    implementation ("androidx.room:room-ktx:$room_version")
+    implementation ("androidx.room:room-runtime:$room_version")
+    ksp ("androidx.room:room-compiler:$room_version")
+    // optional - Paging 3 Integration
+    implementation ("androidx.room:room-paging:$room_version")
 }

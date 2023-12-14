@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.edit
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class DataStoreUtils @Inject constructor(private val dataStore: DataStore<Preferences>) {
@@ -20,5 +21,5 @@ class DataStoreUtils @Inject constructor(private val dataStore: DataStore<Prefer
         return result
     }
 
-    suspend fun clearAll() = dataStore.edit { it.clear() }
+    suspend fun clearAll() = runBlocking { dataStore.edit { it.clear() } }
 }

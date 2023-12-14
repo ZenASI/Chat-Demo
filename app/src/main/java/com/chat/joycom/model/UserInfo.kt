@@ -6,6 +6,8 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class UserInfo(
     @field:Json(name = "Profile") val profile: Profile,
+    @field:Json(name = "Contacts") val contacts: List<Contact>?,
+    @field:Json(name = "Groups") val groups: List<Group>?,
     @field:Json(name = "LastAckId") val lastAckId: String,
 )
 

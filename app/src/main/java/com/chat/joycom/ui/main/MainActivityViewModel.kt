@@ -12,9 +12,13 @@ import com.chat.joycom.model.Config
 import com.chat.joycom.network.ApiResult
 import com.chat.joycom.network.AppApiRepo
 import com.chat.joycom.network.UrlPath
+import com.chat.joycom.room.RoomUtils
 import com.chat.joycom.ui.UiEvent
 import com.chat.joycom.utils.DataStoreUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -23,6 +27,7 @@ import javax.inject.Inject
 class MainActivityViewModel @Inject constructor(
     private val appApiRepo: AppApiRepo,
     private val dataStoreUtils: DataStoreUtils,
+    private val roomUtils: RoomUtils,
 ) : BaseViewModel() {
 
     val userInfo = AccountFlow.stateFlow
@@ -31,6 +36,9 @@ class MainActivityViewModel @Inject constructor(
     private val phone = mutableStateOf("")
     private val code = mutableStateOf("")
     private val set = mutableStateOf(setOf<String>())
+
+     val groups = roomUtils.findAllGroup().distinctUntilChanged()
+     val contacts = roomUtils.findAllContact().distinctUntilChanged()
 
     init {
         viewModelScope.launch {
@@ -45,7 +53,7 @@ class MainActivityViewModel @Inject constructor(
                     stringSetPreferencesKey(DSKey.COOKIE_SET_KEY),
                     setOf()
                 )
-            if (sid.value.isNotEmpty()) {
+            if (code.value.isNotEmpty() and phone.value.isNotEmpty()) {
                 when (val result = appApiRepo.getBasicConfig()) {
                     is ApiResult.OnSuccess -> {
                         UrlPath.config = result.data
