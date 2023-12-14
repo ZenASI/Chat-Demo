@@ -29,10 +29,6 @@ data class Message(
     @field:Json(name = "FromUserId")
     val fromUserId: Int,
 
-    @ColumnInfo(name = "hash_code", typeAffinity = ColumnInfo.INTEGER)
-    @field:Json(name = "HashCode")
-    val hashCode: Int,
-
     @ColumnInfo(name = "msg_id", typeAffinity = ColumnInfo.TEXT)
     @field:Json(name = "MsgId")
     val msgId: String,
@@ -48,6 +44,10 @@ data class Message(
     @ColumnInfo(name = "send_status", typeAffinity = ColumnInfo.INTEGER)
     @field:Json(name = "SendStatus")
     val sendStatus: Int,
+
+    @ColumnInfo(name = "send_ticks", typeAffinity = ColumnInfo.INTEGER)
+    @field:Json(name = "SendTicks")
+    val sendTicks: Int,
 
     @ColumnInfo(name = "send_time", typeAffinity = ColumnInfo.INTEGER)
     @field:Json(name = "SendTime")

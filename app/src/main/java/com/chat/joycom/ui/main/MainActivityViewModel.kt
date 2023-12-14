@@ -8,17 +8,16 @@ import com.chat.joycom.BaseViewModel
 import com.chat.joycom.ds.DSKey
 import com.chat.joycom.flow.AccountFlow
 import com.chat.joycom.flow.MemberFlow
-import com.chat.joycom.model.Config
+import com.chat.joycom.model.Message
 import com.chat.joycom.network.ApiResult
 import com.chat.joycom.network.AppApiRepo
+import com.chat.joycom.utils.SocketUtils
 import com.chat.joycom.network.UrlPath
-import com.chat.joycom.room.RoomUtils
+import com.chat.joycom.utils.RoomUtils
 import com.chat.joycom.ui.UiEvent
 import com.chat.joycom.utils.DataStoreUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -28,6 +27,7 @@ class MainActivityViewModel @Inject constructor(
     private val appApiRepo: AppApiRepo,
     private val dataStoreUtils: DataStoreUtils,
     private val roomUtils: RoomUtils,
+    private val socketUtils: SocketUtils,
 ) : BaseViewModel() {
 
     val userInfo = AccountFlow.stateFlow
@@ -57,6 +57,7 @@ class MainActivityViewModel @Inject constructor(
                 when (val result = appApiRepo.getBasicConfig()) {
                     is ApiResult.OnSuccess -> {
                         UrlPath.config = result.data
+                        connectSocket()
                         querySelf()
                     }
 
@@ -69,6 +70,8 @@ class MainActivityViewModel @Inject constructor(
             }
         }
     }
+
+    private fun connectSocket() = socketUtils.connect()
 
     private fun querySelf() {
         viewModelScope.launch {

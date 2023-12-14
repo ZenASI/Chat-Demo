@@ -2,7 +2,6 @@ package com.chat.joycom.flow
 
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
 abstract class SingletonStateFlow<T> {

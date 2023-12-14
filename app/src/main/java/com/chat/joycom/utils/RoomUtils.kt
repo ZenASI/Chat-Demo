@@ -1,7 +1,9 @@
-package com.chat.joycom.room
+package com.chat.joycom.utils
 
 import com.chat.joycom.model.Contact
 import com.chat.joycom.model.Group
+import com.chat.joycom.room.RoomDAO
+import com.chat.joycom.room.RoomDB
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -10,9 +12,8 @@ class RoomUtils @Inject constructor(
     private val dao: RoomDAO,
     private val db: RoomDB
 ) {
-    private val TAG = this::class.java.simpleName
 
-    suspend fun clearAllTable() = db.clearAllTables()
+    fun clearAllTable() = db.clearAllTables()
 
     suspend fun insertContact(item: Contact) = dao.insertContact(item)
 

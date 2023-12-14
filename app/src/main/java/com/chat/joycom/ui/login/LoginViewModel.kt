@@ -8,16 +8,14 @@ import com.chat.joycom.flow.AccountFlow
 import com.chat.joycom.network.ApiResult
 import com.chat.joycom.network.AppApiRepo
 import com.chat.joycom.network.UrlPath
-import com.chat.joycom.room.RoomUtils
+import com.chat.joycom.utils.RoomUtils
 import com.chat.joycom.ui.UiEvent
 import com.chat.joycom.utils.DataStoreUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val appApiRepo: AppApiRepo,

@@ -41,7 +41,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.chat.joycom.R
-import com.chat.joycom.flow.AccountFlow
 import com.chat.joycom.network.UrlPath
 import com.chat.joycom.network.UrlPath.getFileFullUrl
 import com.chat.joycom.ui.theme.JoyComTheme

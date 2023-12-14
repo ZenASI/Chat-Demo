@@ -32,10 +32,22 @@ class NetWorkModule {
     fun provideApiServices(retrofit: Retrofit): AppApiService =
         retrofit.create(AppApiService::class.java)
 
+    @Singleton
+    @SocketOkhttp
+    @Provides
+    fun provideSocketOkhttp(netCookieJar: NetCookieJar): OkHttpClient =
+        OkHttpClient.Builder()
+            .cookieJar(netCookieJar)
+            .connectTimeout(5, TimeUnit.SECONDS)
+            .readTimeout(5, TimeUnit.SECONDS)
+            .writeTimeout(5, TimeUnit.SECONDS)
+            .pingInterval(30, TimeUnit.SECONDS)
+            .build()
 
     @Singleton
+    @ApiOkhttp
     @Provides
-    fun provideOkHttp(
+    fun provideApiOkHttp(
         httpLoggingInterceptor: HttpLoggingInterceptor,
         netCookieJar: NetCookieJar,
     ): OkHttpClient = OkHttpClient.Builder()
@@ -50,7 +62,7 @@ class NetWorkModule {
     @Provides
     fun provideRetrofit(
         moshiConverterFactory: MoshiConverterFactory,
-        okHttpClient: OkHttpClient
+        @ApiOkhttp okHttpClient: OkHttpClient
     ): Retrofit = Retrofit.Builder()
         .baseUrl("https://c1.joycom.vip")
         .addConverterFactory(moshiConverterFactory)

@@ -35,7 +35,9 @@ data class Websocket(
     @field:Json(name = "Port1") val port1: String?,
     @field:Json(name = "Port2") val port2: String?,
     @field:Json(name = "Uri") val uri: String?,
-)
+){
+    fun getDomainUrl():String = protocol + domain + uri
+}
 
 @JsonClass(generateAdapter = true)
 data class Signal(
