@@ -27,13 +27,14 @@ import coil.request.ImageRequest
 import com.chat.joycom.model.Contact
 import com.chat.joycom.network.UrlPath
 import com.chat.joycom.network.UrlPath.getFileFullUrl
+import com.chat.joycom.ui.chat.ChatActivity
 
 @Composable
 fun ContactScene() {
 
     val viewModel: MainActivityViewModel = viewModel()
     val contacts = viewModel.contacts.collectAsState(initial = mutableListOf()).value
-
+    val context = LocalContext.current
     Scaffold { paddingValues ->
         LazyColumn(modifier = Modifier.padding(paddingValues)) {
             items(
@@ -46,7 +47,7 @@ fun ContactScene() {
                         .wrapContentHeight()
                         .clip(RoundedCornerShape(5.dp))
                         .clickable {
-
+                            ChatActivity.start(context, item, null, false)
                         },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -64,7 +65,6 @@ fun ContactScene() {
                         placeholder = null,
                         contentScale = ContentScale.Crop,
                     )
-
                     Text(text = item.nickname)
                 }
             }

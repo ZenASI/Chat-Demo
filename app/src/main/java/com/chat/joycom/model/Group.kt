@@ -1,13 +1,16 @@
 package com.chat.joycom.model
 
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.chat.joycom.model.Group.Companion.TABLE_NAME
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import kotlinx.parcelize.Parcelize
 
 @Entity(tableName = TABLE_NAME)
+@Parcelize
 @JsonClass(generateAdapter = true)
 data class Group(
     @ColumnInfo(name = "avatar", typeAffinity = ColumnInfo.TEXT)
@@ -30,7 +33,7 @@ data class Group(
     @ColumnInfo(name = "user_id", typeAffinity = ColumnInfo.INTEGER)
     @field:Json(name = "UserId")
     val userId: Int,
-){
+): Parcelable  {
     companion object{
         const val TABLE_NAME = "GroupEntity"
     }

@@ -1,13 +1,16 @@
 package com.chat.joycom.model
 
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.chat.joycom.model.Contact.Companion.TABLE_NAME
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import kotlinx.parcelize.Parcelize
 
 @Entity(tableName = TABLE_NAME)
+@Parcelize
 @JsonClass(generateAdapter = true)
 data class Contact(
 
@@ -42,11 +45,7 @@ data class Contact(
     @ColumnInfo(name = "is_no_disturb", typeAffinity = ColumnInfo.INTEGER)
     @field:Json(name = "IsNoDisturb")
     val isNoDisturb: Int,
-
-
-
-
-){
+) : Parcelable {
     companion object{
         const val TABLE_NAME = "ContactEntity"
     }

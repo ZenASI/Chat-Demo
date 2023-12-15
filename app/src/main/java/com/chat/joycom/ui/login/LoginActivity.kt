@@ -1,5 +1,6 @@
 package com.chat.joycom.ui.login
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -30,6 +31,16 @@ import kotlinx.coroutines.launch
 class LoginActivity : ComponentActivity() {
 
     private lateinit var viewModel: LoginViewModel
+
+    companion object{
+        fun start(
+            context: Context,
+        ) {
+            context.startActivity(
+                Intent(context, LoginActivity::class.java)
+            )
+        }
+    }
 
     @OptIn(ExperimentalFoundationApi::class)
     override
@@ -86,7 +97,7 @@ class LoginActivity : ComponentActivity() {
                         }
 
                         is UiEvent.LoginSuccessEvent -> {
-                            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                            MainActivity.start(this@LoginActivity)
                             finish()
                         }
 

@@ -1,5 +1,6 @@
 package com.chat.joycom.network
 
+import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,7 +26,7 @@ class NetWorkModule {
 
     @Singleton
     @Provides
-    fun provideMoshiConvert(): MoshiConverterFactory = MoshiConverterFactory.create()
+    fun provideMoshiConvert(moshi: Moshi): MoshiConverterFactory = MoshiConverterFactory.create(moshi)
 
     @Singleton
     @Provides

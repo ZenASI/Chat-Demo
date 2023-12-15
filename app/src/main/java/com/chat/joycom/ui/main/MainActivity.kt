@@ -1,5 +1,6 @@
 package com.chat.joycom.ui.main
 
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
@@ -50,6 +51,16 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class)
 class MainActivity : ComponentActivity() {
 
+    companion object {
+        fun start(
+            context: Context,
+        ) {
+            context.startActivity(
+                Intent(context, MainActivity::class.java)
+            )
+        }
+    }
+
     private lateinit var viewModel: MainActivityViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,7 +100,7 @@ class MainActivity : ComponentActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect {
                     if (it is UiEvent.GoLoginActEvent) {
-                        startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                        LoginActivity.start(this@MainActivity)
                         finish()
                     }
                 }

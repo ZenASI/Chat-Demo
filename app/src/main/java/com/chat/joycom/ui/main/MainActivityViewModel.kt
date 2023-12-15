@@ -8,7 +8,6 @@ import com.chat.joycom.BaseViewModel
 import com.chat.joycom.ds.DSKey
 import com.chat.joycom.flow.AccountFlow
 import com.chat.joycom.flow.MemberFlow
-import com.chat.joycom.model.Message
 import com.chat.joycom.network.ApiResult
 import com.chat.joycom.network.AppApiRepo
 import com.chat.joycom.utils.SocketUtils

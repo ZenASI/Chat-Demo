@@ -29,6 +29,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.chat.joycom.ui.login.LoginActivity" />
+        <activity android:name="com.chat.joycom.ui.chat.ChatActivity" />
     </application>
 
 </manifest>
