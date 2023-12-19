@@ -13,13 +13,16 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @JsonClass(generateAdapter = true)
 data class Group(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0L,
+
     @ColumnInfo(name = "avatar", typeAffinity = ColumnInfo.TEXT)
     @field:Json(name = "Avatar")
     val avatar: String,
 
     @ColumnInfo(name = "group_id", typeAffinity = ColumnInfo.INTEGER)
     @field:Json(name = "GroupId")
-    val groupId: Int,
+    val groupId: Long,
 
     @ColumnInfo(name = "group_name", typeAffinity = ColumnInfo.TEXT)
     @field:Json(name = "GroupName")
@@ -29,10 +32,9 @@ data class Group(
     @field:Json(name = "IsNoDisturb")
     val isNoDisturb: Int,
 
-    @PrimaryKey
     @ColumnInfo(name = "user_id", typeAffinity = ColumnInfo.INTEGER)
     @field:Json(name = "UserId")
-    val userId: Int,
+    val userId: Long,
 ): Parcelable  {
     companion object{
         const val TABLE_NAME = "GroupEntity"

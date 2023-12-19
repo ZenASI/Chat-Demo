@@ -2,6 +2,7 @@ package com.chat.joycom.network
 
 import com.chat.joycom.model.BaseResponse
 import com.chat.joycom.model.Config
+import com.chat.joycom.model.GroupContact
 import com.chat.joycom.model.Member
 import com.chat.joycom.model.UserInfo
 import retrofit2.Response
@@ -49,4 +50,10 @@ interface AppApiService {
     suspend fun logout(
         @Url url: String,
     ): Response<BaseResponse<String>>
+
+    @GET
+    suspend fun groupContact(
+        @Url url: String,
+        @QueryMap data: Map<String, String>
+    ): Response<BaseResponse<List<GroupContact>>>
 }

@@ -5,7 +5,7 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class Config(
-    @field:Json(name = "userid") val userid: Int? = 0,
+    @field:Json(name = "userid") val userid: Long? = 0,
     @field:Json(name = "cookie") var cookie: String = "",
     @field:Json(name = "api") val api: Api? = null,
     @field:Json(name = "websocket") val websocket: Websocket? = null,

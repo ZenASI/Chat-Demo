@@ -149,4 +149,7 @@ dependencies {
     ksp ("androidx.room:room-compiler:$room_version")
     // optional - Paging 3 Integration
     implementation ("androidx.room:room-paging:$room_version")
+
+    val activity_version = "1.8.1"
+    implementation("androidx.activity:activity-ktx:$activity_version")
 }

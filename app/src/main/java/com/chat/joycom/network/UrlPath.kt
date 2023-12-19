@@ -20,6 +20,8 @@ object UrlPath {
 
     const val LOGOUT = "/member/logout"
 
+    const val GROUP_CONTACT = "/group/getMembers"
+
     fun String.getFullUrlPath() = config.api?.getDomainUrl() + this
 
     fun getSocketFullUrl() = config.websocket?.getDomainUrl() ?: ""

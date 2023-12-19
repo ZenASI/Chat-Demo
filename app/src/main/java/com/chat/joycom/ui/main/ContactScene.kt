@@ -25,6 +25,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.chat.joycom.model.Contact
+import com.chat.joycom.model.Group
 import com.chat.joycom.network.UrlPath
 import com.chat.joycom.network.UrlPath.getFileFullUrl
 import com.chat.joycom.ui.chat.ChatActivity
@@ -33,39 +34,71 @@ import com.chat.joycom.ui.chat.ChatActivity
 fun ContactScene() {
 
     val viewModel: MainActivityViewModel = viewModel()
-    val contacts = viewModel.contacts.collectAsState(initial = mutableListOf()).value
+    val listFlow = viewModel.combineFlow().collectAsState(initial = mutableListOf()).value
     val context = LocalContext.current
     Scaffold { paddingValues ->
         LazyColumn(modifier = Modifier.padding(paddingValues)) {
-            items(
-                items = contacts,
-                key = { item: Contact -> item.userId },
-                contentType = { item: Contact -> item.userId }) { item ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .clip(RoundedCornerShape(5.dp))
-                        .clickable {
-                            ChatActivity.start(context, item, null, false)
-                        },
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(UrlPath.GET_FILE.getFileFullUrl() + item.avatar)
-                            .crossfade(true).build(),
-                        contentDescription = "",
-                        modifier = Modifier
-                            .padding(start = 10.dp)
-                            .width(50.dp)
-                            .height(50.dp)
-                            .clip(CircleShape)
-                            .align(Alignment.CenterVertically),
-                        placeholder = null,
-                        contentScale = ContentScale.Crop,
-                    )
-                    Text(text = item.nickname)
+            listFlow.forEachIndexed { index, item ->
+                item(key = index) {
+                    when (item) {
+                        is Contact -> {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight()
+                                    .clip(RoundedCornerShape(5.dp))
+                                    .clickable {
+                                        ChatActivity.start(context, item, null, false)
+                                    },
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                AsyncImage(
+                                    model = ImageRequest.Builder(LocalContext.current)
+                                        .data(UrlPath.GET_FILE.getFileFullUrl() + item.avatar)
+                                        .crossfade(true).build(),
+                                    contentDescription = "",
+                                    modifier = Modifier
+                                        .padding(start = 10.dp)
+                                        .width(50.dp)
+                                        .height(50.dp)
+                                        .clip(CircleShape)
+                                        .align(Alignment.CenterVertically),
+                                    placeholder = null,
+                                    contentScale = ContentScale.Crop,
+                                )
+                                Text(text = item.nickname)
+                            }
+                        }
+
+                        is Group -> {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight()
+                                    .clip(RoundedCornerShape(5.dp))
+                                    .clickable {
+                                        ChatActivity.start(context, null, item, true)
+                                    },
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                AsyncImage(
+                                    model = ImageRequest.Builder(LocalContext.current)
+                                        .data(UrlPath.GET_FILE.getFileFullUrl() + item.avatar)
+                                        .crossfade(true).build(),
+                                    contentDescription = "",
+                                    modifier = Modifier
+                                        .padding(start = 10.dp)
+                                        .width(50.dp)
+                                        .height(50.dp)
+                                        .clip(CircleShape)
+                                        .align(Alignment.CenterVertically),
+                                    placeholder = null,
+                                    contentScale = ContentScale.Crop,
+                                )
+                                Text(text = item.groupName)
+                            }
+                        }
+                    }
                 }
             }
         }

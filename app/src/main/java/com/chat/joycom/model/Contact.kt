@@ -13,11 +13,12 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @JsonClass(generateAdapter = true)
 data class Contact(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0L,
 
-    @PrimaryKey
     @ColumnInfo(name = "user_id", typeAffinity = ColumnInfo.INTEGER)
     @field:Json(name = "UserId")
-    val userId: Int,
+    val userId: Long,
 
     @ColumnInfo(name = "account", typeAffinity = ColumnInfo.TEXT)
     @field:Json(name = "Account") val account: String,

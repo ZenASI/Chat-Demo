@@ -2,7 +2,6 @@ package com.chat.joycom.ui.commom
 
 import android.net.Uri
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -56,6 +55,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.chat.joycom.R
 import com.chat.joycom.model.Message
+import com.chat.joycom.ui.chat.ChatViewModel
+import timber.log.Timber
 
 @OptIn(
     ExperimentalLayoutApi::class, ExperimentalComposeUiApi::class,
@@ -63,6 +64,7 @@ import com.chat.joycom.model.Message
 )
 @Composable
 fun ChatInput(
+    isGroup: Boolean,
     modifier: Modifier = Modifier,
     onMessage: ((message: Message) -> Unit)? = null,
 ) {
@@ -164,7 +166,8 @@ fun ChatInput(
                     if (rightBtnState == RightBtnState.Send) {
                         keyboardController?.hide()
                         toolBarVisibleState = false
-//                        onMessage?.invoke(Message()) // sent
+
+//                        onMessage?.invoke(msg) // sent
                         inputText = "" // clear
                     } else {
                         keyboardController?.hide()
@@ -193,10 +196,21 @@ fun ChatInput(
         }
         AnimatedContent(targetState = toolBarVisibleState, label = "") {
             if (it) {
+                var capturedImageUri by remember {
+                    mutableStateOf<Uri>(Uri.EMPTY)
+                }
                 val featureList = ToolsFeature.values().toList()
-                val launcher =
+                val launcherImage =
                     rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-                        //When the user has selected a photo, its URI is returned here
+                        Timber.d("launcherImage => $uri")
+                    }
+                val launcherFile =
+                    rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+                        Timber.d("launcherFile => $uri")
+                    }
+                val launcherPicture =
+                    rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { boolean ->
+                        Timber.d("launcherPicture => $boolean")
                     }
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(4),
@@ -209,7 +223,11 @@ fun ChatInput(
                                     .clickable {
                                         when (item) {
                                             ToolsFeature.ImagePick -> {
-                                                launcher.launch(PickVisualMediaRequest(mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly))
+                                                launcherImage.launch(
+                                                    PickVisualMediaRequest(
+                                                        mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+                                                    )
+                                                )
                                             }
 
                                             ToolsFeature.TakePicture -> {
@@ -217,12 +235,12 @@ fun ChatInput(
                                             }
 
                                             ToolsFeature.FilePick -> {
-
+                                                launcherFile.launch(arrayOf("*/*"))
                                             }
                                         }
                                     },
                                 text = { Text(text = item.featureName) },
-                                icon = { Image(painterResource(id = item.resId), "")})
+                                icon = { Image(painterResource(id = item.resId), "") })
                         }
                     }
                 }

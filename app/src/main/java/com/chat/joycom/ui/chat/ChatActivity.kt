@@ -6,19 +6,30 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.core.os.bundleOf
+import androidx.lifecycle.DEFAULT_ARGS_KEY
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.MutableCreationExtras
 import com.chat.joycom.model.Contact
 import com.chat.joycom.model.Group
+import com.chat.joycom.model.Message
 import com.chat.joycom.ui.commom.ChatInput
 import com.chat.joycom.ui.commom.JoyComAppBar
+import com.chat.joycom.ui.commom.OtherMsg
+import com.chat.joycom.ui.commom.SelfMsg
 import com.chat.joycom.ui.theme.JoyComTheme
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 const val CONTACT_INFO = "CONTACT_INFO"
 const val GROUP_INFO = "GROUP_INFO"
@@ -26,8 +37,6 @@ const val IS_GROUP = "IS_GROUP"
 
 @AndroidEntryPoint
 class ChatActivity : ComponentActivity() {
-
-    private lateinit var viewModel: ChatViewModel
 
     private val contact by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -49,6 +58,19 @@ class ChatActivity : ComponentActivity() {
         intent.getBooleanExtra(IS_GROUP, false)
     }
 
+    private val viewModel by viewModels<ChatViewModel>(extrasProducer = {
+        // pass to viewModel params
+        MutableCreationExtras(defaultViewModelCreationExtras).apply {
+            set(
+                DEFAULT_ARGS_KEY, bundleOf(
+                    IS_GROUP to isGroupBool,
+                    CONTACT_INFO to contact,
+                    GROUP_INFO to group
+                )
+            )
+        }
+    })
+
     companion object {
         fun start(
             context: Context,
@@ -67,7 +89,6 @@ class ChatActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(this)[ChatViewModel::class.java]
         val title = if (isGroupBool) group?.groupName else contact?.nickname
         setContent {
             JoyComTheme {
@@ -76,16 +97,44 @@ class ChatActivity : ComponentActivity() {
                         topBar = {
                             JoyComAppBar(
                                 showBack = true,
-                                title = { Text(title ?: "") })
+                                title = { Text(title ?: "") }
+                            )
                         },
                         bottomBar = {
-                            ChatInput(onMessage = {
-                                // TODO: save to db
-                            })
+                            ChatInput(
+                                isGroup = isGroupBool,
+                                onMessage = { viewModel.sentMessage(it) }
+                            )
                         }
                     ) { paddingValues ->
-                        LazyColumn(modifier = Modifier.padding(paddingValues)) {
+                        val memberInfo = viewModel.memberInfo.collectAsState(initial = null).value
+                        val messageList =
+                            viewModel.messageList.collectAsState(initial = mutableListOf()).value
+                        if (memberInfo != null) {
+                            val lazyState = rememberLazyListState()
+                            LazyColumn(modifier = Modifier.padding(paddingValues), state = lazyState) {
+                                items(
+                                    items = messageList,
+                                    key = { item: Message -> item.id },
+                                    contentType = { item: Message -> item.fromUserId }
+                                ) { item ->
+                                    when (item.fromUserId) {
+                                        memberInfo.userId -> {
+                                            SelfMsg(
+                                                isDailyFirstMsg = true,
+                                                message = item
+                                            )
+                                        }
 
+                                        else -> {
+                                            OtherMsg(
+                                                isDailyFirstMsg = true,
+                                                message = item
+                                            )
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }

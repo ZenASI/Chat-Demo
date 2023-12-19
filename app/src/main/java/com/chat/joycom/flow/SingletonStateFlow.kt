@@ -2,15 +2,17 @@ package com.chat.joycom.flow
 
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 abstract class SingletonStateFlow<T> {
 
-    private val _shareFlow: MutableSharedFlow<T> =
-        MutableSharedFlow(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    private val _stateFlow: MutableStateFlow<T?> =
+        MutableStateFlow(null)
 
-    val stateFlow = _shareFlow.asSharedFlow()
+    val stateFlow = _stateFlow.asStateFlow()
 
     fun updateValue(value: T) =
-        _shareFlow.tryEmit(value)
+        _stateFlow.tryEmit(value)
 }

@@ -1,6 +1,9 @@
 package com.chat.joycom.ui.main
 
+import android.os.Parcelable
 import androidx.compose.runtime.mutableStateOf
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.lifecycle.viewModelScope
@@ -8,6 +11,8 @@ import com.chat.joycom.BaseViewModel
 import com.chat.joycom.ds.DSKey
 import com.chat.joycom.flow.AccountFlow
 import com.chat.joycom.flow.MemberFlow
+import com.chat.joycom.model.post.MessageServerRequest
+import com.chat.joycom.model.post.MessageServerRequestJsonAdapter
 import com.chat.joycom.network.ApiResult
 import com.chat.joycom.network.AppApiRepo
 import com.chat.joycom.utils.SocketUtils
@@ -15,9 +20,18 @@ import com.chat.joycom.network.UrlPath
 import com.chat.joycom.utils.RoomUtils
 import com.chat.joycom.ui.UiEvent
 import com.chat.joycom.utils.DataStoreUtils
+import com.squareup.moshi.Moshi
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -27,6 +41,7 @@ class MainActivityViewModel @Inject constructor(
     private val dataStoreUtils: DataStoreUtils,
     private val roomUtils: RoomUtils,
     private val socketUtils: SocketUtils,
+    private val moshi: Moshi
 ) : BaseViewModel() {
 
     val userInfo = AccountFlow.stateFlow
@@ -36,11 +51,21 @@ class MainActivityViewModel @Inject constructor(
     private val code = mutableStateOf("")
     private val set = mutableStateOf(setOf<String>())
 
-     val groups = roomUtils.findAllGroup().distinctUntilChanged()
-     val contacts = roomUtils.findAllContact().distinctUntilChanged()
+    private val groupsFlow = roomUtils.findAllGroup().distinctUntilChanged()
+    private val contactsFlow = roomUtils.findAllContact().distinctUntilChanged()
+    fun combineFlow(): Flow<List<Parcelable>> {
+        return combine(groupsFlow, contactsFlow) { groupList, contactList ->
+            val list = mutableListOf<Parcelable>().apply {
+                addAll(contactList)
+                addAll(groupList)
+            }
+            list
+        }
+    }
 
     init {
         viewModelScope.launch {
+
             code.value =
                 dataStoreUtils.readDataStoreValue(stringPreferencesKey(DSKey.PHONE_CODE), "")
             phone.value =
@@ -58,6 +83,7 @@ class MainActivityViewModel @Inject constructor(
                         UrlPath.config = result.data
                         connectSocket()
                         querySelf()
+                        upDateMessageToDB()
                     }
 
                     is ApiResult.OnFail -> {
@@ -94,12 +120,33 @@ class MainActivityViewModel @Inject constructor(
             when (val result = appApiRepo.logout()) {
                 is ApiResult.OnSuccess -> {
                     dataStoreUtils.clearAll()
+                    withContext(Dispatchers.IO) { roomUtils.clearAllTable() }
                     sendState(UiEvent.GoLoginActEvent)
                 }
 
                 is ApiResult.OnFail -> {
                     Timber.d("logout error => ${result.message}")
                 }
+            }
+        }
+    }
+
+    private fun upDateMessageToDB() {
+        viewModelScope.launch {
+            memberInfo.collect{
+                it ?: return@collect
+                val lastAckId =
+                    dataStoreUtils.readDataStoreValue(longPreferencesKey(DSKey.LAST_ACK_ID), 1L)
+
+                val json = MessageServerRequestJsonAdapter(moshi).toJson(
+                    MessageServerRequest(
+                        cmd = "applogin",
+                        uid = it.userId,
+                        token = UrlPath.config.cookie,
+                        lastackmid = lastAckId.toString(),
+                    )
+                )
+                socketUtils.send(json)
             }
         }
     }

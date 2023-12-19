@@ -1,11 +1,15 @@
 package com.chat.joycom.room
 
+import android.os.Parcelable
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.RawQuery
 import com.chat.joycom.model.Contact
 import com.chat.joycom.model.Group
+import com.chat.joycom.model.GroupContact
+import com.chat.joycom.model.Message
 import kotlinx.coroutines.flow.Flow
 
 
@@ -23,4 +27,19 @@ interface RoomDAO {
 
     @Query("Select * From ${Contact.TABLE_NAME}")
     fun findAllContact(): Flow<List<Contact>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertMessage(item: Message): Long
+
+    @Query("Select * From ${Message.TABLE_NAME} Where (from_user_id = :id And to_user_id = :selfId) Or (from_user_id = :selfId And to_user_id = :id)")
+    fun queryMessageByUserId(id: Long, selfId: Long): Flow<List<Message>>
+
+    @Query("Select * From ${Message.TABLE_NAME} Where to_group_id = :groupId")
+    fun queryMessageByGroupId(groupId: Long): Flow<List<Message>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertGroupContact(item: GroupContact): Long
+
+    @Query("Select * From ${GroupContact.TABLE_NAME} Where group_id = :groupId")
+    fun queryGroupContactById(groupId: Long): Flow<List<GroupContact>>
 }

@@ -1,5 +1,7 @@
 package com.chat.joycom.ui.login
 
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.viewModelScope
 import com.chat.joycom.BaseViewModel
@@ -27,10 +29,10 @@ class LoginViewModel @Inject constructor(
             when (val result = appApiRepo.getBasicConfig()) {
                 is ApiResult.OnSuccess -> {
                     UrlPath.config = result.data // set to object
-                    dataStoreUtils.saveDataStoreValue(
-                        stringPreferencesKey(DSKey.COOKIE_KEY),
-                        result.data.cookie
-                    )
+//                    dataStoreUtils.saveDataStoreValue(
+//                        stringPreferencesKey(DSKey.COOKIE_KEY),
+//                        result.data.cookie
+//                    )
                 }
 
                 is ApiResult.OnFail -> {
@@ -68,6 +70,14 @@ class LoginViewModel @Inject constructor(
                         stringPreferencesKey(DSKey.PHONE_CODE),
                         countryCode
                     )
+                    dataStoreUtils.saveDataStoreValue(
+                        longPreferencesKey(DSKey.LAST_ACK_ID),
+                        result.data.lastAckId
+                    )
+                    dataStoreUtils.saveDataStoreValue(
+                        stringPreferencesKey(DSKey.COOKIE_KEY),
+                        UrlPath.config.cookie
+                    )
                     AccountFlow.updateValue(result.data)
                     roomUtils.insertContact(result.data.contacts)
                     roomUtils.insertGroup(result.data.groups)
@@ -84,7 +94,8 @@ class LoginViewModel @Inject constructor(
     fun goRegister(nickName: String, countryCode: String, phone: String, otp: String) {
         if (phone.isEmpty() or otp.isEmpty() or nickName.isEmpty()) return
         viewModelScope.launch {
-            when (val result = appApiRepo.goRegister(nickName, countryCode.substring(1), phone, otp)) {
+            when (val result =
+                appApiRepo.goRegister(nickName, countryCode.substring(1), phone, otp)) {
                 is ApiResult.OnSuccess -> {
                     AccountFlow.updateValue(result.data)
                 }

@@ -2,6 +2,7 @@ package com.chat.joycom.network
 
 import com.chat.joycom.model.BaseResponse
 import com.chat.joycom.model.Config
+import com.chat.joycom.model.GroupContact
 import com.chat.joycom.model.Member
 import com.chat.joycom.model.UserInfo
 import com.chat.joycom.network.UrlPath.getFullUrlPath
@@ -14,6 +15,14 @@ import javax.inject.Singleton
 
 @Singleton
 class AppApiRepo @Inject constructor(private val appApiService: AppApiService) {
+
+    suspend fun queryGroupContacts(
+        groupId: Long,
+    ): ApiResult<List<GroupContact>> =
+        withContext(Dispatchers.IO) {
+            val groupContactMap = mapOf<String, String>("GroupId" to groupId.toString())
+            handleResponse { appApiService.groupContact(UrlPath.GROUP_CONTACT.getFullUrlPath(), groupContactMap) }
+        }
 
     suspend fun logout(): ApiResult<String> = withContext(Dispatchers.IO) {
         handleResponse { appApiService.logout(UrlPath.LOGOUT.getFullUrlPath()) }
