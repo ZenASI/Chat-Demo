@@ -18,7 +18,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.core.os.bundleOf
 import androidx.lifecycle.DEFAULT_ARGS_KEY
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.MutableCreationExtras
 import com.chat.joycom.model.Contact
 import com.chat.joycom.model.Group
@@ -29,7 +28,6 @@ import com.chat.joycom.ui.commom.OtherMsg
 import com.chat.joycom.ui.commom.SelfMsg
 import com.chat.joycom.ui.theme.JoyComTheme
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 
 const val CONTACT_INFO = "CONTACT_INFO"
 const val GROUP_INFO = "GROUP_INFO"
@@ -48,7 +46,7 @@ class ChatActivity : ComponentActivity() {
 
     private val group by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(CONTACT_INFO, Group::class.java)
+            intent.getParcelableExtra(GROUP_INFO, Group::class.java)
         } else {
             intent.getParcelableExtra(GROUP_INFO) as Group?
         }
@@ -110,28 +108,22 @@ class ChatActivity : ComponentActivity() {
                         val memberInfo = viewModel.memberInfo.collectAsState(initial = null).value
                         val messageList =
                             viewModel.messageList.collectAsState(initial = mutableListOf()).value
+
                         if (memberInfo != null) {
                             val lazyState = rememberLazyListState()
-                            LazyColumn(modifier = Modifier.padding(paddingValues), state = lazyState) {
+                            LazyColumn(
+                                modifier = Modifier.padding(paddingValues),
+                                state = lazyState,
+                                reverseLayout = false
+                            ) {
                                 items(
                                     items = messageList,
                                     key = { item: Message -> item.id },
                                     contentType = { item: Message -> item.fromUserId }
                                 ) { item ->
                                     when (item.fromUserId) {
-                                        memberInfo.userId -> {
-                                            SelfMsg(
-                                                isDailyFirstMsg = true,
-                                                message = item
-                                            )
-                                        }
-
-                                        else -> {
-                                            OtherMsg(
-                                                isDailyFirstMsg = true,
-                                                message = item
-                                            )
-                                        }
+                                        memberInfo.userId -> SelfMsg(message = item)
+                                        else -> OtherMsg(message = item)
                                     }
                                 }
                             }

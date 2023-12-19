@@ -90,6 +90,10 @@ data class Message(
 
     @Ignore
     var isGroup: Boolean = toGroupId != 0L
+
     @Ignore
     var isSelect: Boolean = false
+
+    @Ignore
+    var showTopTime: Boolean = true
 }

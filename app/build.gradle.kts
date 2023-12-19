@@ -150,6 +150,13 @@ dependencies {
     // optional - Paging 3 Integration
     implementation ("androidx.room:room-paging:$room_version")
 
+    val paging_version = "3.2.1"
+    implementation("androidx.paging:paging-runtime-ktx:$paging_version")
+    implementation("androidx.paging:paging-compose:3.3.0-alpha02")
+
     val activity_version = "1.8.1"
     implementation("androidx.activity:activity-ktx:$activity_version")
+
+    val constraintlayout_compose_version = "1.0.1"
+    implementation ("androidx.constraintlayout:constraintlayout-compose:$constraintlayout_compose_version")
 }

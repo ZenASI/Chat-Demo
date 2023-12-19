@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -27,7 +28,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,6 +43,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.chat.joycom.R
+import com.chat.joycom.ext.toTopTimeFormat
+import com.chat.joycom.ext.toSendTimeFormat
 import com.chat.joycom.model.Message
 import com.chat.joycom.network.UrlPath
 import com.chat.joycom.network.UrlPath.getFileFullUrl
@@ -50,10 +52,9 @@ import com.chat.joycom.ui.chat.ChatViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SelfMsg(isDailyFirstMsg: Boolean, message: Message) {
+fun SelfMsg(message: Message) {
     val viewModel: ChatViewModel = viewModel()
     val memberInfo = viewModel.memberInfo.collectAsState(initial = null)
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -63,9 +64,9 @@ fun SelfMsg(isDailyFirstMsg: Boolean, message: Message) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // first time show or hide
-        if (isDailyFirstMsg) {
+        if (message.showTopTime) {
             Text(
-                text = message.sendTime,
+                text = message.sendTime.toTopTimeFormat(),
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .wrapContentWidth()
@@ -73,38 +74,48 @@ fun SelfMsg(isDailyFirstMsg: Boolean, message: Message) {
                     .background(Color.Gray)
             )
         }
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxWidth(.9f)
-                .clip(RoundedCornerShape(topStart = 8.dp, bottomStart = 8.dp, topEnd = 8.dp))
                 .padding(top = 3.dp)
-                .background(Color.Green.copy(alpha = .5f))
-                .align(Alignment.End),
-            verticalArrangement = Arrangement.spacedBy(3.dp)
+                .align(Alignment.End)
         ) {
-            // replay
-            // TODO: replay layout
-            // content
-            Text(
-                text = message.content,
+            Column(
                 modifier = Modifier
-                    .align(Alignment.Start)
-                    .padding(horizontal = 3.dp)
-                    .combinedClickable(
-                        onClick = {},
-                        onLongClick = {}
-                    )
-            )
-            // image or not
-            // TODO: image from user
-
-            // time and read
-            Row(
-                modifier = Modifier.align(Alignment.End),
-                verticalAlignment = Alignment.CenterVertically
+                    .wrapContentWidth()
+                    .clip(RoundedCornerShape(topStart = 8.dp, bottomStart = 8.dp, topEnd = 8.dp))
+                    .background(Color.Green.copy(alpha = .5f))
+                    .align(Alignment.CenterEnd)
             ) {
-                Text(text = message.sendTime, modifier = Modifier.wrapContentWidth(Alignment.End), maxLines = 1)
-                Icon(Icons.Filled.Check, "")
+                // replay
+                // TODO: replay layout
+                // content
+                Text(
+                    text = message.content,
+                    modifier = Modifier
+                        .align(Alignment.Start)
+                        .padding(horizontal = 3.dp)
+                        .combinedClickable(
+                            onClick = {},
+                            onLongClick = {}
+                        )
+                )
+                // image or not
+                // TODO: image from user
+
+                // time and read
+                Row(
+                    modifier = Modifier.align(Alignment.End),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Text(
+                        text = message.sendTime.toSendTimeFormat(),
+                        modifier = Modifier.wrapContentWidth(),
+                        maxLines = 1
+                    )
+                    Icon(Icons.Filled.Check, "")
+                }
             }
         }
     }
@@ -113,14 +124,13 @@ fun SelfMsg(isDailyFirstMsg: Boolean, message: Message) {
 @Preview
 @Composable
 fun SelfMsg_Preview() {
-    val isDailyFirstMsg = true
     val message = Message.getFakeMessage()
-    SelfMsg(isDailyFirstMsg = isDailyFirstMsg, message = message)
+    SelfMsg(message = message)
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun OtherMsg(isDailyFirstMsg: Boolean, message: Message) {
+fun OtherMsg(message: Message) {
     val viewModel: ChatViewModel = viewModel()
     val fromUserId = remember { mutableLongStateOf(message.fromUserId) }
 
@@ -139,22 +149,22 @@ fun OtherMsg(isDailyFirstMsg: Boolean, message: Message) {
     }
     val phone = remember(groupContact, contact) {
         derivedStateOf {
-            if (message.isGroup) "" else "+"+ contact.value?.countryCode + contact.value?.phoneNumber
+            if (message.isGroup) "" else "+" + contact.value?.countryCode + contact.value?.phoneNumber
         }
     }
 
     Column(
         modifier = Modifier
-            .width(IntrinsicSize.Min)
+            .fillMaxWidth()
             .wrapContentHeight()
             .background(MaterialTheme.colorScheme.background)
             .padding(3.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // first time show or hide
-        if (isDailyFirstMsg) {
+        if (message.showTopTime) {
             Text(
-                text = message.sendTime,
+                text = message.sendTime.toTopTimeFormat(),
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .wrapContentWidth()
@@ -164,7 +174,7 @@ fun OtherMsg(isDailyFirstMsg: Boolean, message: Message) {
         }
         Row(
             modifier = Modifier
-                .wrapContentWidth()
+                .width(IntrinsicSize.Min)
                 .padding(top = 3.dp)
                 .align(Alignment.Start),
             horizontalArrangement = Arrangement.spacedBy(3.dp)
@@ -202,9 +212,19 @@ fun OtherMsg(isDailyFirstMsg: Boolean, message: Message) {
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(text = nickName.value ?: "", maxLines = 1, textAlign = TextAlign.Start, modifier = Modifier)
+                    Text(
+                        text = nickName.value ?: "",
+                        maxLines = 1,
+                        textAlign = TextAlign.Start,
+                        modifier = Modifier
+                    )
                     Spacer(modifier = Modifier.size(5.dp))
-                    Text(text = phone.value, maxLines = 1, textAlign = TextAlign.End, modifier = Modifier)
+                    Text(
+                        text = phone.value,
+                        maxLines = 1,
+                        textAlign = TextAlign.End,
+                        modifier = Modifier
+                    )
                 }
                 // image or not
                 // TODO: image from user
@@ -221,7 +241,7 @@ fun OtherMsg(isDailyFirstMsg: Boolean, message: Message) {
                 )
                 // time
                 Text(
-                    text = message.sendTime,
+                    text = message.sendTime.toSendTimeFormat(),
                     modifier = Modifier
                         .align(Alignment.End)
                         .padding(horizontal = 3.dp)
@@ -234,7 +254,6 @@ fun OtherMsg(isDailyFirstMsg: Boolean, message: Message) {
 @Preview
 @Composable
 fun OtherMsg_PreView() {
-    val isDailyFirstMsg = true
     val message = Message.getFakeMessage()
-    OtherMsg(isDailyFirstMsg = isDailyFirstMsg, message = message)
+    OtherMsg(message = message)
 }
