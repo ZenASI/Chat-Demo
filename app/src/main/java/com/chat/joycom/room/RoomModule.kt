@@ -2,6 +2,7 @@ package com.chat.joycom.room
 
 import android.content.Context
 import androidx.room.Room
+import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,7 +18,9 @@ class RoomModule {
     @Singleton
     @Provides
     fun provideRoomDB(@ApplicationContext context: Context) =
-        Room.databaseBuilder(context, RoomDB::class.java, dbName).build()
+        Room.databaseBuilder(context, RoomDB::class.java, dbName)
+            .build()
+
 
     @Singleton
     @Provides

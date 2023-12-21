@@ -55,7 +55,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.chat.joycom.R
 import com.chat.joycom.model.Message
-import com.chat.joycom.ui.chat.ChatViewModel
 import timber.log.Timber
 
 @OptIn(
@@ -67,6 +66,7 @@ fun ChatInput(
     isGroup: Boolean,
     modifier: Modifier = Modifier,
     onMessage: ((message: Message) -> Unit)? = null,
+    id: Long?,
 ) {
     val context = LocalContext.current
     val imeState = WindowInsets.isImeVisible // for keyboard show/hide bool
@@ -167,7 +167,7 @@ fun ChatInput(
                         keyboardController?.hide()
                         toolBarVisibleState = false
 
-//                        onMessage?.invoke(msg) // sent
+//                        onMessage?.invoke(postMessage) // sent
                         inputText = "" // clear
                     } else {
                         keyboardController?.hide()

@@ -1,14 +1,15 @@
 package com.chat.joycom.ui.main
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
@@ -20,10 +21,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.chat.joycom.R
 import com.chat.joycom.model.Contact
 import com.chat.joycom.model.Group
 import com.chat.joycom.network.UrlPath
@@ -31,9 +35,29 @@ import com.chat.joycom.network.UrlPath.getFileFullUrl
 import com.chat.joycom.ui.chat.ChatActivity
 
 @Composable
-fun ContactScene() {
+fun CallScene(viewModel: MainActivityViewModel = viewModel()) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Text(
+            text = "Call", textAlign = TextAlign.Center, modifier = Modifier.align(
+                Alignment.Center
+            )
+        )
+    }
+}
 
-    val viewModel: MainActivityViewModel = viewModel()
+@Composable
+fun GroupScene(viewModel: MainActivityViewModel = viewModel()) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Text(
+            text = "Group", textAlign = TextAlign.Center, modifier = Modifier.align(
+                Alignment.Center
+            )
+        )
+    }
+}
+
+@Composable
+fun ChatScene(viewModel: MainActivityViewModel = viewModel()) {
     val listFlow = viewModel.combineFlow().collectAsState(initial = mutableListOf()).value
     val context = LocalContext.current
     Scaffold { paddingValues ->
@@ -64,6 +88,7 @@ fun ContactScene() {
                                         .clip(CircleShape)
                                         .align(Alignment.CenterVertically),
                                     placeholder = null,
+                                    error = painterResource(id = R.drawable.ic_def_user),
                                     contentScale = ContentScale.Crop,
                                 )
                                 Text(text = item.nickname)
@@ -93,6 +118,7 @@ fun ContactScene() {
                                         .clip(CircleShape)
                                         .align(Alignment.CenterVertically),
                                     placeholder = null,
+                                    error = painterResource(id = R.drawable.ic_def_group),
                                     contentScale = ContentScale.Crop,
                                 )
                                 Text(text = item.groupName)
@@ -104,3 +130,15 @@ fun ContactScene() {
         }
     }
 }
+
+@Composable
+fun UpdateScene(viewmode: MainActivityViewModel = viewModel()) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Text(
+            text = "Update", textAlign = TextAlign.Center, modifier = Modifier.align(
+                Alignment.Center
+            )
+        )
+    }
+}
+

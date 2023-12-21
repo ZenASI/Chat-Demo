@@ -1,6 +1,5 @@
 package com.chat.joycom.ui.login
 
-import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.viewModelScope
@@ -72,7 +71,8 @@ class LoginViewModel @Inject constructor(
                     )
                     dataStoreUtils.saveDataStoreValue(
                         longPreferencesKey(DSKey.LAST_ACK_ID),
-                        result.data.lastAckId
+                        1L
+//                        result.data.lastAckId
                     )
                     dataStoreUtils.saveDataStoreValue(
                         stringPreferencesKey(DSKey.COOKIE_KEY),

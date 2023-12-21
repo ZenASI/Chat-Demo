@@ -65,7 +65,7 @@ class NetWorkModule {
         moshiConverterFactory: MoshiConverterFactory,
         @ApiOkhttp okHttpClient: OkHttpClient
     ): Retrofit = Retrofit.Builder()
-        .baseUrl("https://c1.joycom.vip")
+        .baseUrl("https://99.83.189.18")
         .addConverterFactory(moshiConverterFactory)
         .client(okHttpClient)
         .build()

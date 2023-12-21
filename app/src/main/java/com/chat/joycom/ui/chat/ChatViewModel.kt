@@ -3,8 +3,11 @@ package com.chat.joycom.ui.chat
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.chat.joycom.ext.toCrc32Value
 import com.chat.joycom.flow.MemberFlow
 import com.chat.joycom.model.Contact
+import com.chat.joycom.model.Content
+import com.chat.joycom.model.ContentJsonAdapter
 import com.chat.joycom.model.Group
 import com.chat.joycom.model.GroupContact
 import com.chat.joycom.model.Message
@@ -12,11 +15,16 @@ import com.chat.joycom.network.ApiResult
 import com.chat.joycom.network.AppApiRepo
 import com.chat.joycom.utils.RoomUtils
 import com.chat.joycom.utils.SocketUtils
+import com.squareup.moshi.Moshi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,7 +32,8 @@ class ChatViewModel @Inject constructor(
     private val roomUtils: RoomUtils,
     private val socketUtils: SocketUtils,
     private val appApiRepo: AppApiRepo,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    private val moshi: Moshi,
 ) : ViewModel() {
     val memberInfo = MemberFlow.stateFlow
     var messageList = flowOf(emptyList<Message>())
@@ -51,12 +60,14 @@ class ChatViewModel @Inject constructor(
     }
 
     private fun queryByUserId(id: Long?) = run {
+        // TODO: 處理content to data class
         id ?: return@run flowOf(mutableListOf())
         val selfId = memberInfo.value?.userId ?: return@run flowOf(mutableListOf())
         roomUtils.queryMessageByUserId(id, selfId)
     }
 
     private fun queryByGroupId(groupId: Long?) = run {
+        // TODO: 處理content to data class
         groupId ?: return@run flowOf(mutableListOf())
         roomUtils.queryMessageByGroupId(groupId)
     }

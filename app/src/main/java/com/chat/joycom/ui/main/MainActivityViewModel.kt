@@ -2,7 +2,6 @@ package com.chat.joycom.ui.main
 
 import android.os.Parcelable
 import androidx.compose.runtime.mutableStateOf
-import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
@@ -22,16 +21,10 @@ import com.chat.joycom.ui.UiEvent
 import com.chat.joycom.utils.DataStoreUtils
 import com.squareup.moshi.Moshi
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -110,22 +103,6 @@ class MainActivityViewModel @Inject constructor(
                     if (result.code == 401) {
                         sendState(UiEvent.GoLoginActEvent)
                     }
-                }
-            }
-        }
-    }
-
-    fun logout() {
-        viewModelScope.launch {
-            when (val result = appApiRepo.logout()) {
-                is ApiResult.OnSuccess -> {
-                    dataStoreUtils.clearAll()
-                    withContext(Dispatchers.IO) { roomUtils.clearAllTable() }
-                    sendState(UiEvent.GoLoginActEvent)
-                }
-
-                is ApiResult.OnFail -> {
-                    Timber.d("logout error => ${result.message}")
                 }
             }
         }

@@ -1,3 +1,40 @@
 <resources>
     <string name="app_name">JoyCom</string>
+
+    <string name="group">群組</string>
+    <string name="chat">對話</string>
+    <string name="update">更新</string>
+    <string name="call">通話</string>
+
+    <string name="create_group">新增群組</string>
+    <string name="create_broadcast">新增廣播</string>
+    <string name="linked_device">已連接裝置</string>
+    <string name="marked_msg">已標註訊息</string>
+    <string name="setting">設定</string>
+
+    <string name="account">帳號</string>
+    <string name="account_desc">帳號</string>
+
+    <string name="privacy">隱私</string>
+    <string name="privacy_desc">隱私</string>
+
+    <string name="avatar">虛擬替身</string>
+    <string name="avatar_desc">虛擬替身</string>
+    
+    <string name="conversation">對話</string>
+    <string name="conversation_desc">對話</string>
+    
+    <string name="notification">通知</string>
+    <string name="notification_desc">通知</string>
+
+    <string name="storage">儲存空間與數據用量</string>
+    <string name="storage_desc">儲存空間與數據用量</string>
+
+    <string name="language">語言</string>
+    <string name="language_desc">語言</string>
+
+    <string name="help">幫助</string>
+    <string name="help_desc">幫助</string>
+
+    <string name="invite_friend">邀請朋友</string>
 </resources>

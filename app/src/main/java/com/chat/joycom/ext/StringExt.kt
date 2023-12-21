@@ -3,6 +3,7 @@ package com.chat.joycom.ext
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import java.util.zip.CRC32
 
 fun String.toSendTimeFormat(): String {
     val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
@@ -29,4 +30,11 @@ fun String.toTopTimeFormat(): String {
     } else {
         SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(date)
     }
+}
+
+// timestamp + content + "asdfghjkl"
+fun String.toCrc32Value(): Long {
+    val crc32 = CRC32()
+    crc32.update(this.toByteArray())
+    return crc32.value
 }

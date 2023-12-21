@@ -7,21 +7,43 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.core.os.bundleOf
 import androidx.lifecycle.DEFAULT_ARGS_KEY
 import androidx.lifecycle.viewmodel.MutableCreationExtras
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.chat.joycom.R
 import com.chat.joycom.model.Contact
 import com.chat.joycom.model.Group
 import com.chat.joycom.model.Message
+import com.chat.joycom.network.UrlPath
+import com.chat.joycom.network.UrlPath.getFileFullUrl
 import com.chat.joycom.ui.commom.ChatInput
 import com.chat.joycom.ui.commom.JoyComAppBar
 import com.chat.joycom.ui.commom.OtherMsg
@@ -33,6 +55,7 @@ const val CONTACT_INFO = "CONTACT_INFO"
 const val GROUP_INFO = "GROUP_INFO"
 const val IS_GROUP = "IS_GROUP"
 
+@OptIn(ExperimentalMaterial3Api::class)
 @AndroidEntryPoint
 class ChatActivity : ComponentActivity() {
 
@@ -95,12 +118,35 @@ class ChatActivity : ComponentActivity() {
                         topBar = {
                             JoyComAppBar(
                                 showBack = true,
-                                title = { Text(title ?: "") }
+                                title = {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        AsyncImage(
+                                            model = ImageRequest.Builder(LocalContext.current)
+                                                .data(UrlPath.GET_FILE.getFileFullUrl() + if (isGroupBool) group?.avatar else contact?.avatar)
+                                                .crossfade(true).build(),
+                                            contentDescription = "",
+                                            modifier = Modifier
+                                                .width(50.dp)
+                                                .height(50.dp)
+                                                .clip(CircleShape)
+                                                .clickable {
+                                                    // TODO: show user info card
+                                                },
+                                            placeholder = painterResource(id = if (isGroupBool) R.drawable.ic_def_group else R.drawable.ic_def_user),
+                                            contentScale = ContentScale.Crop,
+                                            error = painterResource(id = if (isGroupBool) R.drawable.ic_def_group else R.drawable.ic_def_user)
+                                        )
+                                        Text(title ?: "")
+                                    }
+                                }
                             )
                         },
                         bottomBar = {
                             ChatInput(
                                 isGroup = isGroupBool,
+                                id = if (isGroupBool) group?.groupId else contact?.userId,
                                 onMessage = { viewModel.sentMessage(it) }
                             )
                         }
