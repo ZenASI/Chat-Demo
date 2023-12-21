@@ -29,7 +29,8 @@
             </intent-filter>
         </activity>
         <activity android:name="com.chat.joycom.ui.login.LoginActivity" />
-        <activity android:name="com.chat.joycom.ui.chat.ChatActivity" />
+        <activity android:name="com.chat.joycom.ui.chat.ChatActivity"
+            android:windowSoftInputMode="adjustResize"/>
         <activity android:name="com.chat.joycom.ui.setting.SettingActivity" />
     </application>
 

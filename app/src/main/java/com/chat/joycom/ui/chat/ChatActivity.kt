@@ -7,12 +7,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imeNestedScroll
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,17 +24,16 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.os.bundleOf
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.DEFAULT_ARGS_KEY
 import androidx.lifecycle.viewmodel.MutableCreationExtras
 import coil.compose.AsyncImage
@@ -55,7 +55,7 @@ const val CONTACT_INFO = "CONTACT_INFO"
 const val GROUP_INFO = "GROUP_INFO"
 const val IS_GROUP = "IS_GROUP"
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @AndroidEntryPoint
 class ChatActivity : ComponentActivity() {
 
@@ -111,6 +111,7 @@ class ChatActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val title = if (isGroupBool) group?.groupName else contact?.nickname
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             JoyComTheme {
                 Surface {
@@ -147,9 +148,12 @@ class ChatActivity : ComponentActivity() {
                             ChatInput(
                                 isGroup = isGroupBool,
                                 id = if (isGroupBool) group?.groupId else contact?.userId,
-                                onMessage = { viewModel.sentMessage(it) }
+                                onMessage = { viewModel.sentMessage(it) },
+                                modifier = Modifier
+                                    .imePadding()
                             )
-                        }
+                        },
+                        modifier = Modifier.navigationBarsPadding()
                     ) { paddingValues ->
                         val memberInfo = viewModel.memberInfo.collectAsState(initial = null).value
                         val messageList =
@@ -158,9 +162,11 @@ class ChatActivity : ComponentActivity() {
                         if (memberInfo != null) {
                             val lazyState = rememberLazyListState()
                             LazyColumn(
-                                modifier = Modifier.padding(paddingValues),
+                                modifier = Modifier
+                                    .padding(paddingValues)
+                                    .imeNestedScroll(),
                                 state = lazyState,
-                                reverseLayout = false
+                                reverseLayout = true
                             ) {
                                 items(
                                     items = messageList,

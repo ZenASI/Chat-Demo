@@ -1,11 +1,9 @@
 package com.chat.joycom.room
 
-import android.os.Parcelable
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.RawQuery
 import com.chat.joycom.model.Contact
 import com.chat.joycom.model.Group
 import com.chat.joycom.model.GroupContact

@@ -3,11 +3,8 @@ package com.chat.joycom.ui.chat
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.chat.joycom.ext.toCrc32Value
 import com.chat.joycom.flow.MemberFlow
 import com.chat.joycom.model.Contact
-import com.chat.joycom.model.Content
-import com.chat.joycom.model.ContentJsonAdapter
 import com.chat.joycom.model.Group
 import com.chat.joycom.model.GroupContact
 import com.chat.joycom.model.Message
@@ -19,12 +16,8 @@ import com.squareup.moshi.Moshi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
 import javax.inject.Inject
 
 @HiltViewModel
