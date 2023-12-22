@@ -27,7 +27,7 @@ class SettingViewModel @Inject constructor(
             when (val result = appApiRepo.logout()) {
                 is ApiResult.OnSuccess -> {
                     dataStoreUtils.clearAll()
-                    withContext(Dispatchers.IO) { roomUtils.clearAllTable() }
+                    withContext(Dispatchers.IO) { roomUtils.db.clearAllTables() }
                     sendState(UiEvent.GoLoginActEvent)
                 }
 

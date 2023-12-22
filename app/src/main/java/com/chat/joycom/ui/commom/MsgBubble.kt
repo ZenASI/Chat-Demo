@@ -62,58 +62,62 @@ fun SelfMsg(message: Message) {
             .padding(3.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // first time show or hide
-        if (message.showTopTime) {
-            Text(
-                text = message.sendTime.toTopTimeFormat(),
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(Color.Gray)
-            )
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth(.9f)
-                .padding(top = 3.dp)
-                .align(Alignment.End)
-        ) {
-            Column(
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .clip(RoundedCornerShape(topStart = 8.dp, bottomStart = 8.dp, topEnd = 8.dp))
-                    .background(Color.Green.copy(alpha = .5f))
-                    .align(Alignment.CenterEnd)
-            ) {
-                // replay
-                // TODO: replay layout
-                // content
+        when(message.msgType){
+            -1 -> {
+                // top time
                 Text(
-                    text = message.content,
+                    text = message.sendTime.toTopTimeFormat(),
+                    textAlign = TextAlign.Center,
                     modifier = Modifier
-                        .align(Alignment.Start)
-                        .padding(horizontal = 3.dp)
-                        .combinedClickable(
-                            onClick = {},
-                            onLongClick = {}
-                        )
+                        .wrapContentWidth()
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Color.Gray)
                 )
-                // image or not
-                // TODO: image from user
-
-                // time and read
-                Row(
-                    modifier = Modifier.align(Alignment.End),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.End
+            }
+            else -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(.9f)
+                        .padding(top = 3.dp)
+                        .align(Alignment.End)
                 ) {
-                    Text(
-                        text = message.sendTime.toSendTimeFormat(),
-                        modifier = Modifier.wrapContentWidth(),
-                        maxLines = 1
-                    )
-                    Icon(Icons.Filled.Check, "")
+                    Column(
+                        modifier = Modifier
+                            .wrapContentWidth()
+                            .clip(RoundedCornerShape(topStart = 8.dp, bottomStart = 8.dp, topEnd = 8.dp))
+                            .background(Color.Green.copy(alpha = .5f))
+                            .align(Alignment.CenterEnd)
+                    ) {
+                        // replay
+                        // TODO: replay layout
+                        // content
+                        Text(
+                            text = message.content,
+                            modifier = Modifier
+                                .align(Alignment.Start)
+                                .padding(horizontal = 3.dp)
+                                .combinedClickable(
+                                    onClick = {},
+                                    onLongClick = {}
+                                )
+                        )
+                        // image or not
+                        // TODO: image from user
+
+                        // time and read
+                        Row(
+                            modifier = Modifier.align(Alignment.End),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            Text(
+                                text = message.sendTime.toSendTimeFormat(),
+                                modifier = Modifier.wrapContentWidth(),
+                                maxLines = 1
+                            )
+                            Icon(Icons.Filled.Check, "")
+                        }
+                    }
                 }
             }
         }
@@ -153,91 +157,99 @@ fun OtherMsg(message: Message) {
             .padding(3.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // first time show or hide
-        if (message.showTopTime) {
-            Text(
-                text = message.sendTime.toTopTimeFormat(),
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(Color.Gray)
-            )
-        }
-        Row(
-            modifier = Modifier
-                .width(IntrinsicSize.Min)
-                .padding(top = 3.dp)
-                .align(Alignment.Start),
-            horizontalArrangement = Arrangement.spacedBy(3.dp)
-        ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(UrlPath.GET_FILE.getFileFullUrl() + if (message.isGroup) groupContact.value?.avatar else contact.value?.avatar)
-                    .crossfade(true).build(),
-                contentDescription = "",
-                modifier = Modifier
-                    .width(50.dp)
-                    .height(50.dp)
-                    .clip(CircleShape)
-                    .align(Alignment.Top)
-                    .clickable {
-                        // TODO: show user info card
-                    },
-                placeholder = painterResource(id = R.drawable.ic_def_user),
-                contentScale = ContentScale.Crop,
-                error = painterResource(id = R.drawable.ic_def_user)
-            )
-            Column(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(bottomStart = 8.dp, topEnd = 8.dp, bottomEnd = 8.dp))
-                    .background(Color.DarkGray.copy(alpha = .5f))
-                    .fillMaxWidth(.9f),
-                verticalArrangement = Arrangement.spacedBy(3.dp)
-            ) {
-                // reply
-                // TODO: reply layout
-                // name and phone
+        when(message.msgType){
+            -1 -> {
+                // top time
+                Text(
+                    text = message.sendTime.toTopTimeFormat(),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Color.Gray)
+                )
+            }
+            else -> {
                 Row(
                     modifier = Modifier
-                        .padding(horizontal = 3.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .width(IntrinsicSize.Min)
+                        .padding(top = 3.dp)
+                        .align(Alignment.Start),
+                    horizontalArrangement = Arrangement.spacedBy(3.dp)
                 ) {
-                    Text(
-                        text = nickName.value ?: "",
-                        maxLines = 1,
-                        textAlign = TextAlign.Start,
-                        modifier = Modifier
-                    )
-                    Spacer(modifier = Modifier.size(5.dp))
-                    Text(
-                        text = phone.value,
-                        maxLines = 1,
-                        textAlign = TextAlign.End,
-                        modifier = Modifier
-                    )
-                }
-                // image or not
-                // TODO: image from user
-                // content
-                Text(
-                    text = message.content,
-                    modifier = Modifier
-                        .padding(horizontal = 3.dp)
-                        .align(Alignment.Start)
-                        .combinedClickable(
-                            onClick = {},
-                            onLongClick = {}
+                    if (message.showIcon){
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(UrlPath.GET_FILE.getFileFullUrl() + if (message.isGroup) groupContact.value?.avatar else contact.value?.avatar)
+                                .crossfade(true).build(),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .width(50.dp)
+                                .height(50.dp)
+                                .clip(CircleShape)
+                                .align(Alignment.Top)
+                                .clickable {
+                                    // TODO: show user info card
+                                },
+                            placeholder = painterResource(id = R.drawable.ic_def_user),
+                            contentScale = ContentScale.Crop,
+                            error = painterResource(id = R.drawable.ic_def_user)
                         )
-                )
-                // time
-                Text(
-                    text = message.sendTime.toSendTimeFormat(),
-                    modifier = Modifier
-                        .align(Alignment.End)
-                        .padding(horizontal = 3.dp)
-                )
+                    }else{
+                        Spacer(modifier = Modifier.size(50.dp))
+                    }
+                    Column(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(bottomStart = 8.dp, topEnd = 8.dp, bottomEnd = 8.dp))
+                            .background(Color.DarkGray.copy(alpha = .5f))
+                            .fillMaxWidth(.9f),
+                        verticalArrangement = Arrangement.spacedBy(3.dp)
+                    ) {
+                        // reply
+                        // TODO: reply layout
+                        // name and phone
+                        Row(
+                            modifier = Modifier
+                                .padding(horizontal = 3.dp)
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = nickName.value ?: "",
+                                maxLines = 1,
+                                textAlign = TextAlign.Start,
+                                modifier = Modifier
+                            )
+                            Spacer(modifier = Modifier.size(5.dp))
+                            Text(
+                                text = phone.value,
+                                maxLines = 1,
+                                textAlign = TextAlign.End,
+                                modifier = Modifier
+                            )
+                        }
+                        // image or not
+                        // TODO: image from user
+                        // content
+                        Text(
+                            text = message.content,
+                            modifier = Modifier
+                                .padding(horizontal = 3.dp)
+                                .align(Alignment.Start)
+                                .combinedClickable(
+                                    onClick = {},
+                                    onLongClick = {}
+                                )
+                        )
+                        // time
+                        Text(
+                            text = message.sendTime.toSendTimeFormat(),
+                            modifier = Modifier
+                                .align(Alignment.End)
+                                .padding(horizontal = 3.dp)
+                        )
+                    }
+                }
             }
         }
     }

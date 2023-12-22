@@ -36,6 +36,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.DEFAULT_ARGS_KEY
 import androidx.lifecycle.viewmodel.MutableCreationExtras
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.chat.joycom.R
@@ -156,8 +157,9 @@ class ChatActivity : ComponentActivity() {
                         modifier = Modifier.navigationBarsPadding()
                     ) { paddingValues ->
                         val memberInfo = viewModel.memberInfo.collectAsState(initial = null).value
-                        val messageList =
-                            viewModel.messageList.collectAsState(initial = mutableListOf()).value
+//                        val messageList =
+//                            viewModel.messageList.collectAsState(initial = mutableListOf()).value
+                        val pagingList = viewModel.pagingMessage.collectAsLazyPagingItems()
 
                         if (memberInfo != null) {
                             val lazyState = rememberLazyListState()
@@ -168,14 +170,13 @@ class ChatActivity : ComponentActivity() {
                                 state = lazyState,
                                 reverseLayout = true
                             ) {
-                                items(
-                                    items = messageList,
-                                    key = { item: Message -> item.id },
-                                    contentType = { item: Message -> item.fromUserId }
-                                ) { item ->
-                                    when (item.fromUserId) {
-                                        memberInfo.userId -> SelfMsg(message = item)
-                                        else -> OtherMsg(message = item)
+                                items(count = pagingList.itemCount) {
+                                    val item = pagingList[it]
+                                    item?.let {
+                                        when (item.fromUserId) {
+                                            memberInfo.userId -> SelfMsg(message = item)
+                                            else -> OtherMsg(message = item)
+                                        }
                                     }
                                 }
                             }
