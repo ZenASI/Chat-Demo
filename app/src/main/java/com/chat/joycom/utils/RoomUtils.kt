@@ -55,9 +55,9 @@ class RoomUtils @Inject constructor(
 
     fun findGroupContact(groupId: Long) = dao.queryGroupContactById(groupId)
 
-    fun pagingMessageByGroupId(groupId: Long, prevKey: Int, nextKey: Int) =
-        dao.pagingMessageByGroupId(groupId = groupId, prevKey = prevKey, nextKey = nextKey)
+    fun pagingMessageByGroupId(groupId: Long, offset: Int, limit: Int) =
+        dao.pagingMessageByGroupId(groupId = groupId, offset = offset, limit = limit)
 
-    fun pagingMessageByUserId(selfId: Long, userId: Long, prevKey: Int, nextKey: Int) =
-        dao.pagingMessageByUserId(selfId = selfId, userId = userId, prevKey = prevKey, nextKey = nextKey)
+    fun pagingMessageByUserId(selfId: Long, userId: Long, offset: Int, limit: Int) =
+        dao.pagingMessageByUserId(selfId = selfId, userId = userId, offset = offset, limit = limit)
 }

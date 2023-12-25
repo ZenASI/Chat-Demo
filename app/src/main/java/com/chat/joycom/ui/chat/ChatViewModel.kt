@@ -1,5 +1,6 @@
 package com.chat.joycom.ui.chat
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -39,13 +40,13 @@ class ChatViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val moshi: Moshi,
 ) : ViewModel() {
-    private var pagingSource:MessagePagingSource? = null
+    private val PAGING_SIZE = 30
     val memberInfo = MemberFlow.stateFlow
-    var messageList = flowOf(emptyList<Message>())
     var groupContactList = flowOf(emptyList<GroupContact>())
     var contactInfo = MutableStateFlow<Contact?>(null)
 
-    var pagingMessage: Flow<PagingData<Message>> = emptyFlow()
+    var pagingMessage: Flow<PagingData<Message>> =
+        emptyFlow<PagingData<Message>>().cachedIn(viewModelScope)
 
     init {
         val isGroup = savedStateHandle.get<Boolean>(IS_GROUP) ?: false
@@ -56,29 +57,44 @@ class ChatViewModel @Inject constructor(
             groupContactList = groupContact(groupId = group?.groupId)
             group?.groupId?.let {
                 pagingMessage = Pager(
-                    config = PagingConfig(pageSize = 20, enablePlaceholders = true, initialLoadSize = 60),
-                    pagingSourceFactory = { MessagePagingSource(id = it, roomUtils = roomUtils) }
-                ).flow.map { pagingDate ->
-                    pagingDate.insertSeparators { beforeItem: Message?, afterItem: Message? ->
-                        if (afterItem == null && beforeItem != null) {
-                            return@insertSeparators beforeItem.copy(msgType = -1).apply {
-                                showIcon = false
-                            }
-                        } else if (afterItem != null && beforeItem != null) {
-                            val afterDate = Instant.ofEpochMilli(afterItem.sendTicks).atZone(ZoneId.systemDefault()).toLocalDate()
-                            val beforeDate = Instant.ofEpochMilli(beforeItem.sendTicks).atZone(ZoneId.systemDefault()).toLocalDate()
-                            if (afterDate.isEqual(beforeDate)){
-                                return@insertSeparators null
-                            } else {
+                    config = PagingConfig(
+                        pageSize = PAGING_SIZE,
+                        prefetchDistance = 1,
+                        initialLoadSize = PAGING_SIZE,
+                        enablePlaceholders = true,
+                        maxSize = PAGING_SIZE * 10
+                    ),
+                    pagingSourceFactory = {
+                        MessagePagingSource(
+                            id = group.groupId,
+                            roomUtils = roomUtils
+                        )
+                    }
+                ).flow
+                    .map { pagingData ->
+                        pagingData.insertSeparators { beforeItem: Message?, afterItem: Message? ->
+                            if (afterItem == null && beforeItem != null) {
                                 return@insertSeparators beforeItem.copy(msgType = -1).apply {
                                     showIcon = false
                                 }
+                            } else if (afterItem != null && beforeItem != null) {
+                                val afterDate = Instant.ofEpochMilli(afterItem.sendTicks)
+                                    .atZone(ZoneId.systemDefault()).toLocalDate()
+                                val beforeDate = Instant.ofEpochMilli(beforeItem.sendTicks)
+                                    .atZone(ZoneId.systemDefault()).toLocalDate()
+                                if (afterDate.isEqual(beforeDate)) {
+                                    return@insertSeparators null
+                                } else {
+                                    return@insertSeparators beforeItem.copy(msgType = -1).apply {
+                                        showIcon = false
+                                    }
+                                }
+                            } else {
+                                return@insertSeparators null
                             }
-                        } else {
-                            return@insertSeparators null
                         }
                     }
-                }.cachedIn(viewModelScope)
+                    .cachedIn(viewModelScope)
             }
         } else {
             contactInfo.value = contact
@@ -86,29 +102,39 @@ class ChatViewModel @Inject constructor(
             val userId = contact?.userId
             if (selfId != null && userId != null) {
                 pagingMessage = Pager(
-                    config = PagingConfig(pageSize = 20, enablePlaceholders = true, initialLoadSize = 60),
+                    config = PagingConfig(
+                        pageSize = PAGING_SIZE,
+                        prefetchDistance = 1,
+                        initialLoadSize = PAGING_SIZE,
+                        enablePlaceholders = true,
+                        maxSize = PAGING_SIZE * 10
+                    ),
                     pagingSourceFactory = { MessagePagingSource(selfId, userId, roomUtils) }
-                ).flow.map { pagingData ->
-                    pagingData.insertSeparators { beforeItem: Message?, afterItem: Message? ->
-                        if (afterItem == null && beforeItem != null) {
-                            return@insertSeparators beforeItem.copy(msgType = -1).apply {
-                                showIcon = false
-                            }
-                        } else if (afterItem != null && beforeItem != null) {
-                            val afterDate = Instant.ofEpochMilli(afterItem.sendTicks).atZone(ZoneId.systemDefault()).toLocalDate()
-                            val beforeDate = Instant.ofEpochMilli(beforeItem.sendTicks).atZone(ZoneId.systemDefault()).toLocalDate()
-                            if (afterDate.isEqual(beforeDate)){
-                                return@insertSeparators null
-                            } else {
+                ).flow
+                    .map { pagingData ->
+                        pagingData.insertSeparators { beforeItem: Message?, afterItem: Message? ->
+                            if (afterItem == null && beforeItem != null) {
                                 return@insertSeparators beforeItem.copy(msgType = -1).apply {
                                     showIcon = false
                                 }
+                            } else if (afterItem != null && beforeItem != null) {
+                                val afterDate = Instant.ofEpochMilli(afterItem.sendTicks)
+                                    .atZone(ZoneId.systemDefault()).toLocalDate()
+                                val beforeDate = Instant.ofEpochMilli(beforeItem.sendTicks)
+                                    .atZone(ZoneId.systemDefault()).toLocalDate()
+                                if (afterDate.isEqual(beforeDate)) {
+                                    return@insertSeparators null
+                                } else {
+                                    return@insertSeparators beforeItem.copy(msgType = -1).apply {
+                                        showIcon = false
+                                    }
+                                }
+                            } else {
+                                return@insertSeparators null
                             }
-                        } else {
-                            return@insertSeparators null
                         }
                     }
-                }.cachedIn(viewModelScope)
+                    .cachedIn(viewModelScope)
             }
         }
     }

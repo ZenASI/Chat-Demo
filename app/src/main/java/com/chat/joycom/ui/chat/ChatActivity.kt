@@ -7,6 +7,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
@@ -17,13 +18,13 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,7 +43,6 @@ import coil.request.ImageRequest
 import com.chat.joycom.R
 import com.chat.joycom.model.Contact
 import com.chat.joycom.model.Group
-import com.chat.joycom.model.Message
 import com.chat.joycom.network.UrlPath
 import com.chat.joycom.network.UrlPath.getFileFullUrl
 import com.chat.joycom.ui.commom.ChatInput
@@ -51,6 +51,7 @@ import com.chat.joycom.ui.commom.OtherMsg
 import com.chat.joycom.ui.commom.SelfMsg
 import com.chat.joycom.ui.theme.JoyComTheme
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 const val CONTACT_INFO = "CONTACT_INFO"
 const val GROUP_INFO = "GROUP_INFO"
@@ -109,6 +110,7 @@ class ChatActivity : ComponentActivity() {
         }
     }
 
+    @OptIn(ExperimentalFoundationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val title = if (isGroupBool) group?.groupName else contact?.nickname
@@ -157,12 +159,14 @@ class ChatActivity : ComponentActivity() {
                         modifier = Modifier.navigationBarsPadding()
                     ) { paddingValues ->
                         val memberInfo = viewModel.memberInfo.collectAsState(initial = null).value
-//                        val messageList =
-//                            viewModel.messageList.collectAsState(initial = mutableListOf()).value
                         val pagingList = viewModel.pagingMessage.collectAsLazyPagingItems()
+                        val lazyState = rememberLazyListState()
+                        LaunchedEffect(key1 = lazyState.isScrollInProgress){
 
+                                Timber.d("firstVisibleItemIndex => ${lazyState.firstVisibleItemIndex}, firstVisibleItemScrollOffset => ${lazyState.firstVisibleItemScrollOffset}")
+
+                        }
                         if (memberInfo != null) {
-                            val lazyState = rememberLazyListState()
                             LazyColumn(
                                 modifier = Modifier
                                     .padding(paddingValues)

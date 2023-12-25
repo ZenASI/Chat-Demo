@@ -51,11 +51,11 @@ import com.chat.joycom.ui.chat.ChatViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SelfMsg(message: Message) {
+fun SelfMsg(message: Message, modifier: Modifier = Modifier) {
     val viewModel: ChatViewModel = viewModel()
     val memberInfo = viewModel.memberInfo.collectAsState(initial = null)
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight()
             .background(MaterialTheme.colorScheme.background)
@@ -126,7 +126,7 @@ fun SelfMsg(message: Message) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun OtherMsg(message: Message) {
+fun OtherMsg(message: Message, modifier: Modifier = Modifier) {
     val viewModel: ChatViewModel = viewModel()
     val fromUserId = remember { mutableLongStateOf(message.fromUserId) }
 
@@ -150,7 +150,7 @@ fun OtherMsg(message: Message) {
     }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight()
             .background(MaterialTheme.colorScheme.background)
