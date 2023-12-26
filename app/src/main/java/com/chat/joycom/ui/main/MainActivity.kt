@@ -5,16 +5,17 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandHorizontally
-import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -24,6 +25,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,9 +33,12 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -44,15 +49,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.chat.joycom.R
+import com.chat.joycom.ui.BaseActivity
 import com.chat.joycom.ui.UiEvent
 import com.chat.joycom.ui.commom.JoyComAppBar
 import com.chat.joycom.ui.login.LoginActivity
@@ -63,7 +69,7 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 @OptIn(ExperimentalFoundationApi::class)
-class MainActivity : ComponentActivity() {
+class MainActivity : BaseActivity() {
 
     companion object {
         fun start(
@@ -104,8 +110,17 @@ class MainActivity : ComponentActivity() {
                     },
                     floatingActionButton = {
                         // see ref:https://issuetracker.google.com/issues/224005027
-                        AnimatedVisibility(visible = pagerState.currentPage != 0, enter = fadeIn(), exit = fadeOut()) {
-                            FloatingActionButton(onClick = {}, elevation = FloatingActionButtonDefaults.elevation(0.dp)) {
+                        AnimatedVisibility(
+                            visible = pagerState.currentPage != 0,
+                            enter = fadeIn(),
+                            exit = fadeOut()
+                        ) {
+                            FloatingActionButton(
+                                onClick = {},
+                                elevation = FloatingActionButtonDefaults.elevation(0.dp),
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                            ) {
                                 Icon(Icons.Filled.Add, "")
                             }
                         }
@@ -114,7 +129,7 @@ class MainActivity : ComponentActivity() {
                 ) { paddingValues ->
                     HorizontalPager(
                         contentPadding = paddingValues,
-                        state = pagerState
+                        state = pagerState,
                     ) { pos ->
                         joyComScenesList[pos].body.invoke()
                     }
@@ -141,11 +156,30 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainTableRow(currentScene: JoyComScene, onClick: (Int) -> Unit) {
     val joyComScenesList = JoyComScene.values().toList()
-    TabRow(selectedTabIndex = currentScene.ordinal) {
+    val unSelectColor = if (isSystemInDarkTheme()) Color(0xFF8696A0) else Color(0XFFB2D9D2)
+    val selectColor = if (isSystemInDarkTheme()) Color(0xFF00A884) else Color.White
+    TabRow(
+        selectedTabIndex = currentScene.ordinal,
+        divider = { },
+        indicator = { tabPositions ->
+            if (currentScene.ordinal < tabPositions.size) {
+                TabRowDefaults.Indicator(
+                    Modifier.tabIndicatorOffset(tabPositions[currentScene.ordinal]),
+//                    1.dp,
+                    color = selectColor,
+                )
+            }
+        }
+    ) {
         joyComScenesList.forEachIndexed { index, item ->
-            Tab(selected = currentScene.ordinal == index, onClick = { onClick.invoke(index) }) {
+            Tab(
+                selected = currentScene.ordinal == index,
+                onClick = { onClick.invoke(index) },
+                selectedContentColor = selectColor,
+                unselectedContentColor = unSelectColor
+            ) {
                 if (index == 0) {
-                    Image(painterResource(id = R.drawable.ic_group), "")
+                    Icon(painterResource(id = R.drawable.ic_group), "")
                 } else {
                     Text(
                         text = stringResource(id = item.sceneName),
@@ -174,7 +208,7 @@ fun MainTopBarAction(pagerState: PagerState) {
         mutableStateOf(false)
     }
     val context = LocalContext.current
-    Image(
+    Icon(
         painterResource(id = R.drawable.ic_camera),
         "",
         modifier = Modifier.clickable {
@@ -186,7 +220,7 @@ fun MainTopBarAction(pagerState: PagerState) {
         enter = fadeIn() + expandHorizontally(),
         exit = fadeOut() + shrinkHorizontally()
     ) {
-        Image(
+        Icon(
             painterResource(id = R.drawable.ic_search),
             "",
             modifier = Modifier.clickable {
@@ -194,7 +228,7 @@ fun MainTopBarAction(pagerState: PagerState) {
             })
     }
     Box() {
-        Image(
+        Icon(
             Icons.Filled.MoreVert,
             "",
             modifier = Modifier.clickable {

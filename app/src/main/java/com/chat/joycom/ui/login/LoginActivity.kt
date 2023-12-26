@@ -21,6 +21,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.chat.joycom.ui.BaseActivity
 import com.chat.joycom.ui.main.MainActivity
 import com.chat.joycom.ui.UiEvent
 import com.chat.joycom.ui.theme.JoyComTheme
@@ -28,7 +29,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class LoginActivity : ComponentActivity() {
+class LoginActivity : BaseActivity() {
 
     private lateinit var viewModel: LoginViewModel
 

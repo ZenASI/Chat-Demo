@@ -13,28 +13,36 @@
     <string name="setting">設定</string>
 
     <string name="account">帳號</string>
-    <string name="account_desc">帳號</string>
+    <string name="account_desc">安全通知、變更號碼</string>
 
     <string name="privacy">隱私</string>
-    <string name="privacy_desc">隱私</string>
+    <string name="privacy_desc">封鎖聯絡人、限時訊息</string>
 
     <string name="avatar">虛擬替身</string>
-    <string name="avatar_desc">虛擬替身</string>
+    <string name="avatar_desc">新增、編輯、個人頭像</string>
     
     <string name="conversation">對話</string>
-    <string name="conversation_desc">對話</string>
+    <string name="conversation_desc">主題、背景圖片、對話紀錄</string>
     
     <string name="notification">通知</string>
-    <string name="notification_desc">通知</string>
+    <string name="notification_desc">信息、群組與通話提示音</string>
 
     <string name="storage">儲存空間與數據用量</string>
-    <string name="storage_desc">儲存空間與數據用量</string>
+    <string name="storage_desc">網路用量、自動下載</string>
 
-    <string name="language">語言</string>
-    <string name="language_desc">語言</string>
+    <string name="app_language">應用程式語言</string>
+    <string name="app_language_desc">語言</string>
 
     <string name="help">幫助</string>
-    <string name="help_desc">幫助</string>
+    <string name="help_desc">使用說明、聯絡我們、隱私政策</string>
 
     <string name="invite_friend">邀請朋友</string>
+
+    <string name="user_info">個人資料</string>
+    
+    <string name="name">名稱</string>
+    <string name="phone">電話</string>
+
+    <string name="about_me">關於我</string>
+    <string name="about_me_desc">你好! 我正在使用WhatsApp</string>
 </resources>

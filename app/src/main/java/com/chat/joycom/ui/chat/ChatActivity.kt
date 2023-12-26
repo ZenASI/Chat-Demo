@@ -44,6 +44,7 @@ import com.chat.joycom.model.Group
 import com.chat.joycom.model.Message
 import com.chat.joycom.network.UrlPath
 import com.chat.joycom.network.UrlPath.getFileFullUrl
+import com.chat.joycom.ui.BaseActivity
 import com.chat.joycom.ui.commom.ChatInput
 import com.chat.joycom.ui.commom.JoyComAppBar
 import com.chat.joycom.ui.commom.OtherMsg
@@ -57,7 +58,7 @@ const val IS_GROUP = "IS_GROUP"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @AndroidEntryPoint
-class ChatActivity : ComponentActivity() {
+class ChatActivity : BaseActivity() {
 
     private val contact by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

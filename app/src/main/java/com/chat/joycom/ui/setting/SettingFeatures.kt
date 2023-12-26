@@ -36,8 +36,8 @@ enum class SettingFeatures(
         icon = R.drawable.ic_def_group
     ),
     Language(
-        title = R.string.language,
-        content = R.string.language_desc,
+        title = R.string.app_language,
+        content = R.string.app_language_desc,
         icon = R.drawable.ic_def_group
     ),
     Help(

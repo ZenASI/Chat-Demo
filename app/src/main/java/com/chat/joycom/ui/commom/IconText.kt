@@ -34,6 +34,7 @@ fun IconTextH(
     modifier: Modifier = Modifier,
     text: @Composable () -> Unit = {},
     icon: @Composable () -> Unit = {},
+    action: @Composable () -> Unit = {},
     verticalAlignment: Alignment.Vertical = Alignment.Top,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
 ) {
@@ -45,5 +46,6 @@ fun IconTextH(
         icon()
         Spacer(modifier = Modifier.size(3.dp))
         text()
+        action()
     }
 }
