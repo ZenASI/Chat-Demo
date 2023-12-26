@@ -82,8 +82,8 @@ data class Message(
     var isSelect: Boolean = false
 
     @Ignore
-    var showTopTime: Boolean = true
+    var msgContent: Content? = null
 
     @Ignore
-    var msgContent: Content? = null
+    var showIcon = true
 }

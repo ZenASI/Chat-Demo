@@ -24,8 +24,8 @@ data class Api(
 ) {
 
     //    fun getDomainUrl(): String = "https://120.79.151.1:3389" + uri
-    fun getDomainUrl(): String = "https://99.83.189.18$uri"
-    //    fun getDomainUrl():String = protocol + domain + uri
+//    fun getDomainUrl(): String = "https://99.83.189.18$uri"
+        fun getDomainUrl():String = protocol + domain + uri
 }
 
 @JsonClass(generateAdapter = true)
@@ -37,8 +37,8 @@ data class Websocket(
     @field:Json(name = "Port2") val port2: String?,
     @field:Json(name = "Uri") val uri: String?,
 ) {
-    //    fun getDomainUrl(): String = "$protocol$domain$uri"
-    fun getDomainUrl(): String = "wss://99.83.189.18/websocket"
+        fun getDomainUrl(): String = "$protocol$domain$uri"
+//    fun getDomainUrl(): String = "wss://99.83.189.18/websocket"
 }
 
 @JsonClass(generateAdapter = true)

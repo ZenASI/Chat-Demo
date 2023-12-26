@@ -12,10 +12,8 @@ import javax.inject.Singleton
 @Singleton
 class RoomUtils @Inject constructor(
     private val dao: RoomDAO,
-    private val db: RoomDB
+    val db: RoomDB
 ) {
-
-    fun clearAllTable() = db.clearAllTables()
 
     suspend fun insertContact(item: Contact) = dao.insertContact(item)
 
@@ -56,4 +54,10 @@ class RoomUtils @Inject constructor(
     }
 
     fun findGroupContact(groupId: Long) = dao.queryGroupContactById(groupId)
+
+    fun pagingMessageByGroupId(groupId: Long, offset: Int, limit: Int) =
+        dao.pagingMessageByGroupId(groupId = groupId, offset = offset, limit = limit)
+
+    fun pagingMessageByUserId(selfId: Long, userId: Long, offset: Int, limit: Int) =
+        dao.pagingMessageByUserId(selfId = selfId, userId = userId, offset = offset, limit = limit)
 }

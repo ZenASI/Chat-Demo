@@ -90,7 +90,9 @@ class SocketUtils @Inject constructor(
                                 longPreferencesKey(DSKey.LAST_ACK_ID),
                                 it.msgId.toLong()
                             )
-                            roomUtils.insertMessage(it)
+                            if (it.msgType in 1..5) {
+                                roomUtils.insertMessage(it)
+                            }
                             MessageFlow.updateValue(it)
                         }
                     }
