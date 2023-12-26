@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -95,7 +96,7 @@ class UserInfoActivity : BaseActivity() {
                                         modifier = Modifier
                                             .size(50.dp)
                                             .align(Alignment.BottomEnd)
-                                            .background(Color.Green, CircleShape)
+                                            .background(MaterialTheme.colorScheme.primary, CircleShape)
                                     ) {
                                         Image(
                                             painterResource(id = R.drawable.ic_camera),
@@ -137,7 +138,7 @@ class UserInfoActivity : BaseActivity() {
                                         Image(
                                             Icons.Filled.Create,
                                             contentDescription = "",
-                                            colorFilter = ColorFilter.tint(Color.Green),
+                                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
                                             modifier = Modifier.align(Alignment.Center)
                                         )
                                     }
@@ -172,7 +173,7 @@ class UserInfoActivity : BaseActivity() {
                                         Image(
                                             Icons.Filled.Create,
                                             contentDescription = "",
-                                            colorFilter = ColorFilter.tint(Color.Green),
+                                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
                                             modifier = Modifier.align(Alignment.Center)
                                         )
                                     }

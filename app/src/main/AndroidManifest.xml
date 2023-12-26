@@ -42,6 +42,7 @@
             android:windowSoftInputMode="adjustResize"/>
         <activity android:name="com.chat.joycom.ui.setting.SettingActivity" />
         <activity android:name="com.chat.joycom.ui.setting.user.UserInfoActivity" />
+        <activity android:name="com.chat.joycom.ui.setting.qrcode.QRCodeActivity" />
     </application>
 
 </manifest>

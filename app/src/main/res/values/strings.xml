@@ -45,4 +45,10 @@
 
     <string name="about_me">關於我</string>
     <string name="about_me_desc">你好! 我正在使用WhatsApp</string>
+
+    <string name="qrcode">QR條碼</string>
+    <string name="my_qrcode">我的QR條碼</string>
+    <string name="scan_qrcode">掃描QR條碼</string>
+
+    <string name="add_new_account">新增帳號</string>
 </resources>

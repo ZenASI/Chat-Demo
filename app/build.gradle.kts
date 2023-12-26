@@ -159,4 +159,12 @@ dependencies {
 
     val constraintlayout_compose_version = "1.0.1"
     implementation ("androidx.constraintlayout:constraintlayout-compose:$constraintlayout_compose_version")
+
+    val camerax_version = "1.4.0-alpha03"
+    implementation ("androidx.camera:camera-core:${camerax_version}")
+    implementation ("androidx.camera:camera-camera2:${camerax_version}")
+    implementation ("androidx.camera:camera-lifecycle:${camerax_version}")
+    implementation ("androidx.camera:camera-view:${camerax_version}")
+
+    implementation ("com.google.zxing:core:3.5.1")
 }

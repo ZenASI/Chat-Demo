@@ -3,12 +3,11 @@ package com.chat.joycom.ui.setting
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Space
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,16 +22,29 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -54,6 +66,7 @@ import com.chat.joycom.ui.commom.IconTextH
 import com.chat.joycom.ui.commom.JoyComAppBar
 import com.chat.joycom.ui.login.LoginActivity
 import com.chat.joycom.ui.main.MainActivityViewModel
+import com.chat.joycom.ui.setting.qrcode.QRCodeActivity
 import com.chat.joycom.ui.setting.user.UserInfoActivity
 import com.chat.joycom.ui.theme.JoyComTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -84,7 +97,7 @@ class SettingActivity : BaseActivity() {
                             JoyComAppBar(
                                 showBack = true,
                                 title = { Text(text = stringResource(id = R.string.setting)) },
-                                acton = { Image(painterResource(id = R.drawable.ic_search), "") }
+                                acton = { Icon(painterResource(id = R.drawable.ic_search), "") }
                             )
                         },
                     ) { paddingValues ->
@@ -117,11 +130,15 @@ class SettingActivity : BaseActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserInfo() {
     val context = LocalContext.current
     val viewModel: MainActivityViewModel = viewModel()
     val member = viewModel.memberInfo.collectAsState(initial = null).value
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
+    var showBottomSheet by remember { mutableStateOf(false) }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -145,17 +162,77 @@ fun UserInfo() {
             placeholder = null,
             contentScale = ContentScale.Crop,
         )
-        Spacer(modifier = Modifier.size(15.dp))
+        Spacer(modifier = Modifier.size(10.dp))
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(),
+                .fillMaxHeight()
+                .weight(1f),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Center
         ) {
             Text(text = member?.nickname ?: "", fontSize = 20.sp)
             Spacer(modifier = Modifier.size(15.dp))
-            Text(text = stringResource(id = R.string.about_me_desc))
+            Text(text = stringResource(id = R.string.about_me_desc), fontSize = 14.sp)
+        }
+        Row() {
+            Icon(
+                painterResource(id = R.drawable.ic_qr_code),
+                "",
+                modifier = Modifier.clickable {
+                    QRCodeActivity.start(context)
+                }
+            )
+            Spacer(modifier = Modifier.size(10.dp))
+            Icon(
+                Icons.Filled.KeyboardArrowDown,
+                "",
+                modifier = Modifier
+                    .border(1.dp, Color.White, CircleShape)
+                    .clickable { showBottomSheet = true }
+            )
+        }
+    }
+    if (showBottomSheet) {
+        ModalBottomSheet(onDismissRequest = { showBottomSheet = false }, sheetState = sheetState) {
+            // Sheet content
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+            ) {
+                IconTextH(
+                    icon = { Image(painterResource(id = R.drawable.ic_def_user), "") },
+                    text = { Text(member?.nickname ?: "") },
+                    action = {},
+                    modifier = Modifier
+                        .height(80.dp)
+                        .fillMaxWidth()
+                        .clickable {
+                            scope.launch { sheetState.hide() }
+                                .invokeOnCompletion {
+                                    if (!sheetState.isVisible) {
+                                        showBottomSheet = false
+                                    }
+                                }
+                        }
+                )
+                IconTextH(
+                    icon = { Image(Icons.Filled.Add, "") },
+                    text = { Text(stringResource(id = R.string.add_new_account)) },
+                    modifier = Modifier
+                        .height(80.dp)
+                        .fillMaxWidth()
+                        .clickable {
+                            scope.launch { sheetState.hide() }
+                                .invokeOnCompletion {
+                                    if (!sheetState.isVisible) {
+                                        showBottomSheet = false
+                                    }
+                                }
+                        }
+                )
+            }
         }
     }
 }
