@@ -1,11 +1,14 @@
 package com.chat.joycom.utils
 
+import androidx.room.Transaction
+import com.chat.joycom.model.About
 import com.chat.joycom.model.Contact
 import com.chat.joycom.model.Group
 import com.chat.joycom.model.GroupContact
 import com.chat.joycom.model.Message
 import com.chat.joycom.room.RoomDAO
 import com.chat.joycom.room.RoomDB
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -60,4 +63,20 @@ class RoomUtils @Inject constructor(
 
     fun pagingMessageByUserId(selfId: Long, userId: Long, offset: Int, limit: Int) =
         dao.pagingMessageByUserId(selfId = selfId, userId = userId, offset = offset, limit = limit)
+
+    suspend fun insertAbout(item: About) = dao.insertAbout(item)
+
+    fun queryAllAbout() = dao.queryAboutList()
+
+    @Transaction
+    fun updateAboutSelect(newAbout: About) {
+        dao.updateOldSelectedEntities()
+        dao.updateSelectedEntity(newAbout.id)
+    }
+
+    fun querySelectAbout(): Flow<About> = dao.querySelectAbout()
+
+    fun deleteAbout(about: About) = dao.deleteAbout(about)
+
+    fun deleteAllAbout() = dao.deleteAllAboutWithoutSelect()
 }

@@ -1,8 +1,7 @@
 package com.chat.joycom.ui.setting
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.chat.joycom.BaseViewModel
+import com.chat.joycom.ui.BaseViewModel
 import com.chat.joycom.network.ApiResult
 import com.chat.joycom.network.AppApiRepo
 import com.chat.joycom.ui.UiEvent

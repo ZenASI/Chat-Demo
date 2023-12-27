@@ -11,4 +11,6 @@ object DSKey {
     const val PHONE_CODE = "PHONE_CODE"
 
     const val LAST_ACK_ID = "LAST_ACK_ID"
+
+    const val INSTALL_ABOUT = "INSTALL_ABOUT"
 }

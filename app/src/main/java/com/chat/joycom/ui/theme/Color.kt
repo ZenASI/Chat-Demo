@@ -28,3 +28,8 @@ val OnSurfaceLight = Color.White
 val BackGroundDark = Color(0xFF111B21)
 val BackGroundLight = Color.White
 
+val TabSelectDark = Color(0xFF00A884)
+val TabSelectLight = Color.White
+val TabUnSelectDark = Color(0xFF8696A0)
+val TabUnSelectLight = Color(0XFFB2D9D2)
+

@@ -22,7 +22,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -46,8 +45,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.colorspace.ColorSpaces
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -62,6 +59,10 @@ import com.chat.joycom.ui.commom.JoyComAppBar
 import com.chat.joycom.ui.login.LoginActivity
 import com.chat.joycom.ui.setting.SettingActivity
 import com.chat.joycom.ui.theme.JoyComTheme
+import com.chat.joycom.ui.theme.TabSelectDark
+import com.chat.joycom.ui.theme.TabSelectLight
+import com.chat.joycom.ui.theme.TabUnSelectDark
+import com.chat.joycom.ui.theme.TabUnSelectLight
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -154,9 +155,8 @@ class MainActivity : BaseActivity() {
 @Composable
 fun MainTableRow(currentScene: JoyComScene, onClick: (Int) -> Unit) {
     val joyComScenesList = JoyComScene.values().toList()
-
-    val unSelectColor = if (isSystemInDarkTheme()) Color(0xFF8696A0) else Color(0XFFB2D9D2)
-    val selectColor = if (isSystemInDarkTheme()) Color(0xFF00A884) else Color.White
+    val unSelectColor = if (isSystemInDarkTheme()) TabUnSelectDark else TabUnSelectLight
+    val selectColor = if (isSystemInDarkTheme()) TabSelectDark else TabSelectLight
     TabRow(
         selectedTabIndex = currentScene.ordinal,
         divider = { },
@@ -235,7 +235,9 @@ fun MainTopBarAction(pagerState: PagerState) {
             })
         DropdownMenu(
             expanded = isExpanded,
-            onDismissRequest = { isExpanded = false }) {
+            onDismissRequest = { isExpanded = false },
+
+        ) {
             dropDownList.forEach {
                 DropdownMenuItem(
                     text = { Text(text = stringResource(id = it.itemName)) },

@@ -43,6 +43,7 @@
         <activity android:name="com.chat.joycom.ui.setting.SettingActivity" />
         <activity android:name="com.chat.joycom.ui.setting.user.UserInfoActivity" />
         <activity android:name="com.chat.joycom.ui.setting.qrcode.QRCodeActivity" />
+        <activity android:name="com.chat.joycom.ui.setting.user.about.AboutMeActivity" />
     </application>
 
 </manifest>

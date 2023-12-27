@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -163,9 +162,7 @@ class ChatActivity : BaseActivity() {
                         val pagingList = viewModel.pagingMessage.collectAsLazyPagingItems()
                         val lazyState = rememberLazyListState()
                         LaunchedEffect(key1 = lazyState.isScrollInProgress){
-
-                                Timber.d("firstVisibleItemIndex => ${lazyState.firstVisibleItemIndex}, firstVisibleItemScrollOffset => ${lazyState.firstVisibleItemScrollOffset}")
-
+                            Timber.d("firstVisibleItemIndex => ${lazyState.firstVisibleItemIndex}, firstVisibleItemScrollOffset => ${lazyState.firstVisibleItemScrollOffset}")
                         }
                         if (memberInfo != null) {
                             LazyColumn(

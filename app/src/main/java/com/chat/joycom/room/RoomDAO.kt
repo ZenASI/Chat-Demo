@@ -1,10 +1,11 @@
 package com.chat.joycom.room
 
-import androidx.paging.PagingSource
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.chat.joycom.model.About
 import com.chat.joycom.model.Contact
 import com.chat.joycom.model.Group
 import com.chat.joycom.model.GroupContact
@@ -47,4 +48,25 @@ interface RoomDAO {
 
     @Query("Select * From ${GroupContact.TABLE_NAME} Where group_id = :groupId")
     fun queryGroupContactById(groupId: Long): Flow<List<GroupContact>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAbout(item: About): Long
+
+    @Query("Select * From ${About.TABLE_NAME}")
+    fun queryAboutList(): Flow<List<About>>
+
+    @Query("UPDATE ${About.TABLE_NAME} SET is_select = 0 WHERE is_select = 1")
+    fun updateOldSelectedEntities()
+
+    @Query("UPDATE ${About.TABLE_NAME} SET is_select = 1 WHERE id = :id")
+    fun updateSelectedEntity(id: Int)
+
+    @Query("Select * From ${About.TABLE_NAME} Where is_select = 1")
+    fun querySelectAbout(): Flow<About>
+
+    @Delete
+    fun deleteAbout(about: About)
+
+    @Query("Delete From ${About.TABLE_NAME} WHERE is_select = 0")
+    fun deleteAllAboutWithoutSelect()
 }
