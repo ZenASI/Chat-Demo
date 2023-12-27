@@ -6,9 +6,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
@@ -16,15 +22,20 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.chat.joycom.R
 import com.chat.joycom.ui.BaseActivity
 import com.chat.joycom.ui.main.MainActivity
 import com.chat.joycom.ui.UiEvent
+import com.chat.joycom.ui.commom.JoyComAppBar
 import com.chat.joycom.ui.theme.JoyComTheme
+import com.google.i18n.phonenumbers.PhoneNumberUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -33,7 +44,7 @@ class LoginActivity : BaseActivity() {
 
     private lateinit var viewModel: LoginViewModel
 
-    companion object{
+    companion object {
         fun start(
             context: Context,
         ) {
@@ -43,7 +54,7 @@ class LoginActivity : BaseActivity() {
         }
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
+    @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
     override
     fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,19 +69,32 @@ class LoginActivity : BaseActivity() {
                     val scope = rememberCoroutineScope()
                     Scaffold(
                         topBar = {
-                            TabRow(selectedTabIndex = pagerState.currentPage) {
-                                loginScenesList.forEachIndexed { index, item ->
-                                    Tab(
-                                        selected = index == pagerState.currentPage,
-                                        onClick = {
-                                            scope.launch {
-                                                pagerState.animateScrollToPage(index)
-                                            }
-                                        }) {
+                            Column {
+                                JoyComAppBar(
+                                    showBack = true,
+                                    title = {
                                         Text(
-                                            text = item.sceneName,
-                                            modifier = Modifier.padding(15.dp)
+                                            text = stringResource(id = R.string.pls_input_phone),
+                                            modifier = Modifier.fillMaxWidth(),
+                                            textAlign = TextAlign.Center
                                         )
+                                    },
+                                    acton = { Icon(Icons.Filled.MoreVert, "") }
+                                )
+                                TabRow(selectedTabIndex = pagerState.currentPage) {
+                                    loginScenesList.forEachIndexed { index, item ->
+                                        Tab(
+                                            selected = index == pagerState.currentPage,
+                                            onClick = {
+                                                scope.launch {
+                                                    pagerState.animateScrollToPage(index)
+                                                }
+                                            }) {
+                                            Text(
+                                                text = item.sceneName,
+                                                modifier = Modifier.padding(15.dp)
+                                            )
+                                        }
                                     }
                                 }
                             }

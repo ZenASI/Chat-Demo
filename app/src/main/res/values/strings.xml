@@ -80,4 +80,6 @@
         <item>在健身房</item>
         <item>緊急電話才接</item>
     </string-array>
+
+    <string name="pls_input_phone">請輸入您的電話號碼</string>
 </resources>
