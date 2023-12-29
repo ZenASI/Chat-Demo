@@ -8,6 +8,7 @@ import com.chat.joycom.ds.DSKey
 import com.chat.joycom.flow.MemberFlow
 import com.chat.joycom.utils.DataStoreUtils
 import com.chat.joycom.utils.RoomUtils
+import com.google.i18n.phonenumbers.PhoneNumberUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,9 +27,16 @@ class UserInfoViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val phoneNumber = dataStoreUtils.readDataStoreValue(stringPreferencesKey(DSKey.PHONE), "")
+            val phoneNumber =
+                dataStoreUtils.readDataStoreValue(stringPreferencesKey(DSKey.PHONE), "")
             val code = dataStoreUtils.readDataStoreValue(stringPreferencesKey(DSKey.PHONE_CODE), "")
-            phone.value = "$code$phoneNumber"
+            try {
+                val parsePhone = PhoneNumberUtil.getInstance().parse("$code$phoneNumber", null)
+                phone.value = PhoneNumberUtil.getInstance().format(parsePhone, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL)
+            } catch (e: Throwable) {
+                e.printStackTrace()
+                phone.value = "$code$phoneNumber"
+            }
         }
     }
 }

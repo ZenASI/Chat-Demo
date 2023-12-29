@@ -8,9 +8,9 @@ sealed class UiEvent {
 
     data class LoadingEvent(val show: Boolean) : UiEvent()
 
-    object SendSmsSuccessEvent : UiEvent()
+    data object SendSmsSuccessEvent : UiEvent()
 
-    data class LoginSuccessEvent(val userInfo: UserInfo) : UiEvent()
+    data object LoginSuccessEvent : UiEvent()
 
     data class GetConfigSuccessEvent(val config: Config) : UiEvent()
 

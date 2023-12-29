@@ -45,6 +45,6 @@ enum class SettingFeatures(
         content = R.string.help_desc,
         icon = R.drawable.ic_def_group),
     Invite(
-        title = R.string.invite_friend,
+        title = R.string.invite_friends,
         icon = R.drawable.ic_def_group),
 }

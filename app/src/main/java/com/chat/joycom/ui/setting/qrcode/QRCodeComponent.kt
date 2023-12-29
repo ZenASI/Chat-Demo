@@ -1,41 +1,94 @@
 package com.chat.joycom.ui.setting.qrcode
 
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.widget.LinearLayout
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.camera.core.AspectRatio
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.Preview
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.camera.view.PreviewView
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.ContextCompat
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import com.chat.joycom.R
+import com.chat.joycom.ui.commom.PermissionDescAlert
+import com.chat.joycom.ui.commom.PermissionType
+import com.chat.joycom.ui.commom.QrcodeCamera
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
-import timber.log.Timber
+import com.google.accompanist.permissions.shouldShowRationale
 
 @Composable
 fun MyQrcode() {
     Box(modifier = Modifier.fillMaxSize()) {
 
+        Column(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .fillMaxWidth(.8f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .background(
+                        MaterialTheme.colorScheme.tertiaryContainer,
+                        RoundedCornerShape(8.dp)
+                    )
+                    .aspectRatio(1f)
+            ) {
+                Image(
+                    painterResource(id = R.drawable.ic_def_user),
+                    "",
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .size(50.dp)
+                        .offset(y = (-25).dp)
+                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.Center),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Text(text = "")
+                    Text(text = stringResource(id = R.string.joycom_contact), color = MaterialTheme.colorScheme.onTertiaryContainer)
+                    Box(modifier = Modifier.background(Color.White, RoundedCornerShape(8.dp)).fillMaxWidth(.6f)){
+                        Image(
+                            painterResource(id = R.drawable.ic_qr_code),
+                            "",
+                            modifier = Modifier.aspectRatio(1f)
+                        )
+                    }
+                }
+            }
+            Text(text = stringResource(id = R.string.my_qrcode_notice), textAlign = TextAlign.Center)
+        }
     }
 }
 
@@ -45,20 +98,37 @@ fun ScanQrcode() {
     val cameraPermissionState = rememberPermissionState(
         android.Manifest.permission.CAMERA
     )
+    var showPermissionDesc by rememberSaveable {
+        mutableStateOf(false)
+    }
+    LaunchedEffect(cameraPermissionState) {
+        if (!cameraPermissionState.status.isGranted) {
+            if (cameraPermissionState.status.shouldShowRationale) {
+                showPermissionDesc = true
+            } else {
+                cameraPermissionState.launchPermissionRequest()
+            }
+        }
+    }
     Box(modifier = Modifier.fillMaxSize()) {
         if (cameraPermissionState.status.isGranted) {
             QrcodeCamera()
-        } else {
-            // TODO: check permission
         }
+    }
+    if (showPermissionDesc) {
+        PermissionDescAlert(
+            type = PermissionType.Qrcode,
+            showState = { showPermissionDesc = false },
+            acceptCallback = {
+                cameraPermissionState.launchPermissionRequest()
+            }
+        )
     }
 }
 
 @Composable
 fun QrcodeTabRow(currentScene: QRCodeScene, onClick: (Int) -> Unit) {
     val tabList = QRCodeScene.values().toList()
-    val unSelectColor = if (isSystemInDarkTheme()) Color(0xFF8696A0) else Color(0XFFB2D9D2)
-    val selectColor = if (isSystemInDarkTheme()) Color(0xFF00A884) else Color.White
     TabRow(
         selectedTabIndex = currentScene.ordinal,
         divider = { },
@@ -67,7 +137,6 @@ fun QrcodeTabRow(currentScene: QRCodeScene, onClick: (Int) -> Unit) {
                 TabRowDefaults.Indicator(
                     Modifier.tabIndicatorOffset(tabPositions[currentScene.ordinal]),
 //                    1.dp,
-                    color = selectColor,
                 )
             }
         },
@@ -76,59 +145,9 @@ fun QrcodeTabRow(currentScene: QRCodeScene, onClick: (Int) -> Unit) {
             Tab(
                 selected = currentScene.ordinal == index,
                 onClick = { onClick.invoke(index) },
-                selectedContentColor = selectColor,
-                unselectedContentColor = unSelectColor
             ) {
                 Text(text = stringResource(id = item.title), modifier = Modifier.padding(15.dp))
             }
         }
     }
-}
-
-@Composable
-fun QrcodeCamera() {
-    val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
-    DisposableEffect(key1 = cameraProviderFuture) {
-        onDispose {
-            try {
-                cameraProviderFuture.get().unbindAll()
-
-            } catch (e: Throwable) {
-                e.printStackTrace()
-                Timber.d(e.message)
-            }
-        }
-    }
-    AndroidView(
-        modifier = Modifier.fillMaxSize(),
-        factory = { context ->
-            PreviewView(context).apply {
-                layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
-                scaleType = PreviewView.ScaleType.FILL_START
-                implementationMode = PreviewView.ImplementationMode.COMPATIBLE
-                post {
-                    cameraProviderFuture.addListener({
-                        val cameraProvider = cameraProviderFuture.get()
-                        val preview: Preview = Preview.Builder()
-                            .setTargetAspectRatio(AspectRatio.RATIO_16_9)
-                            .build()
-
-                        val cameraSelector: CameraSelector = CameraSelector.Builder()
-                            .requireLensFacing(CameraSelector.LENS_FACING_BACK)
-                            .build()
-
-                        preview.setSurfaceProvider(this.surfaceProvider)
-
-                        var camera = cameraProvider.bindToLifecycle(
-                            lifecycleOwner,
-                            cameraSelector,
-                            preview
-                        )
-                    }, ContextCompat.getMainExecutor(context))
-                }
-            }
-        }
-    )
 }

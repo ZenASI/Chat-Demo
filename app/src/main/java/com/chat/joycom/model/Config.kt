@@ -23,8 +23,8 @@ data class Api(
     @field:Json(name = "Uri") val uri: String?,
 ) {
 
-    //    fun getDomainUrl(): String = "https://120.79.151.1:3389" + uri
-    fun getDomainUrl(): String = "https://99.83.189.18$uri"
+//        fun getDomainUrl(): String = "https://120.79.151.1$uri"
+        fun getDomainUrl(): String = "https://99.83.189.18$uri"
 //        fun getDomainUrl():String = protocol + domain + uri
 }
 

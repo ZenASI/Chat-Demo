@@ -90,27 +90,28 @@ class AppApiRepo @Inject constructor(private val appApiService: AppApiService) {
         }
 
     private suspend fun <T> handleResponse(response: suspend () -> Response<BaseResponse<T>>): ApiResult<T> {
-        val result = response.invoke()
-        return try {
-            if (result.isSuccessful) {
-                // 200 ~ 299
-                val body = result.body()
-                if (body?.code == 200 && body.data != null) {
-                    ApiResult.OnSuccess(body.data)
-                } else {
-                    ApiResult.OnFail(body?.code, body?.msg)
-                }
-            } else {
-                // TODO: need to handle errorBody
-                ApiResult.OnFail(result.code(), result.message())
-            }
-        } catch (e: Throwable) {
-            e.printStackTrace()
-            if (e is HttpException) {
-                ApiResult.OnFail(code = e.code(), message = e.message, e = e)
-            } else {
-                ApiResult.OnFail(code = null, message = e.message, e = e)
-            }
-        }
+//        val result = response.invoke()
+        return ApiResult.OnFail(0, "disable network")
+//        return try {
+//            if (result.isSuccessful) {
+//                // 200 ~ 299
+//                val body = result.body()
+//                if (body?.code == 200 && body.data != null) {
+//                    ApiResult.OnSuccess(body.data)
+//                } else {
+//                    ApiResult.OnFail(body?.code, body?.msg)
+//                }
+//            } else {
+//                // TODO: need to handle errorBody
+//                ApiResult.OnFail(result.code(), result.message())
+//            }
+//        } catch (e: Throwable) {
+//            e.printStackTrace()
+//            if (e is HttpException) {
+//                ApiResult.OnFail(code = e.code(), message = e.message, e = e)
+//            } else {
+//                ApiResult.OnFail(code = null, message = e.message, e = e)
+//            }
+//        }
     }
 }

@@ -21,6 +21,7 @@ import com.chat.joycom.ui.UiEvent
 import com.chat.joycom.utils.DataStoreUtils
 import com.squareup.moshi.Moshi
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged

@@ -84,7 +84,8 @@ fun UserInfo() {
                 .width(70.dp)
                 .height(70.dp)
                 .align(Alignment.CenterVertically),
-            placeholder = null,
+            placeholder = painterResource(id = R.drawable.ic_def_user),
+            error = painterResource(id = R.drawable.ic_def_user),
             contentScale = ContentScale.Crop,
         )
         Spacer(modifier = Modifier.size(10.dp))

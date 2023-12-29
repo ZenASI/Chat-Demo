@@ -81,11 +81,12 @@ class LoginViewModel @Inject constructor(
                     AccountFlow.updateValue(result.data)
                     roomUtils.insertContact(result.data.contacts)
                     roomUtils.insertGroup(result.data.groups)
-                    sendState(UiEvent.LoginSuccessEvent(result.data))
+                    sendState(UiEvent.LoginSuccessEvent)
                 }
 
                 is ApiResult.OnFail -> {
                     Timber.d("goLogin error ${result.message}")
+                    sendState(UiEvent.LoginSuccessEvent)
                 }
             }
         }

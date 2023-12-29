@@ -20,10 +20,10 @@
 
     <string name="avatar">虛擬替身</string>
     <string name="avatar_desc">新增、編輯、個人頭像</string>
-    
+
     <string name="conversation">對話</string>
     <string name="conversation_desc">主題、背景圖片、對話紀錄</string>
-    
+
     <string name="notification">通知</string>
     <string name="notification_desc">信息、群組與通話提示音</string>
 
@@ -36,10 +36,8 @@
     <string name="help">幫助</string>
     <string name="help_desc">使用說明、聯絡我們、隱私政策</string>
 
-    <string name="invite_friend">邀請朋友</string>
-
     <string name="user_info">個人資料</string>
-    
+
     <string name="name">名稱</string>
     <string name="phone">電話</string>
 
@@ -65,7 +63,7 @@
     <string name="about">關於</string>
     <string name="delete_all">全部刪除</string>
     <string name="delete">刪除</string>
-    
+
     <string-array name="about_list">
         <item>你好! 我正在使用JoyCom</item>
         <item>睡眠中</item>
@@ -82,4 +80,30 @@
     </string-array>
 
     <string name="pls_input_phone">請輸入您的電話號碼</string>
+
+    <string name="permission_storage">如果要傳送媒體黨，請允許JoyCom使用裝置照片，媒體和文件檔。</string>
+    <string name="permission_camera_storage">如果要拍照和錄製影片，請允許JoyCom使用您的相機和裝置的照片，媒體和文件檔。</string>
+    <string name="permission_camera_desc">如果要拍照和錄製影片，請允許JoyCom使用您的相機。</string>
+    <string name="permission_camera_qr_desc">若要透過QR條碼新增聯絡人，請允許JoyCom使用您的相機。</string>
+    <string name="permission_contact_desc">為便於JoyCom幫助您與其他使用者聯絡，請允許JoyCom使用您的聯絡人。</string>
+    <string name="permission_record_audio_desc">想要錄製有聲影片嗎?請允許JoyCom使用您的麥克風。</string>
+
+    <string name="not_now">現在不要</string>
+    <string name="keep_going">繼續</string>
+
+    <string name="my_qrcode_notice">您的QR條碼為私人用途。若您分享給其他人，對方可以使用他們的JoyCom相機掃描該條碼並將您新增為聯絡人。</string>
+
+    <string name="joycom_contact">JoyCom聯絡人</string>
+    
+    <string name="select_contact">選擇聯絡人</string>
+    <string name="new_group">新群組</string>
+    <string name="add_new_contact">新增聯絡人</string>
+    <string name="new_community">新社群</string>
+    <string name="in_joycom_contact">在JoyCom上的聯絡人</string>
+    <string name="invite_to_use_joycom">邀請使用JoyCom</string>
+    <string name="share_invite_link">分享邀請連結</string>
+    <string name="common_problem_of_contact">聯絡人常見問題</string>
+    <string name="invite">邀請</string>
+    <string name="invite_friends">邀請好友</string>
+    <string name="refresh">刷新</string>
 </resources>

@@ -14,10 +14,14 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
         android:name=".application.JoyComApplication"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -38,8 +42,9 @@
             </intent-filter>
         </activity>
         <activity android:name="com.chat.joycom.ui.login.LoginActivity" />
-        <activity android:name="com.chat.joycom.ui.chat.ChatActivity"
-            android:windowSoftInputMode="adjustResize"/>
+        <activity
+            android:name="com.chat.joycom.ui.chat.ChatActivity"
+            android:windowSoftInputMode="adjustResize" />
         <activity android:name="com.chat.joycom.ui.setting.SettingActivity" />
         <activity android:name="com.chat.joycom.ui.setting.user.UserInfoActivity" />
         <activity android:name="com.chat.joycom.ui.setting.qrcode.QRCodeActivity" />
