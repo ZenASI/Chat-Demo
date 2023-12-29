@@ -41,9 +41,6 @@ import com.chat.joycom.ui.UiEvent
 import com.chat.joycom.ui.commom.JoyComAppBar
 import com.chat.joycom.ui.commom.PermissionDescAlert
 import com.chat.joycom.ui.commom.PermissionType
-import com.chat.joycom.ui.contact.ContactActionType
-import com.chat.joycom.ui.login.LoginActivity
-import com.chat.joycom.ui.contact.ContactActivity
 import com.chat.joycom.ui.theme.JoyComTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -115,7 +112,7 @@ class MainActivity : BaseActivity() {
                                         when (pagerState.currentPage) {
                                             1 -> {
                                                 if (contactPermission.status.isGranted) {
-                                                    ContactActivity.start(context, ContactActionType.SelectContact)
+
                                                 } else {
                                                     if (contactPermission.status.shouldShowRationale) {
                                                         showPermissionDesc = true
