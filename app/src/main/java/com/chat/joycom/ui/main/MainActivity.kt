@@ -7,6 +7,8 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -108,7 +110,6 @@ class MainActivity : BaseActivity() {
                             ) {
                                 FloatingActionButton(
                                     onClick = {
-                                        Timber.d("Click")
                                         when (pagerState.currentPage) {
                                             1 -> {
                                                 if (contactPermission.status.isGranted) {

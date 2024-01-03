@@ -10,6 +10,8 @@ import com.chat.joycom.ui.BaseViewModel
 import com.chat.joycom.ds.DSKey
 import com.chat.joycom.flow.AccountFlow
 import com.chat.joycom.flow.MemberFlow
+import com.chat.joycom.model.Contact
+import com.chat.joycom.model.Group
 import com.chat.joycom.model.Member
 import com.chat.joycom.model.post.MessageServerRequest
 import com.chat.joycom.model.post.MessageServerRequestJsonAdapter
@@ -26,10 +28,12 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.UUID
 import javax.inject.Inject
+import kotlin.random.Random
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
@@ -47,8 +51,42 @@ class MainActivityViewModel @Inject constructor(
     private val code = mutableStateOf("")
     private val set = mutableStateOf(setOf<String>())
 
-    private val groupsFlow = roomUtils.findAllGroup().distinctUntilChanged()
-    private val contactsFlow = roomUtils.findAllContact().distinctUntilChanged()
+    //    private val groupsFlow = roomUtils.findAllGroup().distinctUntilChanged()
+//    private val contactsFlow = roomUtils.findAllContact().distinctUntilChanged()
+    private val groupsFlow = flow<List<Group>> {
+        emit(listOf<Group>(
+            Group(id = Random.nextLong(), avatar = UUID.randomUUID().toString(), groupId = Random.nextLong(), groupName = "group_1", isNoDisturb = 0, userId = 0L),
+            Group(id = Random.nextLong(), avatar = UUID.randomUUID().toString(), groupId = Random.nextLong(), groupName = "group_1", isNoDisturb = 0, userId = 0L),
+        ))
+
+    }
+    private val contactsFlow = flow<List<Contact>> {
+        emit(listOf<Contact>(
+            Contact(
+                id = Random.nextLong(),
+                avatar = UUID.randomUUID().toString(),
+                userId = Random.nextLong(),
+                nickname = "contact_1",
+                account = "contact_1",
+                countryCode = "",
+                phoneNumber = "",
+                isNoDisturb = 0,
+                friendRemark = ""
+            ),
+            Contact(
+                id = Random.nextLong(),
+                avatar = UUID.randomUUID().toString(),
+                userId = Random.nextLong(),
+                nickname = "contact_2",
+                account = "contact_2",
+                countryCode = "",
+                phoneNumber = "",
+                isNoDisturb = 0,
+                friendRemark = ""
+            ),
+        ))
+    }
+
     fun combineFlow(): Flow<List<Parcelable>> {
         return combine(groupsFlow, contactsFlow) { groupList, contactList ->
             val list = mutableListOf<Parcelable>().apply {
@@ -61,7 +99,6 @@ class MainActivityViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-
             code.value =
                 dataStoreUtils.readDataStoreValue(stringPreferencesKey(DSKey.PHONE_CODE), "")
             phone.value =
@@ -89,7 +126,14 @@ class MainActivityViewModel @Inject constructor(
             } else {
 //                sendState(UiEvent.GoLoginActEvent)
             }
-            MemberFlow.updateValue(Member(userId = 123456, accountName = "jeff", nickname = "jeff", avatar = UUID.randomUUID().toString()))
+            MemberFlow.updateValue(
+                Member(
+                    userId = 123456,
+                    accountName = "jeff",
+                    nickname = "jeff",
+                    avatar = UUID.randomUUID().toString()
+                )
+            )
         }
     }
 
@@ -114,7 +158,7 @@ class MainActivityViewModel @Inject constructor(
 
     private fun upDateMessageToDB() {
         viewModelScope.launch {
-            memberInfo.collect{
+            memberInfo.collect {
                 it ?: return@collect
                 val lastAckId =
                     dataStoreUtils.readDataStoreValue(longPreferencesKey(DSKey.LAST_ACK_ID), 1L)

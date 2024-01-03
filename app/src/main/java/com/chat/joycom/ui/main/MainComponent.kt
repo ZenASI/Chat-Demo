@@ -11,6 +11,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -67,18 +68,22 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 
 @Composable
 fun CallScene(viewModel: MainActivityViewModel = viewModel()) {
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(MaterialTheme.colorScheme.background)) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
 
     }
 }
 
 @Composable
 fun GroupScene(viewModel: MainActivityViewModel = viewModel()) {
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(MaterialTheme.colorScheme.background)) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
 
     }
 }
@@ -87,71 +92,72 @@ fun GroupScene(viewModel: MainActivityViewModel = viewModel()) {
 fun ChatScene(viewModel: MainActivityViewModel = viewModel()) {
     val listFlow = viewModel.combineFlow().collectAsState(initial = mutableListOf()).value
     val context = LocalContext.current
-    Scaffold { paddingValues ->
-        LazyColumn(modifier = Modifier
-            .padding(paddingValues)
-            .background(MaterialTheme.colorScheme.background)) {
-            listFlow.forEachIndexed { index, item ->
-                item(key = index) {
-                    when (item) {
-                        is Contact -> {
-                            Row(
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        listFlow.forEachIndexed { index, item ->
+            item(key = index) {
+                when (item) {
+                    is Contact -> {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                                .clip(RoundedCornerShape(5.dp))
+                                .clickable {
+                                    ChatActivity.start(context, item, null, false)
+                                },
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            AsyncImage(
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(UrlPath.GET_FILE.getFileFullUrl() + item.avatar)
+                                    .crossfade(true).build(),
+                                contentDescription = "",
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentHeight()
-                                    .clip(RoundedCornerShape(5.dp))
-                                    .clickable {
-                                        ChatActivity.start(context, item, null, false)
-                                    },
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                AsyncImage(
-                                    model = ImageRequest.Builder(LocalContext.current)
-                                        .data(UrlPath.GET_FILE.getFileFullUrl() + item.avatar)
-                                        .crossfade(true).build(),
-                                    contentDescription = "",
-                                    modifier = Modifier
-                                        .padding(start = 10.dp)
-                                        .width(50.dp)
-                                        .height(50.dp)
-                                        .clip(CircleShape)
-                                        .align(Alignment.CenterVertically),
-                                    placeholder = null,
-                                    error = painterResource(id = R.drawable.ic_def_user),
-                                    contentScale = ContentScale.Crop,
-                                )
-                                Text(text = item.nickname)
-                            }
+                                    .padding(start = 10.dp)
+                                    .width(50.dp)
+                                    .height(50.dp)
+                                    .clip(CircleShape)
+                                    .align(Alignment.CenterVertically),
+                                placeholder = painterResource(id = R.drawable.ic_def_user),
+                                error = painterResource(id = R.drawable.ic_def_user),
+                                contentScale = ContentScale.Crop,
+                            )
+                            Text(text = item.nickname)
                         }
+                    }
 
-                        is Group -> {
-                            Row(
+                    is Group -> {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                                .clip(RoundedCornerShape(5.dp))
+                                .clickable {
+                                    ChatActivity.start(context, null, item, true)
+                                },
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            AsyncImage(
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(UrlPath.GET_FILE.getFileFullUrl() + item.avatar)
+                                    .crossfade(true).build(),
+                                contentDescription = "",
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentHeight()
-                                    .clip(RoundedCornerShape(5.dp))
-                                    .clickable {
-                                        ChatActivity.start(context, null, item, true)
-                                    },
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                AsyncImage(
-                                    model = ImageRequest.Builder(LocalContext.current)
-                                        .data(UrlPath.GET_FILE.getFileFullUrl() + item.avatar)
-                                        .crossfade(true).build(),
-                                    contentDescription = "",
-                                    modifier = Modifier
-                                        .padding(start = 10.dp)
-                                        .width(50.dp)
-                                        .height(50.dp)
-                                        .clip(CircleShape)
-                                        .align(Alignment.CenterVertically),
-                                    placeholder = null,
-                                    error = painterResource(id = R.drawable.ic_def_group),
-                                    contentScale = ContentScale.Crop,
-                                )
-                                Text(text = item.groupName)
-                            }
+                                    .padding(start = 10.dp)
+                                    .width(50.dp)
+                                    .height(50.dp)
+                                    .clip(CircleShape)
+                                    .align(Alignment.CenterVertically),
+                                placeholder = painterResource(id = R.drawable.ic_def_group),
+                                error = painterResource(id = R.drawable.ic_def_group),
+                                contentScale = ContentScale.Crop,
+                            )
+                            Text(text = item.groupName)
                         }
                     }
                 }
@@ -162,10 +168,12 @@ fun ChatScene(viewModel: MainActivityViewModel = viewModel()) {
 
 @Composable
 fun UpdateScene(viewmode: MainActivityViewModel = viewModel()) {
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(MaterialTheme.colorScheme.background)) {
-        
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+
     }
 }
 
