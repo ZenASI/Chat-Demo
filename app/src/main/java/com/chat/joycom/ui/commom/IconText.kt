@@ -36,7 +36,9 @@ fun IconTextH(
     text: @Composable () -> Unit = {},
     icon: @Composable () -> Unit = {},
     action: @Composable () -> Unit = {},
-    verticalAlignment: Alignment.Vertical = Alignment.Top,
+    textFullWeightEnable: Boolean = false,
+    spaceWeightEnable: Pair<Boolean, Boolean> = Pair(false, false),
+    verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
 ) {
     Row(
@@ -45,7 +47,17 @@ fun IconTextH(
         horizontalArrangement = horizontalArrangement,
     ) {
         icon()
-        text()
+        if (spaceWeightEnable.first) Spacer(modifier = Modifier.weight(1f))
+        if (textFullWeightEnable) {
+            Box(
+                modifier = Modifier.weight(1f),
+                content = { text() },
+                contentAlignment = Alignment.Center
+            )
+        } else {
+            text()
+        }
+        if (spaceWeightEnable.second) Spacer(modifier = Modifier.weight(1f))
         action()
     }
 }

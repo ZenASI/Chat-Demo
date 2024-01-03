@@ -20,22 +20,19 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.chat.joycom.R
 import com.chat.joycom.ui.BaseActivity
 import com.chat.joycom.ui.main.MainActivity
 import com.chat.joycom.ui.UiEvent
 import com.chat.joycom.ui.commom.JoyComAppBar
 import com.chat.joycom.ui.theme.JoyComTheme
-import com.google.i18n.phonenumbers.PhoneNumberUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -59,8 +56,6 @@ class LoginActivity : BaseActivity() {
     fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this)[LoginViewModel::class.java]
-        initCollect()
-
         setContent {
             JoyComTheme {
                 Surface {
@@ -109,23 +104,13 @@ class LoginActivity : BaseActivity() {
                     }
                 }
             }
-        }
-    }
-
-    private fun initCollect() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect {
-                    when (it) {
-                        is UiEvent.SendSmsSuccessEvent -> {
-
-                        }
-
+            LaunchedEffect(Unit) {
+                viewModel.uiAction.collect { uiEvent ->
+                    when (uiEvent){
                         is UiEvent.LoginSuccessEvent -> {
                             MainActivity.start(this@LoginActivity)
                             finish()
                         }
-
                         else -> {}
                     }
                 }

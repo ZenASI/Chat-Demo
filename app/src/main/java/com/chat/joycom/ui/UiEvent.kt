@@ -1,18 +1,23 @@
 package com.chat.joycom.ui
 
+import androidx.annotation.StringRes
 import com.chat.joycom.model.Config
-import com.chat.joycom.model.UserInfo
+import com.chat.joycom.model.Member
 
 sealed class UiEvent {
     data object EmptyEvent : UiEvent()
 
-    data class LoadingEvent(val show: Boolean) : UiEvent()
-
-    data object SendSmsSuccessEvent : UiEvent()
+    /*=======================================================================*/
 
     data object LoginSuccessEvent : UiEvent()
 
-    data class GetConfigSuccessEvent(val config: Config) : UiEvent()
-
     data object GoLoginActEvent : UiEvent()
+
+    data class ToastEvent(@StringRes val msgId: Int) : UiEvent()
+
+    data class GoAddGroupEvent(val list: ArrayList<Member>) : UiEvent()
+
+    /*=======================================================================*/
+
+    data class LoadingEvent(val show: Boolean) : UiEvent()
 }

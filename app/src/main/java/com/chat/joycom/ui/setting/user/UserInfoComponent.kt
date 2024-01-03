@@ -127,7 +127,6 @@ fun UserInfoList(modifier: Modifier = Modifier, viewModel: UserInfoViewModel = v
                 }
             },
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
         )
         IconTextH(
@@ -162,7 +161,6 @@ fun UserInfoList(modifier: Modifier = Modifier, viewModel: UserInfoViewModel = v
                 }
             },
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
         )
         IconTextH(
@@ -182,7 +180,6 @@ fun UserInfoList(modifier: Modifier = Modifier, viewModel: UserInfoViewModel = v
                 }
             },
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
         )
     }

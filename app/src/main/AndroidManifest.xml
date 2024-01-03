@@ -49,6 +49,11 @@
         <activity android:name="com.chat.joycom.ui.setting.user.UserInfoActivity" />
         <activity android:name="com.chat.joycom.ui.setting.qrcode.QRCodeActivity" />
         <activity android:name="com.chat.joycom.ui.setting.user.about.AboutMeActivity" />
+        <activity android:name="com.chat.joycom.ui.main.contacts.ContactsActivity" />
+        <activity android:name="com.chat.joycom.ui.main.contacts.add.contacts.AddContactActivity" />
+        <activity android:name="com.chat.joycom.ui.main.contacts.add.group.NewGroupActivity" />
+        <activity android:name="com.chat.joycom.ui.main.contacts.add.group.AddGroupActivity" />
+        <activity android:name="com.chat.joycom.ui.main.contacts.add.group.GroupPermissionActivity" />
     </application>
 
 </manifest>

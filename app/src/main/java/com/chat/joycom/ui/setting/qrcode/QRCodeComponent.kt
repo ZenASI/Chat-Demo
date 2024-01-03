@@ -22,6 +22,7 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -33,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chat.joycom.R
 import com.chat.joycom.ui.commom.PermissionDescAlert
 import com.chat.joycom.ui.commom.PermissionType
@@ -43,9 +45,9 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 
 @Composable
-fun MyQrcode() {
+fun MyQrcode(viewModel: QRCodeViewModel = viewModel()) {
+    val memberInfo = viewModel.memberInfo.collectAsState()
     Box(modifier = Modifier.fillMaxSize()) {
-
         Column(
             modifier = Modifier
                 .align(Alignment.Center)
@@ -76,9 +78,16 @@ fun MyQrcode() {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    Text(text = "")
-                    Text(text = stringResource(id = R.string.joycom_contact), color = MaterialTheme.colorScheme.onTertiaryContainer)
-                    Box(modifier = Modifier.background(Color.White, RoundedCornerShape(8.dp)).fillMaxWidth(.6f)){
+                    Text(text = memberInfo.value?.nickname ?: "")
+                    Text(
+                        text = stringResource(id = R.string.joycom_contact),
+                        color = MaterialTheme.colorScheme.onTertiaryContainer
+                    )
+                    Box(
+                        modifier = Modifier
+                            .background(Color.White, RoundedCornerShape(8.dp))
+                            .fillMaxWidth(.6f)
+                    ) {
                         Image(
                             painterResource(id = R.drawable.ic_qr_code),
                             "",
@@ -87,7 +96,10 @@ fun MyQrcode() {
                     }
                 }
             }
-            Text(text = stringResource(id = R.string.my_qrcode_notice), textAlign = TextAlign.Center)
+            Text(
+                text = stringResource(id = R.string.my_qrcode_notice),
+                textAlign = TextAlign.Center
+            )
         }
     }
 }

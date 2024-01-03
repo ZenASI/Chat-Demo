@@ -10,6 +10,7 @@ import com.chat.joycom.ui.BaseViewModel
 import com.chat.joycom.ds.DSKey
 import com.chat.joycom.flow.AccountFlow
 import com.chat.joycom.flow.MemberFlow
+import com.chat.joycom.model.Member
 import com.chat.joycom.model.post.MessageServerRequest
 import com.chat.joycom.model.post.MessageServerRequestJsonAdapter
 import com.chat.joycom.network.ApiResult
@@ -27,6 +28,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -81,12 +83,13 @@ class MainActivityViewModel @Inject constructor(
                     }
 
                     is ApiResult.OnFail -> {
-                        sendState(UiEvent.GoLoginActEvent)
+//                        sendState(UiEvent.GoLoginActEvent)
                     }
                 }
             } else {
-                sendState(UiEvent.GoLoginActEvent)
+//                sendState(UiEvent.GoLoginActEvent)
             }
+            MemberFlow.updateValue(Member(userId = 123456, accountName = "jeff", nickname = "jeff", avatar = UUID.randomUUID().toString()))
         }
     }
 
@@ -102,7 +105,7 @@ class MainActivityViewModel @Inject constructor(
                 is ApiResult.OnFail -> {
                     Timber.d("querySelf error => ${result.message}")
                     if (result.code == 401) {
-                        sendState(UiEvent.GoLoginActEvent)
+//                        sendState(UiEvent.GoLoginActEvent)
                     }
                 }
             }

@@ -14,12 +14,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.chat.joycom.R
 import com.chat.joycom.ui.BaseActivity
 import com.chat.joycom.ui.UiEvent
@@ -27,7 +25,6 @@ import com.chat.joycom.ui.commom.JoyComAppBar
 import com.chat.joycom.ui.login.LoginActivity
 import com.chat.joycom.ui.theme.JoyComTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SettingActivity : BaseActivity() {
@@ -69,17 +66,14 @@ class SettingActivity : BaseActivity() {
                     }
                 }
             }
-        }
-        initCollect()
-    }
-
-    private fun initCollect() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect {
-                    if (it is UiEvent.GoLoginActEvent) {
-                        LoginActivity.start(this@SettingActivity)
-                        finish()
+            LaunchedEffect(Unit) {
+                viewModel.uiAction.collect { uiEvent ->
+                    when (uiEvent){
+                        is UiEvent.GoLoginActEvent -> {
+                            LoginActivity.start(this@SettingActivity)
+                            finish()
+                        }
+                        else -> {}
                     }
                 }
             }

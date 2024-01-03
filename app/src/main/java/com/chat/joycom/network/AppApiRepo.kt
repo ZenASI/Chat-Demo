@@ -20,7 +20,7 @@ class AppApiRepo @Inject constructor(private val appApiService: AppApiService) {
         groupId: Long,
     ): ApiResult<List<GroupContact>> =
         withContext(Dispatchers.IO) {
-            val groupContactMap = mapOf<String, String>("GroupId" to groupId.toString())
+            val groupContactMap = mapOf("GroupId" to groupId.toString())
             handleResponse { appApiService.groupContact(UrlPath.GROUP_CONTACT.getFullUrlPath(), groupContactMap) }
         }
 
@@ -33,7 +33,7 @@ class AppApiRepo @Inject constructor(private val appApiService: AppApiService) {
         phoneNumber: String,
     ): ApiResult<Member> = withContext(Dispatchers.IO) {
         val queryMemberMap =
-            mapOf<String, String>("CountryCode" to countryCode, "PhoneNumber" to phoneNumber)
+            mapOf("CountryCode" to countryCode, "PhoneNumber" to phoneNumber)
         handleResponse {
             appApiService.queryMember(
                 UrlPath.QUERY_MEMBER.getFullUrlPath(),
@@ -49,7 +49,7 @@ class AppApiRepo @Inject constructor(private val appApiService: AppApiService) {
         otp: String
     ): ApiResult<UserInfo> = withContext(Dispatchers.IO) {
         val registerMap =
-            mapOf<String, String>(
+            mapOf(
                 "Nickname" to nickName,
                 "CountryCode" to countryCode,
                 "PhoneNumber" to phoneNumber,
@@ -68,7 +68,7 @@ class AppApiRepo @Inject constructor(private val appApiService: AppApiService) {
         otp: String,
     ): ApiResult<UserInfo> =
         withContext(Dispatchers.IO) {
-            val loginMap = mapOf<String, String>(
+            val loginMap = mapOf(
                 "CountryCode" to countryCode,
                 "PhoneNumber" to phoneNumber,
                 "Captcha" to otp
@@ -82,7 +82,7 @@ class AppApiRepo @Inject constructor(private val appApiService: AppApiService) {
     ): ApiResult<String> =
         withContext(Dispatchers.IO) {
             val smsMap =
-                mapOf<String, String>(
+                mapOf(
                     "CountryCode" to countryCode,
                     "PhoneNumber" to phoneNumber,
                 )
@@ -90,28 +90,27 @@ class AppApiRepo @Inject constructor(private val appApiService: AppApiService) {
         }
 
     private suspend fun <T> handleResponse(response: suspend () -> Response<BaseResponse<T>>): ApiResult<T> {
-//        val result = response.invoke()
-        return ApiResult.OnFail(0, "disable network")
-//        return try {
-//            if (result.isSuccessful) {
-//                // 200 ~ 299
-//                val body = result.body()
-//                if (body?.code == 200 && body.data != null) {
-//                    ApiResult.OnSuccess(body.data)
-//                } else {
-//                    ApiResult.OnFail(body?.code, body?.msg)
-//                }
-//            } else {
-//                // TODO: need to handle errorBody
-//                ApiResult.OnFail(result.code(), result.message())
-//            }
-//        } catch (e: Throwable) {
-//            e.printStackTrace()
-//            if (e is HttpException) {
-//                ApiResult.OnFail(code = e.code(), message = e.message, e = e)
-//            } else {
-//                ApiResult.OnFail(code = null, message = e.message, e = e)
-//            }
-//        }
+        return try {
+            val result = response.invoke()
+            if (result.isSuccessful) {
+                // 200 ~ 299
+                val body = result.body()
+                if (body?.code == 200 && body.data != null) {
+                    ApiResult.OnSuccess(body.data)
+                } else {
+                    ApiResult.OnFail(body?.code, body?.msg)
+                }
+            } else {
+                // TODO: need to handle errorBody
+                ApiResult.OnFail(result.code(), result.message())
+            }
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            if (e is HttpException) {
+                ApiResult.OnFail(code = e.code(), message = e.message, e = e)
+            } else {
+                ApiResult.OnFail(code = null, message = e.message, e = e)
+            }
+        }
     }
 }

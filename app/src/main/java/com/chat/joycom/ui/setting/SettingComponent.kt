@@ -145,7 +145,6 @@ fun UserInfo() {
                         ))
                     },
                     horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .height(80.dp)
                         .fillMaxWidth()
@@ -163,7 +162,6 @@ fun UserInfo() {
                     icon = { Icon(Icons.Filled.Add, "", modifier = Modifier.size(50.dp)) },
                     text = { Text(stringResource(id = R.string.add_new_account)) },
                     horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .height(80.dp)
                         .fillMaxWidth()
@@ -224,7 +222,6 @@ fun UserOperateFeature() {
                     .clickable {
 
                     },
-                verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start,
             )
         }

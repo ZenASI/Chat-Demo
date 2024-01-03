@@ -27,7 +27,7 @@ class SettingViewModel @Inject constructor(
                 is ApiResult.OnSuccess -> {
                     dataStoreUtils.clearAll()
                     withContext(Dispatchers.IO) { roomUtils.db.clearAllTables() }
-                    sendState(UiEvent.GoLoginActEvent)
+                    sendUIAction(UiEvent.GoLoginActEvent)
                 }
 
                 is ApiResult.OnFail -> {

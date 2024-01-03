@@ -99,11 +99,50 @@
     <string name="new_group">新群組</string>
     <string name="add_new_contact">新增聯絡人</string>
     <string name="new_community">新社群</string>
-    <string name="in_joycom_contact">在JoyCom上的聯絡人</string>
+    <string name="on_joycom_contact">在JoyCom上的聯絡人</string>
     <string name="invite_to_use_joycom">邀請使用JoyCom</string>
     <string name="share_invite_link">分享邀請連結</string>
     <string name="common_problem_of_contact">聯絡人常見問題</string>
     <string name="invite">邀請</string>
     <string name="invite_friends">邀請好友</string>
     <string name="refresh">刷新</string>
+
+    <string name="contacts">聯絡人</string>
+
+    <string name="first_name">姓氏</string>
+    <string name="last_name">名字</string>
+    <string name="country">國家</string>
+    <string name="save_to">儲存至</string>
+    <string name="add_info">新增資訊</string>
+
+    <string name="per_contacts">%d位聯絡人</string>
+
+    <string name="add_member">新增成員</string>
+
+    <string name="need_select_at_least_one_member">需要選擇至少一名成員</string>
+
+    <string name="group_member">群組成員:%d</string>
+
+    <string name="hint_group_name">群組名稱(選填)</string>
+    <string name="limited_time_msg">限時訊息</string>
+    <string name="limited_time_msg_desc">此對話中所有新訊息會於選定的時間後消失</string>
+
+    <string name="twenty_four_hour">24小時</string>
+    <string name="seven_days">7天</string>
+    <string name="ninety_days">90天</string>
+    <string name="close">關閉</string>
+
+    <string name="group_permission">群組權限</string>
+    <string name="group_permission_desc">成員可以進行以下操作:</string>
+
+    <string name="edit_group_config">編輯群組設定</string>
+    <string name="edit_group_config_desc">包括名稱、圖標、描述、限時訊息時限，並且可以置頂訊息，以及保留和取消訊息。</string>
+    <string name="send_msg">傳送訊息</string>
+    <string name="add_another_member">新增其他成員</string>
+
+    <string name="admin_has">管理員有權:</string>
+    <string name="allow_add_new_member">核准新成員</string>
+    <string name="allow_add_new_member_desc">開啟此模式後，想要加入此群組的人必須經過管理員核准，</string>
+
+    <string name="learn_more">了解更多</string>
 </resources>

@@ -24,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -32,15 +33,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.chat.joycom.R
 import com.chat.joycom.ui.BaseActivity
 import com.chat.joycom.ui.UiEvent
 import com.chat.joycom.ui.commom.JoyComAppBar
 import com.chat.joycom.ui.commom.PermissionDescAlert
 import com.chat.joycom.ui.commom.PermissionType
+import com.chat.joycom.ui.login.LoginActivity
+import com.chat.joycom.ui.main.contacts.ContactsActivity
 import com.chat.joycom.ui.theme.JoyComTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -112,7 +112,7 @@ class MainActivity : BaseActivity() {
                                         when (pagerState.currentPage) {
                                             1 -> {
                                                 if (contactPermission.status.isGranted) {
-
+                                                    ContactsActivity.start(context)
                                                 } else {
                                                     if (contactPermission.status.shouldShowRationale) {
                                                         showPermissionDesc = true
@@ -153,18 +153,14 @@ class MainActivity : BaseActivity() {
                     }
                 }
             }
-
-        }
-        initCollect()
-    }
-
-    private fun initCollect() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect {
-                    if (it is UiEvent.GoLoginActEvent) {
-//                        LoginActivity.start(this@MainActivity)
-//                        finish()
+            LaunchedEffect(Unit) {
+                viewModel.uiAction.collect { uiEvent ->
+                    when (uiEvent){
+                        is UiEvent.GoLoginActEvent -> {
+                            LoginActivity.start(this@MainActivity)
+                            finish()
+                        }
+                        else -> {}
                     }
                 }
             }
