@@ -145,4 +145,8 @@
     <string name="allow_add_new_member_desc">開啟此模式後，想要加入此群組的人必須經過管理員核准，</string>
 
     <string name="learn_more">了解更多</string>
+
+    <string name="group_icon">群組圖標</string>
+    <string name="emoji_and_sticker">表情符號與貼圖</string>
+    <string name="on_internet_search">在網路上搜尋</string>
 </resources>

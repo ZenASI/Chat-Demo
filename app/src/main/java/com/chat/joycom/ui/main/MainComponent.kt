@@ -3,6 +3,9 @@ package com.chat.joycom.ui.main
 import android.Manifest
 import android.os.Build
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -10,16 +13,17 @@ import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -30,11 +34,9 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -45,8 +47,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -65,6 +67,7 @@ import com.chat.joycom.ui.commom.PermissionType
 import com.chat.joycom.ui.setting.SettingActivity
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import timber.log.Timber
 
 @Composable
 fun CallScene(viewModel: MainActivityViewModel = viewModel()) {
@@ -184,9 +187,26 @@ fun MainTableRow(currentScene: JoyComScene, onClick: (Int) -> Unit) {
         selectedTabIndex = currentScene.ordinal,
         divider = { },
         indicator = { tabPositions ->
+            Timber.d("${tabPositions}")
             if (currentScene.ordinal < tabPositions.size) {
                 TabRowDefaults.Indicator(
-                    Modifier.tabIndicatorOffset(tabPositions[currentScene.ordinal]),
+                    Modifier.composed {
+                        val currentTabWidth by animateDpAsState(
+                            targetValue = tabPositions[currentScene.ordinal].width,
+                            animationSpec = tween(durationMillis = 50, easing = FastOutSlowInEasing),
+                            ""
+                        )
+                        val indicatorOffset by animateDpAsState(
+                            targetValue = tabPositions[currentScene.ordinal].left,
+                            animationSpec = tween(durationMillis = 50, easing = FastOutSlowInEasing),
+                            ""
+                        )
+                        fillMaxWidth()
+                            .wrapContentSize(Alignment.BottomStart)
+                            .height(3.dp)
+                            .offset(x = indicatorOffset)
+                            .width(currentTabWidth)
+                    },
 //                    1.dp,
                 )
             }

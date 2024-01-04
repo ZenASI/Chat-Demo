@@ -9,7 +9,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -44,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import com.chat.joycom.R
 import com.chat.joycom.model.Member
 import com.chat.joycom.ui.BaseActivity
+import com.chat.joycom.ui.commom.GroupIconSelectSheet
 import com.chat.joycom.ui.commom.IconTextH
 import com.chat.joycom.ui.commom.IconTextV
 import com.chat.joycom.ui.commom.JoyComAppBar
@@ -106,6 +106,9 @@ class AddGroupActivity : BaseActivity() {
                         var selectTimeId by remember {
                             mutableIntStateOf(R.string.close)
                         }
+                        var groupIconShowState by remember {
+                            mutableStateOf(false)
+                        }
                         Column(
                             modifier = Modifier
                                 .padding(paddingValues)
@@ -117,6 +120,9 @@ class AddGroupActivity : BaseActivity() {
                                         painterResource(id = R.drawable.ic_camera),
                                         "",
                                         modifier = Modifier
+                                            .clickable {
+                                                groupIconShowState = true
+                                            }
                                             .size(50.dp)
                                             .background(Color.Gray, CircleShape)
                                             .padding(10.dp)
@@ -131,10 +137,9 @@ class AddGroupActivity : BaseActivity() {
                                     )
                                 },
                                 action = {
-                                    Image(
+                                    Icon(
                                         painterResource(id = R.drawable.ic_emoji),
                                         "",
-                                        modifier = Modifier
                                     )
                                 },
                                 textFullWeightEnable = true,
@@ -151,7 +156,7 @@ class AddGroupActivity : BaseActivity() {
                                     }
                                 },
                                 action = {
-                                    Image(painterResource(id = R.drawable.ic_time), "")
+                                    Icon(painterResource(id = R.drawable.ic_time), "")
                                 },
                                 modifier = Modifier
                                     .clickable {
@@ -166,7 +171,7 @@ class AddGroupActivity : BaseActivity() {
                                     Text(text = stringResource(id = R.string.group_permission))
                                 },
                                 action = {
-                                    Image(painterResource(id = R.drawable.ic_setting), "")
+                                    Icon(painterResource(id = R.drawable.ic_setting), "")
                                 },
                                 modifier = Modifier
                                     .clickable {
@@ -178,7 +183,10 @@ class AddGroupActivity : BaseActivity() {
                             )
                             Text(
                                 text = stringResource(id = R.string.group_member, list?.size ?: 0),
-                                modifier = Modifier.fillMaxWidth().height(70.dp).wrapContentHeight(Alignment.CenterVertically),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(70.dp)
+                                    .wrapContentHeight(Alignment.CenterVertically),
                                 textAlign = TextAlign.Start
                             )
                             LazyVerticalGrid(
@@ -208,6 +216,9 @@ class AddGroupActivity : BaseActivity() {
                             LimitedTimeAlert(
                                 showState = { timeLimitedShowState = it },
                                 selectCallback = { selectTimeId = it })
+                        }
+                        if (groupIconShowState) {
+                            GroupIconSelectSheet(showState = { groupIconShowState = it })
                         }
                     }
                 }

@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.chat.joycom.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -112,9 +113,10 @@ fun LimitedTimeAlert(showState: (Boolean) -> Unit, selectCallback: (Int) -> Unit
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background, RoundedCornerShape(8.dp))
     ) {
-        Column {
-            Text(text = stringResource(id = R.string.limited_time_msg))
-            Text(text = stringResource(id = R.string.limited_time_msg_desc))
+        Column(verticalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.padding(vertical = 10.dp)
+        ) {
+            Text(text = stringResource(id = R.string.limited_time_msg), Modifier.padding(horizontal = 10.dp), fontSize = 20.sp)
+            Text(text = stringResource(id = R.string.limited_time_msg_desc), Modifier.padding(horizontal = 10.dp))
             radioOptions.forEach { text ->
                 Row(
                     Modifier
