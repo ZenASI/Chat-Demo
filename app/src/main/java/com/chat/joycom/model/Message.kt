@@ -10,6 +10,8 @@ import com.chat.joycom.model.Message.Companion.TABLE_NAME
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
+import java.text.SimpleDateFormat
+import kotlin.random.Random
 
 @Parcelize
 @Entity(tableName = TABLE_NAME, indices = [Index(value = ["msg_id"], unique = true)])
@@ -73,6 +75,23 @@ data class Message(
 ) : Parcelable {
     companion object {
         const val TABLE_NAME = "MessageEntity"
+
+        fun getFakeMsg() = Message(
+            id = Random.nextLong(),
+            atUserIds = "",
+            autoDel = 0,
+            content = "Random Long => ${Random.nextLong()}",
+            encryptionType = 0,
+            fromUserId = Random.nextLong(),
+            msgId = Random.nextLong().toString(),
+            msgType = 2,
+            replyMsgId = "0",
+            sendStatus = 0,
+            sendTicks = System.currentTimeMillis(),
+            sendTime = "${SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(System.currentTimeMillis())}",
+            toGroupId = 0,
+            toUserId = 0
+        )
     }
 
     @Ignore

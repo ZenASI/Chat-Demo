@@ -48,9 +48,17 @@ class MessagePagingSource(val selfId: Long = 0L, val id: Long, val roomUtils: Ro
             val limit = params.loadSize
             try {
                 val result = if (selfId == 0L) {
-                    roomUtils.pagingMessageByGroupId(id, offset, limit)
+                    listOf(
+                        Message.getFakeMsg(), Message.getFakeMsg(), Message.getFakeMsg(),
+                        Message.getFakeMsg(), Message.getFakeMsg(), Message.getFakeMsg()
+                    )
+//                    roomUtils.pagingMessageByGroupId(id, offset, limit)
                 } else {
-                    roomUtils.pagingMessageByUserId(selfId, id, offset, limit)
+//                    roomUtils.pagingMessageByUserId(selfId, id, offset, limit)
+                    listOf(
+                        Message.getFakeMsg(), Message.getFakeMsg(), Message.getFakeMsg(),
+                        Message.getFakeMsg(), Message.getFakeMsg(), Message.getFakeMsg()
+                    )
                 }
                 result.zipWithNext { first, second ->
                     // 確認相鄰的item是否顯示icon

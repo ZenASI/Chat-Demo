@@ -1,53 +1,225 @@
-package com.chat.joycom.ui.commom
+package com.chat.joycom.ui.chat
 
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.core.util.TypedValueCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.chat.joycom.R
-import com.chat.joycom.ext.toTopTimeFormat
 import com.chat.joycom.ext.toSendTimeFormat
+import com.chat.joycom.ext.toTopTimeFormat
 import com.chat.joycom.model.Message
 import com.chat.joycom.network.UrlPath
 import com.chat.joycom.network.UrlPath.getFileFullUrl
-import com.chat.joycom.ui.chat.ChatViewModel
+
+@OptIn(
+    ExperimentalLayoutApi::class, ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class,
+)
+@Composable
+fun ChatInput(
+    isGroup: Boolean,
+    modifier: Modifier = Modifier,
+    onMessage: ((message: Message) -> Unit)? = null,
+    id: Long?,
+) {
+    val context = LocalContext.current
+    val res = LocalContext.current.resources
+    val imeState = WindowInsets.isImeVisible // for keyboard show/hide bool
+    val imeBottom = WindowInsets.ime.getBottom(LocalDensity.current)
+    val keyboardController = LocalSoftwareKeyboardController.current // show/hide keyboard
+    val focusRequester = remember { FocusRequester() }
+    var inputText by rememberSaveable {
+        mutableStateOf("")
+    }
+    val rightIcon by remember {
+        derivedStateOf {
+            if (inputText.isEmpty()) R.drawable.ic_mic else R.drawable.ic_send
+        }
+    }
+    val imeHeightDP = rememberSaveable {
+        mutableFloatStateOf(0f) // 紀錄鍵盤最大值
+    }
+    LaunchedEffect(imeBottom) {
+        if (imeState)
+            imeHeightDP.floatValue = maxOf(imeHeightDP.floatValue, TypedValueCompat.pxToDp(imeBottom.toFloat(), res.displayMetrics))
+    }
+
+    val bottomHeight = animateDpAsState(
+        targetValue = if (imeState) imeHeightDP.floatValue.dp else 0.dp,
+        label = "",
+    )
+
+    val scrollState = rememberScrollState(0)
+    LaunchedEffect(scrollState.maxValue) {
+         scrollState.animateScrollTo(scrollState.maxValue)
+    }
+
+    Column(
+        modifier = modifier
+//            .imePadding()
+            .wrapContentHeight()
+            .padding(horizontal = 5.dp),
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
+        ) {
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .background(Color.Gray, RoundedCornerShape(40.dp))
+                    .padding(horizontal = 1.dp),
+                verticalAlignment = Alignment.Bottom
+            ) {
+                Icon(
+                    painterResource(id = R.drawable.ic_emoji),
+                    "",
+                    Modifier
+                        .size(56.dp)
+                        .scale(.6f)
+                        .clickable {
+                            if (!imeState) {
+                                focusRequester.requestFocus()
+                                keyboardController?.show()
+                            }
+                        }
+                )
+                // ref:https://github.com/JetBrains/compose-multiplatform/issues/202
+                BasicTextField(
+                    value = inputText,
+                    onValueChange = { inputText = it },
+                    textStyle = LocalTextStyle.current.copy(fontSize = 18.sp),
+                    cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+                    modifier = Modifier
+                        .heightIn(min = 56.dp, max = 112.dp)
+                        .weight(1f)
+                        .focusRequester(focusRequester)
+                        .verticalScroll(scrollState),
+                    decorationBox = @Composable { innerTextField ->
+                        // places leading icon, text field with label and placeholder, trailing icon
+                        TextFieldDefaults.DecorationBox(
+                            value = inputText,
+                            innerTextField = innerTextField,
+                            placeholder = { Text(text = stringResource(id = R.string.send_msg))},
+                            enabled = true,
+                            singleLine = true,
+                            visualTransformation = VisualTransformation.None,
+                            interactionSource = remember { MutableInteractionSource() },
+                            contentPadding = PaddingValues(0.dp),
+                            colors = TextFieldDefaults.colors(
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                focusedContainerColor = Color.Transparent,
+                                unfocusedContainerColor = Color.Transparent,
+                                disabledContainerColor = Color.Transparent
+                            ),
+                        )
+                    },
+                )
+                Icon(
+                    painterResource(id = R.drawable.ic_file),
+                    "",
+                    Modifier
+                        .size(56.dp)
+                        .rotate(-45f)
+                        .scale(.6f)
+                )
+                Icon(
+                    painterResource(id = R.drawable.ic_camera),
+                    "",
+                    Modifier
+                        .size(56.dp)
+                        .scale(.6f)
+                )
+            }
+            Icon(
+                painterResource(id = rightIcon),
+                "",
+                modifier = Modifier
+                    .size(60.dp)
+                    .background(Color.Green, CircleShape)
+                    .clickable {
+
+                    }
+                    .padding(10.dp)
+            )
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(bottomHeight.value)
+        ) {
+        }
+    }
+}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -62,7 +234,7 @@ fun SelfMsg(message: Message, modifier: Modifier = Modifier) {
             .padding(3.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        when(message.msgType){
+        when (message.msgType) {
             -1 -> {
                 // top time
                 Text(
@@ -74,6 +246,7 @@ fun SelfMsg(message: Message, modifier: Modifier = Modifier) {
                         .background(Color.Gray)
                 )
             }
+
             else -> {
                 Box(
                     modifier = Modifier
@@ -84,7 +257,13 @@ fun SelfMsg(message: Message, modifier: Modifier = Modifier) {
                     Column(
                         modifier = Modifier
                             .wrapContentWidth()
-                            .clip(RoundedCornerShape(topStart = 8.dp, bottomStart = 8.dp, topEnd = 8.dp))
+                            .clip(
+                                RoundedCornerShape(
+                                    topStart = 8.dp,
+                                    bottomStart = 8.dp,
+                                    topEnd = 8.dp
+                                )
+                            )
                             .background(Color.Green.copy(alpha = .5f))
                             .align(Alignment.CenterEnd)
                     ) {
@@ -157,7 +336,7 @@ fun OtherMsg(message: Message, modifier: Modifier = Modifier) {
             .padding(3.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        when(message.msgType){
+        when (message.msgType) {
             -1 -> {
                 // top time
                 Text(
@@ -169,6 +348,7 @@ fun OtherMsg(message: Message, modifier: Modifier = Modifier) {
                         .background(Color.Gray)
                 )
             }
+
             else -> {
                 Row(
                     modifier = Modifier
@@ -177,7 +357,7 @@ fun OtherMsg(message: Message, modifier: Modifier = Modifier) {
                         .align(Alignment.Start),
                     horizontalArrangement = Arrangement.spacedBy(3.dp)
                 ) {
-                    if (message.showIcon){
+                    if (message.showIcon) {
                         AsyncImage(
                             model = ImageRequest.Builder(LocalContext.current)
                                 .data(UrlPath.GET_FILE.getFileFullUrl() + if (message.isGroup) groupContact.value?.avatar else contact.value?.avatar)
@@ -195,12 +375,18 @@ fun OtherMsg(message: Message, modifier: Modifier = Modifier) {
                             contentScale = ContentScale.Crop,
                             error = painterResource(id = R.drawable.ic_def_user)
                         )
-                    }else{
+                    } else {
                         Spacer(modifier = Modifier.size(50.dp))
                     }
                     Column(
                         modifier = Modifier
-                            .clip(RoundedCornerShape(bottomStart = 8.dp, topEnd = 8.dp, bottomEnd = 8.dp))
+                            .clip(
+                                RoundedCornerShape(
+                                    bottomStart = 8.dp,
+                                    topEnd = 8.dp,
+                                    bottomEnd = 8.dp
+                                )
+                            )
                             .background(Color.DarkGray.copy(alpha = .5f))
                             .fillMaxWidth(.9f),
                         verticalArrangement = Arrangement.spacedBy(3.dp)

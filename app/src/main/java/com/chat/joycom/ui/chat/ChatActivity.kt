@@ -11,19 +11,20 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imeNestedScroll
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,13 +46,9 @@ import com.chat.joycom.model.Group
 import com.chat.joycom.network.UrlPath
 import com.chat.joycom.network.UrlPath.getFileFullUrl
 import com.chat.joycom.ui.BaseActivity
-import com.chat.joycom.ui.commom.ChatInput
 import com.chat.joycom.ui.commom.JoyComAppBar
-import com.chat.joycom.ui.commom.OtherMsg
-import com.chat.joycom.ui.commom.SelfMsg
 import com.chat.joycom.ui.theme.JoyComTheme
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 
 const val CONTACT_INFO = "CONTACT_INFO"
 const val GROUP_INFO = "GROUP_INFO"
@@ -144,6 +141,11 @@ class ChatActivity : BaseActivity() {
                                         )
                                         Text(title ?: "")
                                     }
+                                },
+                                acton = {
+                                    Icon(painterResource(id = R.drawable.ic_videocam), "")
+                                    Icon(Icons.Filled.Phone, "")
+                                    Icon(Icons.Filled.MoreVert, "")
                                 }
                             )
                         },
@@ -153,7 +155,6 @@ class ChatActivity : BaseActivity() {
                                 id = if (isGroupBool) group?.groupId else contact?.userId,
                                 onMessage = { viewModel.sentMessage(it) },
                                 modifier = Modifier
-                                    .imePadding()
                             )
                         },
                         modifier = Modifier.navigationBarsPadding()
@@ -161,14 +162,10 @@ class ChatActivity : BaseActivity() {
                         val memberInfo = viewModel.memberInfo.collectAsState(initial = null).value
                         val pagingList = viewModel.pagingMessage.collectAsLazyPagingItems()
                         val lazyState = rememberLazyListState()
-                        LaunchedEffect(key1 = lazyState.isScrollInProgress){
-                            Timber.d("firstVisibleItemIndex => ${lazyState.firstVisibleItemIndex}, firstVisibleItemScrollOffset => ${lazyState.firstVisibleItemScrollOffset}")
-                        }
                         if (memberInfo != null) {
                             LazyColumn(
                                 modifier = Modifier
-                                    .padding(paddingValues)
-                                    .imeNestedScroll(),
+                                    .padding(paddingValues),
                                 state = lazyState,
                                 reverseLayout = true
                             ) {
