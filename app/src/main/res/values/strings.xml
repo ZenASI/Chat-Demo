@@ -149,4 +149,9 @@
     <string name="group_icon">群組圖標</string>
     <string name="emoji_and_sticker">表情符號與貼圖</string>
     <string name="on_internet_search">在網路上搜尋</string>
+
+    <string name="file">文件</string>
+    <string name="audio">音訊</string>
+    <string name="local">位置</string>
+    <string name="vote">投票</string>
 </resources>

@@ -1,6 +1,9 @@
 package com.chat.joycom.ui.chat
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,6 +28,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -69,6 +74,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
 import androidx.core.util.TypedValueCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
@@ -79,6 +85,7 @@ import com.chat.joycom.ext.toTopTimeFormat
 import com.chat.joycom.model.Message
 import com.chat.joycom.network.UrlPath
 import com.chat.joycom.network.UrlPath.getFileFullUrl
+import com.chat.joycom.ui.commom.IconTextV
 
 @OptIn(
     ExperimentalLayoutApi::class, ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class,
@@ -109,7 +116,10 @@ fun ChatInput(
     }
     LaunchedEffect(imeBottom) {
         if (imeState)
-            imeHeightDP.floatValue = maxOf(imeHeightDP.floatValue, TypedValueCompat.pxToDp(imeBottom.toFloat(), res.displayMetrics))
+            imeHeightDP.floatValue = maxOf(
+                imeHeightDP.floatValue,
+                TypedValueCompat.pxToDp(imeBottom.toFloat(), res.displayMetrics)
+            )
     }
 
     val bottomHeight = animateDpAsState(
@@ -119,7 +129,11 @@ fun ChatInput(
 
     val scrollState = rememberScrollState(0)
     LaunchedEffect(scrollState.maxValue) {
-         scrollState.animateScrollTo(scrollState.maxValue)
+        scrollState.animateScrollTo(scrollState.maxValue)
+    }
+
+    var popUpShowState by remember {
+        mutableStateOf(false)
     }
 
     Column(
@@ -128,6 +142,61 @@ fun ChatInput(
             .wrapContentHeight()
             .padding(horizontal = 5.dp),
     ) {
+        Popup(
+            onDismissRequest = { popUpShowState = false },
+            alignment = Alignment.BottomCenter,
+        ) {
+            AnimatedVisibility(visible = popUpShowState, enter = fadeIn(), exit = fadeOut()) {
+                val popUpStringList = listOf(
+                    R.string.file,
+                    R.string.camera,
+                    R.string.gallery,
+                    R.string.audio,
+                    R.string.local,
+                    R.string.contacts,
+                    R.string.vote
+                )
+                val popUpDrawableList = listOf(
+                    R.drawable.ic_file,
+                    R.drawable.ic_camera,
+                    R.drawable.ic_image,
+                    R.drawable.ic_head_phone,
+                    R.drawable.ic_local,
+                    R.drawable.ic_contacts,
+                    R.drawable.ic_vote
+                )
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    modifier = Modifier
+                        .fillMaxWidth(.95f)
+                        .padding(bottom = 70.dp)
+                        .background(MaterialTheme.colorScheme.background, RoundedCornerShape(8.dp)),
+                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 25.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    popUpStringList.forEachIndexed { index, id ->
+                        item {
+                            IconTextV(
+                                icon = {
+                                    Icon(
+                                        painterResource(id = popUpDrawableList[index]),
+                                        "",
+                                        modifier = Modifier.size(50.dp)
+                                    )
+                                },
+                                text = { Text(text = stringResource(id = id)) },
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.clickable {
+                                    popUpShowState = false
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(5.dp),
@@ -168,7 +237,7 @@ fun ChatInput(
                         TextFieldDefaults.DecorationBox(
                             value = inputText,
                             innerTextField = innerTextField,
-                            placeholder = { Text(text = stringResource(id = R.string.send_msg))},
+                            placeholder = { Text(text = stringResource(id = R.string.send_msg)) },
                             enabled = true,
                             singleLine = true,
                             visualTransformation = VisualTransformation.None,
@@ -191,6 +260,9 @@ fun ChatInput(
                         .size(56.dp)
                         .rotate(-45f)
                         .scale(.6f)
+                        .clickable {
+                            popUpShowState = true
+                        }
                 )
                 Icon(
                     painterResource(id = R.drawable.ic_camera),
