@@ -59,82 +59,94 @@ class UserInfoActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             JoyComTheme {
-                Surface {
-                    Scaffold(
-                        topBar = {
-                            JoyComAppBar(
-                                showBack = true,
-                                title = { Text(text = stringResource(id = R.string.user_info)) }
-                            )
-                        }
-                    ) { paddingValues ->
-                        var showBottomSheet by remember { mutableStateOf(false) }
-                        val sheetState = rememberModalBottomSheetState()
-                        val scope = rememberCoroutineScope()
-                        Column(modifier = Modifier.padding(paddingValues)) {
-                            UserInfoHeader(showBottomSheet = { showBottomSheet = it })
-                            UserInfoList()
-                        }
-                        if (showBottomSheet) {
-                            ModalBottomSheet(onDismissRequest = { showBottomSheet = false }) {
-                                Column {
-                                    Text(
-                                        text = stringResource(id = R.string.self_icon),
+                Scaffold(
+                    topBar = {
+                        JoyComAppBar(
+                            title = { Text(text = stringResource(id = R.string.user_info)) }
+                        )
+                    }
+                ) { paddingValues ->
+                    var showBottomSheet by remember { mutableStateOf(false) }
+                    val sheetState = rememberModalBottomSheetState()
+                    val scope = rememberCoroutineScope()
+                    Column(modifier = Modifier.padding(paddingValues)) {
+                        UserInfoHeader(showBottomSheet = { showBottomSheet = it })
+                        UserInfoList()
+                    }
+                    if (showBottomSheet) {
+                        ModalBottomSheet(onDismissRequest = { showBottomSheet = false }) {
+                            Column {
+                                Text(
+                                    text = stringResource(id = R.string.self_icon),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 10.dp),
+                                    fontSize = 20.sp
+                                )
+                                Spacer(modifier = Modifier.size(20.dp))
+                                Row(
+                                    horizontalArrangement = Arrangement.SpaceAround,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    IconTextV(
+                                        icon = {
+                                            Icon(
+                                                painterResource(id = R.drawable.ic_camera),
+                                                ""
+                                            )
+                                        },
+                                        text = { Text(text = stringResource(id = R.string.camera)) },
+                                        horizontalAlignment = Alignment.CenterHorizontally,
                                         modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(start = 10.dp),
-                                        fontSize = 20.sp
+                                            .weight(1f)
+                                            .clickable {
+                                                showBottomSheet = false
+                                            }
                                     )
-                                    Spacer(modifier = Modifier.size(20.dp))
-                                    Row(
-                                        horizontalArrangement = Arrangement.SpaceAround,
-                                        modifier = Modifier.fillMaxWidth()
-                                    ) {
-                                        IconTextV(
-                                            icon = { Icon(painterResource(id = R.drawable.ic_camera), "") },
-                                            text = { Text(text = stringResource(id = R.string.camera)) },
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            modifier = Modifier
-                                                .weight(1f)
-                                                .clickable {
-                                                    showBottomSheet = false
-                                                }
-                                        )
-                                        IconTextV(
-                                            icon = { Icon(painterResource(id = R.drawable.ic_image), "") },
-                                            text = { Text(text = stringResource(id = R.string.gallery)) },
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            modifier = Modifier
-                                                .weight(1f)
-                                                .clickable {
-                                                    scope
-                                                        .launch { sheetState.hide() }
-                                                        .invokeOnCompletion {
-                                                            if (!sheetState.isVisible) {
-                                                                showBottomSheet = false
-                                                            }
+                                    IconTextV(
+                                        icon = {
+                                            Icon(
+                                                painterResource(id = R.drawable.ic_image),
+                                                ""
+                                            )
+                                        },
+                                        text = { Text(text = stringResource(id = R.string.gallery)) },
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .clickable {
+                                                scope
+                                                    .launch { sheetState.hide() }
+                                                    .invokeOnCompletion {
+                                                        if (!sheetState.isVisible) {
+                                                            showBottomSheet = false
                                                         }
-                                                }
-                                        )
-                                        IconTextV(
-                                            icon = { Icon(painterResource(id = R.drawable.ic_image), "") },
-                                            text = { Text(text = stringResource(id = R.string.avatar)) },
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            modifier = Modifier
-                                                .weight(1f)
-                                                .clickable {
-                                                    scope
-                                                        .launch { sheetState.hide() }
-                                                        .invokeOnCompletion {
-                                                            if (!sheetState.isVisible) {
-                                                                showBottomSheet = false
-                                                            }
+                                                    }
+                                            }
+                                    )
+                                    IconTextV(
+                                        icon = {
+                                            Icon(
+                                                painterResource(id = R.drawable.ic_image),
+                                                ""
+                                            )
+                                        },
+                                        text = { Text(text = stringResource(id = R.string.avatar)) },
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .clickable {
+                                                scope
+                                                    .launch { sheetState.hide() }
+                                                    .invokeOnCompletion {
+                                                        if (!sheetState.isVisible) {
+                                                            showBottomSheet = false
                                                         }
-                                                }
-                                        )
-                                    }
-                                    Spacer(modifier = Modifier.size(20.dp))
+                                                    }
+                                            }
+                                    )
                                 }
+                                Spacer(modifier = Modifier.size(20.dp))
                             }
                         }
                     }

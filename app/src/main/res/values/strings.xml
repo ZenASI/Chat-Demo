@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">JoyCom</string>
 
-    <string name="group">群組</string>
+    <string name="community">社群</string>
     <string name="chat">對話</string>
     <string name="update">更新</string>
     <string name="call">通話</string>
@@ -154,4 +154,16 @@
     <string name="audio">音訊</string>
     <string name="local">位置</string>
     <string name="vote">投票</string>
+    
+    <string name="save_notify">安全通知</string>
+    <string name="email_address">電子郵件地址</string>
+    <string name="two_step_verify">雙步驟驗證</string>
+    <string name="modify_phone">變更電話號碼</string>
+    <string name="require_account_info">要求帳號資訊</string>
+    <string name="delete_account">刪除帳號</string>
+
+    <string name="keep_community_linking">與社群保持聯絡</string>
+    <string name="keep_community_linking_desc">社群可將成員集中在主題群組中。並方便他們接收管理員公告。您已加入的所有社群都會在這裡顯示。</string>
+    <string name="keep_community_linking_sample">查看社群範例></string>
+    <string name="start_build_community">開始建立您的社群</string>
 </resources>

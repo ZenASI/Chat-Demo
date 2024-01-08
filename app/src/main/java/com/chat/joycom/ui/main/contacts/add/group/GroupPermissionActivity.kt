@@ -53,8 +53,8 @@ class GroupPermissionActivity : BaseActivity() {
                     Scaffold(
                         topBar = {
                             JoyComAppBar(
-                                showBack = true,
-                                title = { Text(text = stringResource(id = R.string.group_permission)) })
+                                title = { Text(text = stringResource(id = R.string.group_permission)) }
+                            )
                         }
                     ) { paddingValues ->
                         var editEnable by remember {

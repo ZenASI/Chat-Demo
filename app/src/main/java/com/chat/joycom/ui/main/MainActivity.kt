@@ -7,8 +7,6 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -17,14 +15,12 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -43,6 +39,7 @@ import com.chat.joycom.ui.commom.PermissionDescAlert
 import com.chat.joycom.ui.commom.PermissionType
 import com.chat.joycom.ui.login.LoginActivity
 import com.chat.joycom.ui.main.contacts.ContactsActivity
+import com.chat.joycom.ui.theme.JoyComFabTheme
 import com.chat.joycom.ui.theme.JoyComTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -50,7 +47,6 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 @AndroidEntryPoint
 @OptIn(ExperimentalFoundationApi::class)
@@ -68,7 +64,7 @@ class MainActivity : BaseActivity() {
 
     private val viewModel by viewModels<MainActivityViewModel>()
 
-    @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
+    @OptIn(ExperimentalPermissionsApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -85,29 +81,29 @@ class MainActivity : BaseActivity() {
             val pagerState = rememberPagerState(initialPage = 1) { joyComScenesList.size }
             val context = LocalContext.current
             JoyComTheme() {
-                Surface {
-                    Scaffold(
-                        topBar = {
-                            Column {
-                                JoyComAppBar(
-                                    showBack = false,
-                                    title = { Text(text = stringResource(id = R.string.app_name)) },
-                                    acton = { MainTopBarAction(pagerState) }
-                                )
-                                MainTableRow(
-                                    currentScene = joyComScenesList[pagerState.currentPage],
-                                    onClick = { ordinal ->
-                                        scope.launch { pagerState.animateScrollToPage(ordinal) }
-                                    })
-                            }
-                        },
-                        floatingActionButton = {
-                            // see ref:https://issuetracker.google.com/issues/224005027
-                            AnimatedVisibility(
-                                visible = pagerState.currentPage != 0,
-                                enter = fadeIn(),
-                                exit = fadeOut()
-                            ) {
+                Scaffold(
+                    topBar = {
+                        Column {
+                            JoyComAppBar(
+                                showBack = false,
+                                title = { Text(text = stringResource(id = R.string.app_name)) },
+                                acton = { MainTopBarAction(pagerState) }
+                            )
+                            MainTableRow(
+                                currentScene = joyComScenesList[pagerState.currentPage],
+                                onClick = { ordinal ->
+                                    scope.launch { pagerState.animateScrollToPage(ordinal) }
+                                })
+                        }
+                    },
+                    floatingActionButton = {
+                        // see ref:https://issuetracker.google.com/issues/224005027
+                        AnimatedVisibility(
+                            visible = pagerState.currentPage != 0,
+                            enter = fadeIn(),
+                            exit = fadeOut()
+                        ) {
+                            JoyComFabTheme {
                                 FloatingActionButton(
                                     onClick = {
                                         when (pagerState.currentPage) {
@@ -133,34 +129,35 @@ class MainActivity : BaseActivity() {
                                     Icon(Icons.Filled.Add, "")
                                 }
                             }
-                        },
-                        floatingActionButtonPosition = FabPosition.End
-                    ) { paddingValues ->
-                        HorizontalPager(
-                            contentPadding = paddingValues,
-                            state = pagerState,
-                        ) { pos ->
-                            joyComScenesList[pos].body.invoke()
                         }
+                    },
+                    floatingActionButtonPosition = FabPosition.End
+                ) { paddingValues ->
+                    HorizontalPager(
+                        contentPadding = paddingValues,
+                        state = pagerState,
+                    ) { pos ->
+                        joyComScenesList[pos].body.invoke()
                     }
-                    if (showPermissionDesc) {
-                        PermissionDescAlert(
-                            type = PermissionType.Contacts,
-                            showState = { showPermissionDesc = it },
-                            acceptCallback = {
-                                contactPermission.launchPermissionRequest()
-                            }
-                        )
-                    }
+                }
+                if (showPermissionDesc) {
+                    PermissionDescAlert(
+                        type = PermissionType.Contacts,
+                        showState = { showPermissionDesc = it },
+                        acceptCallback = {
+                            contactPermission.launchPermissionRequest()
+                        }
+                    )
                 }
             }
             LaunchedEffect(Unit) {
                 viewModel.uiAction.collect { uiEvent ->
-                    when (uiEvent){
+                    when (uiEvent) {
                         is UiEvent.GoLoginActEvent -> {
                             LoginActivity.start(this@MainActivity)
                             finish()
                         }
+
                         else -> {}
                     }
                 }

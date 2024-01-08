@@ -17,7 +17,7 @@ val md_theme_light_error = Color(0xFFBA1A1A)
 val md_theme_light_errorContainer = Color(0xFFFFDAD6)
 val md_theme_light_onError = Color(0xFFFFFFFF)
 val md_theme_light_onErrorContainer = Color(0xFF410002)
-val md_theme_light_background = Color(0xFFFBFDFA)
+val md_theme_light_background = Color.White
 val md_theme_light_onBackground = Color(0xFF191C1B)
 val md_theme_light_surface = Color(0xFFFBFDFA)
 val md_theme_light_onSurface = Color(0xFF191C1B)
@@ -48,7 +48,7 @@ val md_theme_dark_error = Color(0xFFFFB4AB)
 val md_theme_dark_errorContainer = Color(0xFF93000A)
 val md_theme_dark_onError = Color(0xFF690005)
 val md_theme_dark_onErrorContainer = Color(0xFFFFDAD6)
-val md_theme_dark_background = Color(0xFF191C1B)
+val md_theme_dark_background = Color(0xFF111B21)
 val md_theme_dark_onBackground = Color(0xFFE1E3E0)
 val md_theme_dark_surface = Color(0xFF191C1B)
 val md_theme_dark_onSurface = Color(0xFFE1E3E0)
@@ -66,4 +66,43 @@ val md_theme_dark_scrim = Color(0xFF000000)
 
 val seed = Color(0xFF008069)
 
+/**
+ * For [JoyComTopBarTheme]
+ */
+val TopBarDark = Color(0xFF202C33)
+val TopBarLight = Color(0xFF008069)
+val OnTopBarDark = Color.White
+val OnTopBarLight = Color.White
+
+val TabRowDark = Color(0xFF202C33)
+val TabRowLight = Color(0xFF008069)
+val OnTabSelectDark = Color(0xFF008069)
+val OnTabSelectLight = Color.White
+val OnTabUnSelectDark = Color(0xFF67767F)
+val OnTabUnSelectLight = Color(0xFF7CBEB2)
+
+/**
+ * for [JoyComDropDownTheme]
+ */
+val DropDownDark = Color(0xFF202C33)
+val DropDownLight = Color.White
+
+
+//val BtnDark = Color(0xFF00A884)
+//val BtnLight = Color(0xFF008069)
+//val OnBtnDark = Color(0xFF111B21)
+//val OnBtnLight = Color.White
+
+/**
+ * for [JoyComFabTheme]
+ */
+val FabDark = Color(0xFF00A884)
+val FabLight = Color(0xFF008069)
+val OnFabDark = Color(0xFF111B21)
+val OnFabLight = Color.White
+
+//val RadioSelectDark = Color(0xFF00A884)
+//val RadioSelectLight = Color(0xFF00A884)
+//val RadioUnSelectDark = Color(0xFF3B4A54)
+//val RadioUnSelectLight = Color(0xFF8696A0)
 

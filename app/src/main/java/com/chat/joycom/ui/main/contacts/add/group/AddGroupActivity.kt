@@ -48,6 +48,7 @@ import com.chat.joycom.ui.commom.IconTextH
 import com.chat.joycom.ui.commom.IconTextV
 import com.chat.joycom.ui.commom.JoyComAppBar
 import com.chat.joycom.ui.commom.LimitedTimeAlert
+import com.chat.joycom.ui.theme.JoyComFabTheme
 import com.chat.joycom.ui.theme.JoyComTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -77,7 +78,6 @@ class AddGroupActivity : BaseActivity() {
         }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -86,13 +86,14 @@ class AddGroupActivity : BaseActivity() {
                     Scaffold(
                         topBar = {
                             JoyComAppBar(
-                                showBack = true,
                                 title = { Text(text = stringResource(id = R.string.new_group)) }
                             )
                         },
                         floatingActionButton = {
-                            FloatingActionButton(onClick = { finish() }) {
-                                Icon(Icons.Filled.Check, "")
+                            JoyComFabTheme {
+                                FloatingActionButton(onClick = { finish() }) {
+                                    Icon(Icons.Filled.Check, "")
+                                }
                             }
                         }
                     ) { paddingValues ->

@@ -11,10 +11,13 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,8 +31,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -53,7 +55,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -64,10 +68,17 @@ import com.chat.joycom.network.UrlPath
 import com.chat.joycom.network.UrlPath.getFileFullUrl
 import com.chat.joycom.ui.chat.ChatActivity
 import com.chat.joycom.ui.commom.PermissionType
+import com.chat.joycom.ui.commom.TopBarIcon
 import com.chat.joycom.ui.setting.SettingActivity
+import com.chat.joycom.ui.theme.JoyComDropDownTheme
+import com.chat.joycom.ui.theme.OnTabSelectDark
+import com.chat.joycom.ui.theme.OnTabSelectLight
+import com.chat.joycom.ui.theme.OnTabUnSelectDark
+import com.chat.joycom.ui.theme.OnTabUnSelectLight
+import com.chat.joycom.ui.theme.TabRowDark
+import com.chat.joycom.ui.theme.TabRowLight
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import timber.log.Timber
 
 @Composable
 fun CallScene(viewModel: MainActivityViewModel = viewModel()) {
@@ -81,13 +92,27 @@ fun CallScene(viewModel: MainActivityViewModel = viewModel()) {
 }
 
 @Composable
-fun GroupScene(viewModel: MainActivityViewModel = viewModel()) {
-    Box(
+fun CommunityScene(viewModel: MainActivityViewModel = viewModel()) {
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .padding(top = 20.dp, start = 20.dp, end = 20.dp)
+            .background(MaterialTheme.colorScheme.background),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(15.dp)
     ) {
+        Image(painterResource(id = R.drawable.ic_bg), "")
+        Text(text = stringResource(id = R.string.keep_community_linking), fontWeight = FontWeight.Bold, fontSize = 26.sp)
+        Text(text = stringResource(id = R.string.keep_community_linking_desc))
+        Text(text = stringResource(id = R.string.keep_community_linking_sample))
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = {
 
+            }
+        ) {
+            Text(text = stringResource(id = R.string.start_build_community))
+        }
     }
 }
 
@@ -170,7 +195,7 @@ fun ChatScene(viewModel: MainActivityViewModel = viewModel()) {
 }
 
 @Composable
-fun UpdateScene(viewmode: MainActivityViewModel = viewModel()) {
+fun UpdateScene(viewModel: MainActivityViewModel = viewModel()) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -183,22 +208,31 @@ fun UpdateScene(viewmode: MainActivityViewModel = viewModel()) {
 @Composable
 fun MainTableRow(currentScene: JoyComScene, onClick: (Int) -> Unit) {
     val joyComScenesList = JoyComScene.values().toList()
+    val containerColor = if (isSystemInDarkTheme()) TabRowDark else TabRowLight
+    val selectColor = if (isSystemInDarkTheme()) OnTabSelectDark else OnTabSelectLight
+    val unSelectColor = if (isSystemInDarkTheme()) OnTabUnSelectDark else OnTabUnSelectLight
     TabRow(
         selectedTabIndex = currentScene.ordinal,
         divider = { },
+        containerColor = containerColor,
         indicator = { tabPositions ->
-            Timber.d("${tabPositions}")
             if (currentScene.ordinal < tabPositions.size) {
                 TabRowDefaults.Indicator(
                     Modifier.composed {
                         val currentTabWidth by animateDpAsState(
                             targetValue = tabPositions[currentScene.ordinal].width,
-                            animationSpec = tween(durationMillis = 50, easing = FastOutSlowInEasing),
+                            animationSpec = tween(
+                                durationMillis = 50,
+                                easing = FastOutSlowInEasing
+                            ),
                             ""
                         )
                         val indicatorOffset by animateDpAsState(
                             targetValue = tabPositions[currentScene.ordinal].left,
-                            animationSpec = tween(durationMillis = 50, easing = FastOutSlowInEasing),
+                            animationSpec = tween(
+                                durationMillis = 50,
+                                easing = FastOutSlowInEasing
+                            ),
                             ""
                         )
                         fillMaxWidth()
@@ -208,6 +242,7 @@ fun MainTableRow(currentScene: JoyComScene, onClick: (Int) -> Unit) {
                             .width(currentTabWidth)
                     },
 //                    1.dp,
+                    color = selectColor
                 )
             }
         }
@@ -216,6 +251,8 @@ fun MainTableRow(currentScene: JoyComScene, onClick: (Int) -> Unit) {
             Tab(
                 selected = currentScene.ordinal == index,
                 onClick = { onClick.invoke(index) },
+                selectedContentColor = selectColor,
+                unselectedContentColor = unSelectColor
             ) {
                 if (index == 0) {
                     Icon(painterResource(id = R.drawable.ic_group), "")
@@ -269,50 +306,51 @@ fun MainTopBarAction(pagerState: PagerState) {
         }
     }
     val context = LocalContext.current
-    Icon(
-        painterResource(id = R.drawable.ic_camera),
-        "",
-        modifier = Modifier.clickable {
-            // TODO: open camera
-        })
-
-    AnimatedVisibility(
-        visible = pagerState.currentPage != 0,
-        enter = fadeIn() + expandHorizontally(),
-        exit = fadeOut() + shrinkHorizontally()
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(15.dp),
+        modifier = Modifier
     ) {
-        Icon(
-            painterResource(id = R.drawable.ic_search),
-            "",
-            modifier = Modifier.clickable {
+        TopBarIcon(
+            R.drawable.ic_camera,
+            onClick = {},
+        )
 
-            })
-    }
-    Box() {
-        Icon(
-            Icons.Filled.MoreVert,
-            "",
-            modifier = Modifier.clickable {
-                isExpanded = true
-            })
-        DropdownMenu(
-            expanded = isExpanded,
-            onDismissRequest = { isExpanded = false },
+        AnimatedVisibility(
+            visible = pagerState.currentPage != 0,
+            enter = fadeIn() + expandHorizontally(),
+            exit = fadeOut() + shrinkHorizontally()
+        ) {
+            TopBarIcon(
+                R.drawable.ic_search,
+                onClick = {},
+            )
+        }
+        Box {
+            TopBarIcon(
+                R.drawable.ic_more_vert,
+                onClick = { isExpanded = true }
+            )
+            JoyComDropDownTheme {
+                DropdownMenu(
+                    expanded = isExpanded,
+                    onDismissRequest = { isExpanded = false },
 
-            ) {
-            dropDownList.forEach {
-                DropdownMenuItem(
-                    text = { Text(text = stringResource(id = it.itemName)) },
-                    onClick = {
-                        isExpanded = false
-                        when (it) {
-                            MainDropDown.Setting -> SettingActivity.start(context)
+                    ) {
+                    dropDownList.forEach {
+                        DropdownMenuItem(
+                            text = { Text(text = stringResource(id = it.itemName)) },
+                            onClick = {
+                                isExpanded = false
+                                when (it) {
+                                    MainDropDown.Setting -> SettingActivity.start(context)
 
-                            else -> {
+                                    else -> {
 
-                            }
-                        }
-                    })
+                                    }
+                                }
+                            })
+                    }
+                }
             }
         }
     }

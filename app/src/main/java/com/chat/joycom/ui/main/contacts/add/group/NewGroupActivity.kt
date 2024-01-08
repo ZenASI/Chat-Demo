@@ -33,6 +33,8 @@ import com.chat.joycom.R
 import com.chat.joycom.ui.BaseActivity
 import com.chat.joycom.ui.UiEvent
 import com.chat.joycom.ui.commom.JoyComAppBar
+import com.chat.joycom.ui.commom.TopBarIcon
+import com.chat.joycom.ui.theme.JoyComFabTheme
 import com.chat.joycom.ui.theme.JoyComTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -52,65 +54,65 @@ class NewGroupActivity : BaseActivity() {
         }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             val snackBarHostState = remember { SnackbarHostState() }
             val scope = rememberCoroutineScope()
             JoyComTheme {
-                Surface {
-                    Scaffold(
-                        topBar = {
-                            JoyComAppBar(
-                                showBack = true,
-                                title = {
-                                    Column {
-                                        Text(text = stringResource(id = R.string.new_group))
-                                        Text(
-                                            text = stringResource(id = R.string.add_member),
-                                            fontSize = 14.sp
-                                        )
-                                    }
-                                },
-                                acton = {
-                                    Icon(painterResource(id = R.drawable.ic_search), "")
+                Scaffold(
+                    topBar = {
+                        JoyComAppBar(
+                            title = {
+                                Column {
+                                    Text(text = stringResource(id = R.string.new_group))
+                                    Text(
+                                        text = stringResource(id = R.string.add_member),
+                                        fontSize = 14.sp
+                                    )
                                 }
-                            )
-                        },
-                        floatingActionButton = {
+                            },
+                            acton = {
+                                TopBarIcon(R.drawable.ic_search, onClick = {})
+                            }
+                        )
+                    },
+                    floatingActionButton = {
+                        JoyComFabTheme {
                             FloatingActionButton(onClick = {
                                 viewModel.createGroupCheck()
                             }) {
                                 Icon(Icons.Filled.ArrowForward, "")
                             }
-                        },
-                        snackbarHost = { SnackbarHost(snackBarHostState) },
-                    ) { paddingValues ->
-                        Column(
-                            modifier = Modifier
-                                .padding(paddingValues)
-                                .fillMaxSize(),
-                            verticalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            Spacer(modifier = Modifier.size(15.dp))
-                            NewGroupSelectContactRow()
-                            NewGroupColumnList()
                         }
+                    },
+                    snackbarHost = { SnackbarHost(snackBarHostState) },
+                ) { paddingValues ->
+                    Column(
+                        modifier = Modifier
+                            .padding(paddingValues)
+                            .fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        Spacer(modifier = Modifier.size(15.dp))
+                        NewGroupSelectContactRow()
+                        NewGroupColumnList()
                     }
                 }
             }
             LaunchedEffect(Unit) {
                 viewModel.uiAction.collect { uiEvent ->
-                    when (uiEvent){
+                    when (uiEvent) {
                         is UiEvent.ToastEvent -> {
                             scope.launch {
                                 snackBarHostState.showSnackbar(message = getString(R.string.need_select_at_least_one_member))
                             }
                         }
+
                         is UiEvent.GoAddGroupEvent -> {
                             AddGroupActivity.start(this@NewGroupActivity, uiEvent.list)
                         }
+
                         else -> {}
                     }
                 }

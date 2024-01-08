@@ -66,7 +66,6 @@ class LoginActivity : BaseActivity() {
                         topBar = {
                             Column {
                                 JoyComAppBar(
-                                    showBack = true,
                                     title = {
                                         Text(
                                             text = stringResource(id = R.string.pls_input_phone),

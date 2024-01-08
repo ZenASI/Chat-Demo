@@ -49,43 +49,27 @@ class QRCodeActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             JoyComTheme {
-                Surface {
-                    val tabList = QRCodeScene.values().toList()
-                    val scope = rememberCoroutineScope()
-                    val pagerState = rememberPagerState { tabList.size }
-                    Scaffold(topBar = {
-                        Column {
-                            JoyComAppBar(
-                                showBack = true,
-                                title = { Text(text = stringResource(id = R.string.qrcode)) },
-                                acton = {
-                                    Icon(Icons.Filled.Share, "", modifier = Modifier.clickable {
-//                                        val sendIntent = Intent().apply {
-//                                            action = Intent.ACTION_SEND
-//                                            putExtra(Intent.EXTRA_STREAM, "uri")
-//                                            type = "image/jpeg"
-//                                        }
-//                                        val shareIntent = Intent.createChooser(sendIntent, null)
-//                                        startActivity(shareIntent)
-                                    })
-                                    Icon(Icons.Filled.MoreVert, "", modifier = Modifier.clickable {
-
-                                    })
-                                }
-                            )
-                            QrcodeTabRow(
-                                currentScene = tabList[pagerState.currentPage],
-                                onClick = { ordinal ->
-                                    scope.launch { pagerState.animateScrollToPage(ordinal) }
-                                })
-                        }
-                    }) { paddingValues ->
-                        HorizontalPager(
-                            state = pagerState,
-                            modifier = Modifier.padding(paddingValues)
-                        ) {
-                            tabList[it].body.invoke()
-                        }
+                val tabList = QRCodeScene.values().toList()
+                val scope = rememberCoroutineScope()
+                val pagerState = rememberPagerState { tabList.size }
+                Scaffold(topBar = {
+                    Column {
+                        JoyComAppBar(
+                            title = { Text(text = stringResource(id = R.string.qrcode)) },
+                            acton = { QrcodeTopBarAction() }
+                        )
+                        QrcodeTabRow(
+                            currentScene = tabList[pagerState.currentPage],
+                            onClick = { ordinal ->
+                                scope.launch { pagerState.animateScrollToPage(ordinal) }
+                            })
+                    }
+                }) { paddingValues ->
+                    HorizontalPager(
+                        state = pagerState,
+                        modifier = Modifier.padding(paddingValues)
+                    ) {
+                        tabList[it].body.invoke()
                     }
                 }
             }
