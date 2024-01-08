@@ -13,6 +13,7 @@ import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -65,9 +66,14 @@ import com.chat.joycom.network.UrlPath.getFileFullUrl
 import com.chat.joycom.ui.chat.ChatActivity
 import com.chat.joycom.ui.commom.PermissionType
 import com.chat.joycom.ui.setting.SettingActivity
+import com.chat.joycom.ui.theme.OnTabSelectDark
+import com.chat.joycom.ui.theme.OnTabSelectLight
+import com.chat.joycom.ui.theme.OnTabUnSelectDark
+import com.chat.joycom.ui.theme.OnTabUnSelectLight
+import com.chat.joycom.ui.theme.TabRowDark
+import com.chat.joycom.ui.theme.TabRowLight
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import timber.log.Timber
 
 @Composable
 fun CallScene(viewModel: MainActivityViewModel = viewModel()) {
@@ -183,22 +189,31 @@ fun UpdateScene(viewmode: MainActivityViewModel = viewModel()) {
 @Composable
 fun MainTableRow(currentScene: JoyComScene, onClick: (Int) -> Unit) {
     val joyComScenesList = JoyComScene.values().toList()
+    val containerColor = if (isSystemInDarkTheme()) TabRowDark else TabRowLight
+    val selectColor = if (isSystemInDarkTheme()) OnTabSelectDark else OnTabSelectLight
+    val unSelectColor = if (isSystemInDarkTheme()) OnTabUnSelectDark else OnTabUnSelectLight
     TabRow(
         selectedTabIndex = currentScene.ordinal,
         divider = { },
+        containerColor = containerColor,
         indicator = { tabPositions ->
-            Timber.d("${tabPositions}")
             if (currentScene.ordinal < tabPositions.size) {
                 TabRowDefaults.Indicator(
                     Modifier.composed {
                         val currentTabWidth by animateDpAsState(
                             targetValue = tabPositions[currentScene.ordinal].width,
-                            animationSpec = tween(durationMillis = 50, easing = FastOutSlowInEasing),
+                            animationSpec = tween(
+                                durationMillis = 50,
+                                easing = FastOutSlowInEasing
+                            ),
                             ""
                         )
                         val indicatorOffset by animateDpAsState(
                             targetValue = tabPositions[currentScene.ordinal].left,
-                            animationSpec = tween(durationMillis = 50, easing = FastOutSlowInEasing),
+                            animationSpec = tween(
+                                durationMillis = 50,
+                                easing = FastOutSlowInEasing
+                            ),
                             ""
                         )
                         fillMaxWidth()
@@ -208,6 +223,7 @@ fun MainTableRow(currentScene: JoyComScene, onClick: (Int) -> Unit) {
                             .width(currentTabWidth)
                     },
 //                    1.dp,
+                    color = selectColor
                 )
             }
         }
@@ -216,6 +232,8 @@ fun MainTableRow(currentScene: JoyComScene, onClick: (Int) -> Unit) {
             Tab(
                 selected = currentScene.ordinal == index,
                 onClick = { onClick.invoke(index) },
+                selectedContentColor = selectColor,
+                unselectedContentColor = unSelectColor
             ) {
                 if (index == 0) {
                     Icon(painterResource(id = R.drawable.ic_group), "")
