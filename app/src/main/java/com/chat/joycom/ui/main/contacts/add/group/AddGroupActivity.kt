@@ -48,6 +48,7 @@ import com.chat.joycom.ui.commom.IconTextH
 import com.chat.joycom.ui.commom.IconTextV
 import com.chat.joycom.ui.commom.JoyComAppBar
 import com.chat.joycom.ui.commom.LimitedTimeAlert
+import com.chat.joycom.ui.theme.JoyComFabTheme
 import com.chat.joycom.ui.theme.JoyComTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -89,8 +90,10 @@ class AddGroupActivity : BaseActivity() {
                             )
                         },
                         floatingActionButton = {
-                            FloatingActionButton(onClick = { finish() }) {
-                                Icon(Icons.Filled.Check, "")
+                            JoyComFabTheme {
+                                FloatingActionButton(onClick = { finish() }) {
+                                    Icon(Icons.Filled.Check, "")
+                                }
                             }
                         }
                     ) { paddingValues ->

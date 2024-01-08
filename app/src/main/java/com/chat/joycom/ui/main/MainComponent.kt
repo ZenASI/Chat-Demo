@@ -55,7 +55,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -100,7 +102,7 @@ fun CommunityScene(viewModel: MainActivityViewModel = viewModel()) {
         verticalArrangement = Arrangement.spacedBy(15.dp)
     ) {
         Image(painterResource(id = R.drawable.ic_bg), "")
-        Text(text = stringResource(id = R.string.keep_community_linking))
+        Text(text = stringResource(id = R.string.keep_community_linking), fontWeight = FontWeight.Bold, fontSize = 26.sp)
         Text(text = stringResource(id = R.string.keep_community_linking_desc))
         Text(text = stringResource(id = R.string.keep_community_linking_sample))
         Button(
@@ -193,7 +195,7 @@ fun ChatScene(viewModel: MainActivityViewModel = viewModel()) {
 }
 
 @Composable
-fun UpdateScene(viewmode: MainActivityViewModel = viewModel()) {
+fun UpdateScene(viewModel: MainActivityViewModel = viewModel()) {
     Box(
         modifier = Modifier
             .fillMaxSize()

@@ -87,3 +87,22 @@ val OnTabUnSelectLight = Color(0xFF7CBEB2)
 val DropDownDark = Color(0xFF202C33)
 val DropDownLight = Color.White
 
+
+//val BtnDark = Color(0xFF00A884)
+//val BtnLight = Color(0xFF008069)
+//val OnBtnDark = Color(0xFF111B21)
+//val OnBtnLight = Color.White
+
+/**
+ * for [JoyComFabTheme]
+ */
+val FabDark = Color(0xFF00A884)
+val FabLight = Color(0xFF008069)
+val OnFabDark = Color(0xFF111B21)
+val OnFabLight = Color.White
+
+//val RadioSelectDark = Color(0xFF00A884)
+//val RadioSelectLight = Color(0xFF00A884)
+//val RadioUnSelectDark = Color(0xFF3B4A54)
+//val RadioUnSelectLight = Color(0xFF8696A0)
+

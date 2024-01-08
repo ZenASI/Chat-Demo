@@ -34,6 +34,7 @@ import com.chat.joycom.ui.BaseActivity
 import com.chat.joycom.ui.UiEvent
 import com.chat.joycom.ui.commom.JoyComAppBar
 import com.chat.joycom.ui.commom.TopBarIcon
+import com.chat.joycom.ui.theme.JoyComFabTheme
 import com.chat.joycom.ui.theme.JoyComTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -77,10 +78,12 @@ class NewGroupActivity : BaseActivity() {
                         )
                     },
                     floatingActionButton = {
-                        FloatingActionButton(onClick = {
-                            viewModel.createGroupCheck()
-                        }) {
-                            Icon(Icons.Filled.ArrowForward, "")
+                        JoyComFabTheme {
+                            FloatingActionButton(onClick = {
+                                viewModel.createGroupCheck()
+                            }) {
+                                Icon(Icons.Filled.ArrowForward, "")
+                            }
                         }
                     },
                     snackbarHost = { SnackbarHost(snackBarHostState) },

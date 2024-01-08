@@ -39,6 +39,7 @@ import com.chat.joycom.ui.commom.PermissionDescAlert
 import com.chat.joycom.ui.commom.PermissionType
 import com.chat.joycom.ui.login.LoginActivity
 import com.chat.joycom.ui.main.contacts.ContactsActivity
+import com.chat.joycom.ui.theme.JoyComFabTheme
 import com.chat.joycom.ui.theme.JoyComTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -102,29 +103,31 @@ class MainActivity : BaseActivity() {
                             enter = fadeIn(),
                             exit = fadeOut()
                         ) {
-                            FloatingActionButton(
-                                onClick = {
-                                    when (pagerState.currentPage) {
-                                        1 -> {
-                                            if (contactPermission.status.isGranted) {
-                                                ContactsActivity.start(context)
-                                            } else {
-                                                if (contactPermission.status.shouldShowRationale) {
-                                                    showPermissionDesc = true
+                            JoyComFabTheme {
+                                FloatingActionButton(
+                                    onClick = {
+                                        when (pagerState.currentPage) {
+                                            1 -> {
+                                                if (contactPermission.status.isGranted) {
+                                                    ContactsActivity.start(context)
                                                 } else {
-                                                    contactPermission.launchPermissionRequest()
+                                                    if (contactPermission.status.shouldShowRationale) {
+                                                        showPermissionDesc = true
+                                                    } else {
+                                                        contactPermission.launchPermissionRequest()
+                                                    }
                                                 }
                                             }
-                                        }
 
-                                        else -> {}
-                                    }
-                                },
-                                elevation = FloatingActionButtonDefaults.elevation(0.dp),
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                            ) {
-                                Icon(Icons.Filled.Add, "")
+                                            else -> {}
+                                        }
+                                    },
+                                    elevation = FloatingActionButtonDefaults.elevation(0.dp),
+                                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                ) {
+                                    Icon(Icons.Filled.Add, "")
+                                }
                             }
                         }
                     },
