@@ -118,7 +118,6 @@ class ChatActivity : BaseActivity() {
                     Scaffold(
                         topBar = {
                             JoyComAppBar(
-                                showBack = true,
                                 title = {
                                     Row(
                                         verticalAlignment = Alignment.CenterVertically,
@@ -142,11 +141,7 @@ class ChatActivity : BaseActivity() {
                                         Text(title ?: "")
                                     }
                                 },
-                                acton = {
-                                    Icon(painterResource(id = R.drawable.ic_videocam), "")
-                                    Icon(Icons.Filled.Phone, "")
-                                    Icon(Icons.Filled.MoreVert, "")
-                                }
+                                acton = { ChatTopBarAction() }
                             )
                         },
                         bottomBar = {

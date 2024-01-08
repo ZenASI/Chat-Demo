@@ -33,28 +33,27 @@ class ContactsActivity : BaseActivity() {
         }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             JoyComTheme {
-                Surface {
-                    Scaffold(
-                        topBar = {
-                            JoyComAppBar(
-                                showBack = true,
-                                title = {
-                                    Column {
-                                        Text(text = stringResource(id = R.string.select_contact))
-                                        Text(text = stringResource(id = R.string.per_contacts, 3), fontSize = 14.sp)
-                                    }
-                                },
-                                acton = { ContactsTopBarActions() }
-                            )
-                        }
-                    ) { paddingValues ->
-                        ContactsColumn(modifier = Modifier.padding(paddingValues))
+                Scaffold(
+                    topBar = {
+                        JoyComAppBar(
+                            title = {
+                                Column {
+                                    Text(text = stringResource(id = R.string.select_contact))
+                                    Text(
+                                        text = stringResource(id = R.string.per_contacts, 3),
+                                        fontSize = 14.sp
+                                    )
+                                }
+                            },
+                            acton = { ContactsTopBarActions() }
+                        )
                     }
+                ) { paddingValues ->
+                    ContactsColumn(modifier = Modifier.padding(paddingValues))
                 }
             }
         }

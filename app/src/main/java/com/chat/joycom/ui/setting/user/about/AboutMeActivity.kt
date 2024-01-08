@@ -45,6 +45,8 @@ import com.chat.joycom.R
 import com.chat.joycom.ui.BaseActivity
 import com.chat.joycom.ui.commom.IconTextH
 import com.chat.joycom.ui.commom.JoyComAppBar
+import com.chat.joycom.ui.commom.TopBarIcon
+import com.chat.joycom.ui.theme.JoyComDropDownTheme
 import com.chat.joycom.ui.theme.JoyComTheme
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
@@ -76,7 +78,8 @@ class AboutMeActivity : BaseActivity() {
         }
     })
 
-    @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
+    @OptIn(
+        ExperimentalFoundationApi::class,
         ExperimentalComposeUiApi::class
     )
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,16 +89,13 @@ class AboutMeActivity : BaseActivity() {
                 mutableStateOf(false)
             }
             JoyComTheme {
-                Surface {
-                    Scaffold(topBar = {
-                        JoyComAppBar(
-                            showBack = true,
-                            title = { Text(text = stringResource(id = R.string.about_me)) },
-                            acton = {
-                                Box() {
-                                    Icon(Icons.Filled.MoreVert, "", modifier = Modifier.clickable {
-                                        isExpanded = true
-                                    })
+                Scaffold(topBar = {
+                    JoyComAppBar(
+                        title = { Text(text = stringResource(id = R.string.about_me)) },
+                        acton = {
+                            Box {
+                                TopBarIcon(R.drawable.ic_more_vert, onClick = { isExpanded = true })
+                                JoyComDropDownTheme {
                                     DropdownMenu(
                                         expanded = isExpanded,
                                         onDismissRequest = { isExpanded = false }) {
@@ -104,61 +104,59 @@ class AboutMeActivity : BaseActivity() {
                                             onClick = { isExpanded = false })
                                     }
                                 }
-
                             }
-                        )
-                    }) { paddingValues ->
-
-                        val itemList =
-                            viewModel.aboutList.collectAsState(initial = emptyList()).value
-                        val offset = remember {
-                            mutableStateOf(Offset.Zero)
                         }
-                        Column(modifier = Modifier.padding(paddingValues)) {
-                            itemList.forEach { about ->
-                                var itemIsExpanded by remember {
-                                    mutableStateOf(false)
-                                }
-                                Box(modifier = Modifier.pointerInteropFilter {
-                                    offset.value = Offset(it.x, it.y)
-                                    false
-                                }) {
-                                    IconTextH(
-                                        text = {
-                                            Text(
-                                                about.aboutText,
-                                                modifier = Modifier
+                    )
+                }) { paddingValues ->
+                    val itemList =
+                        viewModel.aboutList.collectAsState(initial = emptyList()).value
+                    val offset = remember {
+                        mutableStateOf(Offset.Zero)
+                    }
+                    Column(modifier = Modifier.padding(paddingValues)) {
+                        itemList.forEach { about ->
+                            var itemIsExpanded by remember {
+                                mutableStateOf(false)
+                            }
+                            Box(modifier = Modifier.pointerInteropFilter {
+                                offset.value = Offset(it.x, it.y)
+                                false
+                            }) {
+                                IconTextH(
+                                    text = {
+                                        Text(
+                                            about.aboutText,
+                                            modifier = Modifier
+                                        )
+                                    },
+                                    action = {
+                                        if (about.isSelect) {
+                                            Icon(
+                                                Icons.Filled.Check,
+                                                "",
+                                                modifier = Modifier.size(50.dp)
                                             )
-                                        },
-                                        action = {
-                                            if (about.isSelect) {
-                                                Icon(
-                                                    Icons.Filled.Check,
-                                                    "",
-                                                    modifier = Modifier.size(50.dp)
-                                                )
-                                            }
-                                        },
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(60.dp)
-                                            .combinedClickable(
-                                                onClick = { viewModel.upDateSelect(about) },
-                                                onLongClick = { itemIsExpanded = true }
-                                            )
-                                    )
-                                    DropdownMenu(
-                                        expanded = itemIsExpanded,
-                                        offset = DpOffset(offset.value.x.dp, 0.dp),
-                                        onDismissRequest = { itemIsExpanded = false }) {
-                                        DropdownMenuItem(
-                                            text = { Text(text = stringResource(id = R.string.delete)) },
-                                            onClick = {
-                                                itemIsExpanded = false
-                                                viewModel.deleteAbout(about)
-                                            })
-                                    }
+                                        }
+                                    },
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(60.dp)
+                                        .combinedClickable(
+                                            onClick = { viewModel.upDateSelect(about) },
+                                            onLongClick = { itemIsExpanded = true }
+                                        )
+                                )
+                                DropdownMenu(
+                                    expanded = itemIsExpanded,
+                                    offset = DpOffset(offset.value.x.dp, 0.dp),
+                                    onDismissRequest = { itemIsExpanded = false }) {
+                                    DropdownMenuItem(
+                                        text = { Text(text = stringResource(id = R.string.delete)) },
+                                        onClick = {
+                                            itemIsExpanded = false
+                                            viewModel.deleteAbout(about)
+                                        })
                                 }
                             }
                         }

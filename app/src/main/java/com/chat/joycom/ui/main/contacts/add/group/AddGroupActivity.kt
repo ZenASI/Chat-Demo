@@ -77,7 +77,6 @@ class AddGroupActivity : BaseActivity() {
         }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -86,7 +85,6 @@ class AddGroupActivity : BaseActivity() {
                     Scaffold(
                         topBar = {
                             JoyComAppBar(
-                                showBack = true,
                                 title = { Text(text = stringResource(id = R.string.new_group)) }
                             )
                         },

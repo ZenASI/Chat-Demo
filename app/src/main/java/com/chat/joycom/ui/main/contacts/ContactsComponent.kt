@@ -2,7 +2,9 @@ package com.chat.joycom.ui.main.contacts
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,9 +33,11 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chat.joycom.R
 import com.chat.joycom.ui.commom.IconTextH
+import com.chat.joycom.ui.commom.TopBarIcon
 import com.chat.joycom.ui.main.contacts.add.contacts.AddContactActivity
 import com.chat.joycom.ui.main.contacts.add.group.NewGroupActivity
 import com.chat.joycom.ui.setting.qrcode.QRCodeActivity
+import com.chat.joycom.ui.theme.JoyComDropDownTheme
 
 @Composable
 fun ContactsTopBarActions() {
@@ -41,12 +45,12 @@ fun ContactsTopBarActions() {
     var isExpanded by remember {
         mutableStateOf(false)
     }
-    Icon(painterResource(id = R.drawable.ic_search), "")
-    Box(modifier = Modifier) {
-        Icon(Icons.Filled.MoreVert, "", modifier = Modifier.clickable {
-            isExpanded = true
-        })
-        DropdownMenu(expanded = isExpanded, onDismissRequest = { isExpanded = false }) {
+    Row(horizontalArrangement = Arrangement.spacedBy(15.dp)) {
+        TopBarIcon(R.drawable.ic_search, onClick = {})
+        Box(modifier = Modifier) {
+            Icon(Icons.Filled.MoreVert, "", modifier = Modifier.clickable {
+                isExpanded = true
+            })
             val menuList by remember {
                 mutableStateOf(
                     listOf(
@@ -57,14 +61,17 @@ fun ContactsTopBarActions() {
                     )
                 )
             }
-
-            menuList.forEach {
-                DropdownMenuItem(
-                    text = { Text(text = stringResource(id = it)) },
-                    onClick = {
-                        isExpanded = false
+            JoyComDropDownTheme {
+                DropdownMenu(expanded = isExpanded, onDismissRequest = { isExpanded = false }) {
+                    menuList.forEach {
+                        DropdownMenuItem(
+                            text = { Text(text = stringResource(id = it)) },
+                            onClick = {
+                                isExpanded = false
+                            }
+                        )
                     }
-                )
+                }
             }
         }
     }

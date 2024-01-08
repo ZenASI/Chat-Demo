@@ -81,3 +81,9 @@ val OnTabSelectLight = Color.White
 val OnTabUnSelectDark = Color(0xFF67767F)
 val OnTabUnSelectLight = Color(0xFF7CBEB2)
 
+/**
+ * for [JoyComDropDownTheme]
+ */
+val DropDownDark = Color(0xFF202C33)
+val DropDownLight = Color.White
+

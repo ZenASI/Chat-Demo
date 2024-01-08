@@ -37,6 +37,8 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
@@ -86,6 +88,7 @@ import com.chat.joycom.model.Message
 import com.chat.joycom.network.UrlPath
 import com.chat.joycom.network.UrlPath.getFileFullUrl
 import com.chat.joycom.ui.commom.IconTextV
+import com.chat.joycom.ui.commom.TopBarIcon
 
 @OptIn(
     ExperimentalLayoutApi::class, ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class,
@@ -510,5 +513,14 @@ fun OtherMsg(message: Message, modifier: Modifier = Modifier) {
                 }
             }
         }
+    }
+}
+
+@Composable
+fun ChatTopBarAction() {
+    Row(horizontalArrangement = Arrangement.spacedBy(15.dp)) {
+        TopBarIcon(R.drawable.ic_videocam, onClick = {})
+        TopBarIcon(R.drawable.ic_phone, onClick = {})
+        TopBarIcon(R.drawable.ic_more_vert, onClick = {})
     }
 }

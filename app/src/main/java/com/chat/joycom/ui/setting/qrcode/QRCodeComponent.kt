@@ -2,9 +2,12 @@ package com.chat.joycom.ui.setting.qrcode
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +16,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
@@ -39,6 +45,13 @@ import com.chat.joycom.R
 import com.chat.joycom.ui.commom.PermissionDescAlert
 import com.chat.joycom.ui.commom.PermissionType
 import com.chat.joycom.ui.commom.QrcodeCamera
+import com.chat.joycom.ui.commom.TopBarIcon
+import com.chat.joycom.ui.theme.OnTabSelectDark
+import com.chat.joycom.ui.theme.OnTabSelectLight
+import com.chat.joycom.ui.theme.OnTabUnSelectDark
+import com.chat.joycom.ui.theme.OnTabUnSelectLight
+import com.chat.joycom.ui.theme.TabRowDark
+import com.chat.joycom.ui.theme.TabRowLight
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -141,14 +154,19 @@ fun ScanQrcode() {
 @Composable
 fun QrcodeTabRow(currentScene: QRCodeScene, onClick: (Int) -> Unit) {
     val tabList = QRCodeScene.values().toList()
+    val containerColor = if (isSystemInDarkTheme()) TabRowDark else TabRowLight
+    val selectColor = if (isSystemInDarkTheme()) OnTabSelectDark else OnTabSelectLight
+    val unSelectColor = if (isSystemInDarkTheme()) OnTabUnSelectDark else OnTabUnSelectLight
     TabRow(
         selectedTabIndex = currentScene.ordinal,
         divider = { },
+        containerColor = containerColor,
         indicator = { tabPositions ->
             if (currentScene.ordinal < tabPositions.size) {
                 TabRowDefaults.Indicator(
                     Modifier.tabIndicatorOffset(tabPositions[currentScene.ordinal]),
 //                    1.dp,
+                    color = selectColor
                 )
             }
         },
@@ -157,9 +175,27 @@ fun QrcodeTabRow(currentScene: QRCodeScene, onClick: (Int) -> Unit) {
             Tab(
                 selected = currentScene.ordinal == index,
                 onClick = { onClick.invoke(index) },
+                selectedContentColor = selectColor,
+                unselectedContentColor = unSelectColor
             ) {
                 Text(text = stringResource(id = item.title), modifier = Modifier.padding(15.dp))
             }
         }
+    }
+}
+
+@Composable
+fun QrcodeTopBarAction() {
+    Row(horizontalArrangement = Arrangement.spacedBy(15.dp)) {
+        TopBarIcon(R.drawable.ic_share, onClick = {
+//            val sendIntent = Intent().apply {
+//                action = Intent.ACTION_SEND
+//                putExtra(Intent.EXTRA_STREAM, "uri")
+//                type = "image/jpeg"
+//            }
+//            val shareIntent = Intent.createChooser(sendIntent, null)
+//            startActivity(shareIntent)
+        })
+        TopBarIcon(R.drawable.ic_more_vert, onClick = {})
     }
 }

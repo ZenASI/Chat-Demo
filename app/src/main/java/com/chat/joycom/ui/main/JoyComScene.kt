@@ -12,7 +12,7 @@ enum class JoyComScene(
     val icon: ImageVector,
     val body: @Composable () -> Unit,
 ) {
-    Group(sceneName = R.string.group, icon = Icons.Filled.AccountCircle, body = { GroupScene() }),
+    Group(sceneName = R.string.community, icon = Icons.Filled.AccountCircle, body = { CommunityScene() }),
     Chat(sceneName = R.string.chat, icon = Icons.Filled.AccountCircle, body = { ChatScene() }),
     Update(sceneName = R.string.update, icon = Icons.Filled.AccountCircle, body = { UpdateScene() }),
     Call(sceneName = R.string.call, icon = Icons.Filled.AccountCircle, body = { CallScene() }),
