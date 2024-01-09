@@ -3,7 +3,13 @@ package com.chat.joycom.ui.commom
 import androidx.activity.ComponentActivity
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.TwoWayConverter
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateValue
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -14,6 +20,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -40,6 +47,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -104,25 +112,22 @@ fun TopBarContactSearch(clickBack: () -> Unit) {
     }
     val focusRequester = remember { FocusRequester() }
 
-    LaunchedEffect(Unit) {
-        awaitFrame()
-        focusRequester.requestFocus()
-    }
+
     val scope = rememberCoroutineScope()
     val res = LocalContext.current.resources
     val config = LocalConfiguration.current
     val screenWidth = TypedValueCompat.dpToPx(config.screenWidthDp.toFloat(), res.displayMetrics)
-    val animationOffset by remember { mutableStateOf(Offset(screenWidth, 0f)) }
+    val animationOffset by remember { mutableStateOf(Offset(screenWidth * .95f, TypedValueCompat.dpToPx(56f, res.displayMetrics))) }
     val revealSize = remember { Animatable(0f) }
-    LaunchedEffect(key1 = "reveal", block = {
-        if (animationOffset.x > 0f) {
-            revealSize.snapTo(0f)
-            revealSize.animateTo(
-                1f,
-                tween(500)
-            )
-        } else revealSize.snapTo(1f)
-    })
+    LaunchedEffect(Unit) {
+        awaitFrame()
+        revealSize.snapTo(0f)
+        revealSize.animateTo(
+            1f,
+            tween(200)
+        )
+        focusRequester.requestFocus()
+    }
 
     JoyComTopBarSearchTheme {
         CenterAlignedTopAppBar(
@@ -141,7 +146,7 @@ fun TopBarContactSearch(clickBack: () -> Unit) {
                             revealSize.snapTo(1f)
                             revealSize.animateTo(
                                 0f,
-                                tween(500)
+                                tween(200)
                             )
                             awaitFrame()
                             clickBack.invoke()
@@ -167,7 +172,10 @@ fun TopBarContactSearch(clickBack: () -> Unit) {
                     Spacer(modifier = Modifier.size(10.dp))
                 }
             },
-            modifier = Modifier.clip(CirclePath(revealSize.value, animationOffset))
+            modifier = Modifier.graphicsLayer {
+                clip = true
+                shape = CirclePath(revealSize.value, animationOffset)
+            }
         )
     }
 }
