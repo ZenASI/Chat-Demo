@@ -1,6 +1,7 @@
 package com.chat.joycom.ui.main.contacts
 
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import com.chat.joycom.model.Member
 import com.chat.joycom.ui.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -51,4 +52,6 @@ class ContactsViewModel @Inject constructor() : BaseViewModel() {
             avatar = "jeff333"
         ),
     )
+
+    val showSearchBool = mutableStateOf(false)
 }

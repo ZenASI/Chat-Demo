@@ -33,48 +33,56 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chat.joycom.R
 import com.chat.joycom.ui.commom.IconTextH
+import com.chat.joycom.ui.commom.TopBarContactSearch
 import com.chat.joycom.ui.commom.TopBarIcon
 import com.chat.joycom.ui.main.contacts.add.contacts.AddContactActivity
 import com.chat.joycom.ui.main.contacts.add.group.NewGroupActivity
 import com.chat.joycom.ui.setting.qrcode.QRCodeActivity
 import com.chat.joycom.ui.theme.JoyComDropDownTheme
+import com.chat.joycom.ui.theme.JoyComTopBarSearchTheme
 
 @Composable
-fun ContactsTopBarActions() {
+fun ContactsTopBarActions(viewModel: ContactsViewModel = viewModel()) {
     val context = LocalContext.current
     var isExpanded by remember {
         mutableStateOf(false)
     }
     Row(horizontalArrangement = Arrangement.spacedBy(15.dp)) {
-        TopBarIcon(R.drawable.ic_search, onClick = {})
-        Box(modifier = Modifier) {
-            Icon(Icons.Filled.MoreVert, "", modifier = Modifier.clickable {
-                isExpanded = true
-            })
-            val menuList by remember {
-                mutableStateOf(
-                    listOf(
-                        R.string.invite_friends,
-                        R.string.contacts,
-                        R.string.refresh,
-                        R.string.help
-                    )
-                )
-            }
-            JoyComDropDownTheme {
-                DropdownMenu(expanded = isExpanded, onDismissRequest = { isExpanded = false }) {
-                    menuList.forEach {
-                        DropdownMenuItem(
-                            text = { Text(text = stringResource(id = it)) },
-                            onClick = {
-                                isExpanded = false
-                            }
+            TopBarIcon(
+                R.drawable.ic_search,
+                onClick = {
+                    viewModel.showSearchBool.value =
+                        viewModel.showSearchBool.value.not()
+                }
+            )
+            Box(modifier = Modifier) {
+                Icon(Icons.Filled.MoreVert, "", modifier = Modifier.clickable {
+                    isExpanded = true
+                })
+                val menuList by remember {
+                    mutableStateOf(
+                        listOf(
+                            R.string.invite_friends,
+                            R.string.contacts,
+                            R.string.refresh,
+                            R.string.help
                         )
+                    )
+                }
+                JoyComDropDownTheme {
+                    DropdownMenu(expanded = isExpanded, onDismissRequest = { isExpanded = false }) {
+                        menuList.forEach {
+                            DropdownMenuItem(
+                                text = { Text(text = stringResource(id = it)) },
+                                onClick = {
+                                    isExpanded = false
+                                }
+                            )
+                        }
                     }
                 }
             }
         }
-    }
 }
 
 @Composable
@@ -129,7 +137,6 @@ fun ContactsColumn(modifier: Modifier = Modifier, viewModel: ContactsViewModel =
                     spaceWeightEnable = Pair(false, true),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(70.dp)
                         .clickable {
                             when (index) {
                                 0 -> {
@@ -170,7 +177,6 @@ fun ContactsColumn(modifier: Modifier = Modifier, viewModel: ContactsViewModel =
                     modifier = Modifier
                         .clickable { }
                         .fillMaxWidth()
-                        .height(70.dp)
                 )
             }
         }
@@ -205,7 +211,6 @@ fun ContactsColumn(modifier: Modifier = Modifier, viewModel: ContactsViewModel =
                     modifier = Modifier
                         .clickable { }
                         .fillMaxWidth()
-                        .height(70.dp)
                 )
             }
         }
@@ -229,7 +234,6 @@ fun ContactsColumn(modifier: Modifier = Modifier, viewModel: ContactsViewModel =
                 modifier = Modifier
                     .clickable { }
                     .fillMaxWidth()
-                    .height(70.dp)
             )
         }
         item {
@@ -252,7 +256,6 @@ fun ContactsColumn(modifier: Modifier = Modifier, viewModel: ContactsViewModel =
                 modifier = Modifier
                     .clickable { }
                     .fillMaxWidth()
-                    .height(70.dp)
             )
         }
     }

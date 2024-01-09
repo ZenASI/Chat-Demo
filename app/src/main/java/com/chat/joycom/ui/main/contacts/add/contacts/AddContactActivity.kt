@@ -62,7 +62,6 @@ class AddContactActivity : BaseActivity() {
                 Surface {
                     Scaffold(topBar = {
                         JoyComAppBar(
-                            
                             title = { Text(text = stringResource(id = R.string.add_new_contact)) }
                         )
                     }) { paddingValues ->

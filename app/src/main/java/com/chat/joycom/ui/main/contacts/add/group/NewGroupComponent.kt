@@ -149,7 +149,6 @@ fun NewGroupColumnList(viewModel: NewGroupViewModel = viewModel()) {
                             onContactList[index].isSelect = onContactList[index].isSelect.not()
                         }
                         .fillMaxWidth()
-                        .height(70.dp)
                         .padding(horizontal = 10.dp),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 )
@@ -198,7 +197,6 @@ fun NewGroupColumnList(viewModel: NewGroupViewModel = viewModel()) {
                             inviteList[index].isSelect = inviteList[index].isSelect.not()
                         }
                         .fillMaxWidth()
-                        .height(70.dp)
                         .padding(horizontal = 10.dp),
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                 )
@@ -216,7 +214,6 @@ fun NewGroupColumnList(viewModel: NewGroupViewModel = viewModel()) {
                 },
                 text = { Text(text = stringResource(id = R.string.add_new_contact)) },
                 modifier = Modifier
-                    .height(70.dp)
                     .fillMaxWidth()
                     .clickable {
                         AddContactActivity.start(context)

@@ -11,38 +11,34 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
+
 private val LightColorScheme = lightColorScheme(
-    surface = TopBarLight,
-    onSurface = OnTopBarLight,
-    onSurfaceVariant = OnTopBarLight,
+    background = md_theme_light_background,
 )
 
 
 private val DarkColorScheme = darkColorScheme(
-    surface = TopBarDark,
-    onSurface = OnTopBarDark,
-    onSurfaceVariant = OnTopBarLight,
+    background = md_theme_dark_background,
 )
-
 @Composable
-fun JoyComTopBarTheme(
+fun JoyComTopBarSearchTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
+
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
-
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.surface.toArgb()
+            window.statusBarColor = colorScheme.background.toArgb()
             window.navigationBarColor = colorScheme.background.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
         }
     }
 

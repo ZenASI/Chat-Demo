@@ -166,4 +166,10 @@
     <string name="keep_community_linking_desc">社群可將成員集中在主題群組中。並方便他們接收管理員公告。您已加入的所有社群都會在這裡顯示。</string>
     <string name="keep_community_linking_sample">查看社群範例></string>
     <string name="start_build_community">開始建立您的社群</string>
+
+    <string name="build_call_link">建立通話連結</string>
+    <string name="build_call_link_desc">分享您的JoyCom通話連結</string>
+    <string name="hint_phone_call_list_empty">如要與JoyCom聯絡人開始通話，請點擊螢幕下方的</string>
+
+    <string name="pls_input_name_or_phone_number">請輸入名稱或電話號碼</string>
 </resources>

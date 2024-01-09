@@ -13,19 +13,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,6 +30,7 @@ import com.chat.joycom.R
 import com.chat.joycom.ui.BaseActivity
 import com.chat.joycom.ui.UiEvent
 import com.chat.joycom.ui.commom.JoyComAppBar
+import com.chat.joycom.ui.commom.TopBarContactSearch
 import com.chat.joycom.ui.commom.TopBarIcon
 import com.chat.joycom.ui.theme.JoyComFabTheme
 import com.chat.joycom.ui.theme.JoyComTheme
@@ -62,20 +60,32 @@ class NewGroupActivity : BaseActivity() {
             JoyComTheme {
                 Scaffold(
                     topBar = {
-                        JoyComAppBar(
-                            title = {
-                                Column {
-                                    Text(text = stringResource(id = R.string.new_group))
-                                    Text(
-                                        text = stringResource(id = R.string.add_member),
-                                        fontSize = 14.sp
-                                    )
-                                }
-                            },
-                            acton = {
-                                TopBarIcon(R.drawable.ic_search, onClick = {})
+                        if (viewModel.showSearchBool.value) {
+                            TopBarContactSearch {
+                                viewModel.showSearchBool.value =
+                                    viewModel.showSearchBool.value.not()
                             }
-                        )
+                        } else {
+                            JoyComAppBar(
+                                title = {
+                                    Column {
+                                        Text(text = stringResource(id = R.string.new_group))
+                                        Text(
+                                            text = stringResource(id = R.string.add_member),
+                                            fontSize = 14.sp
+                                        )
+                                    }
+                                },
+                                acton = {
+                                    TopBarIcon(
+                                        R.drawable.ic_search,
+                                        onClick = {
+                                            viewModel.showSearchBool.value =
+                                                viewModel.showSearchBool.value.not()
+                                        })
+                                }
+                            )
+                        }
                     },
                     floatingActionButton = {
                         JoyComFabTheme {

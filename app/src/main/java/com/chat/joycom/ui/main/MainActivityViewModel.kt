@@ -20,14 +20,11 @@ import com.chat.joycom.network.AppApiRepo
 import com.chat.joycom.utils.SocketUtils
 import com.chat.joycom.network.UrlPath
 import com.chat.joycom.utils.RoomUtils
-import com.chat.joycom.ui.UiEvent
 import com.chat.joycom.utils.DataStoreUtils
 import com.squareup.moshi.Moshi
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -50,6 +47,7 @@ class MainActivityViewModel @Inject constructor(
     private val phone = mutableStateOf("")
     private val code = mutableStateOf("")
     private val set = mutableStateOf(setOf<String>())
+    val phoneCallList = mutableListOf<Member>()
 
     //    private val groupsFlow = roomUtils.findAllGroup().distinctUntilChanged()
 //    private val contactsFlow = roomUtils.findAllContact().distinctUntilChanged()

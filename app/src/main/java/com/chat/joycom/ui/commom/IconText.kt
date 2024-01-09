@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -42,7 +43,7 @@ fun IconTextH(
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier.heightIn(min = 80.dp),
         verticalAlignment = verticalAlignment,
         horizontalArrangement = horizontalArrangement,
     ) {

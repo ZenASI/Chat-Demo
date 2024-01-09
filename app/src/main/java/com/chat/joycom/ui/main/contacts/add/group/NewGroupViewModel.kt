@@ -1,6 +1,7 @@
 package com.chat.joycom.ui.main.contacts.add.group
 
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import com.chat.joycom.R
 import com.chat.joycom.model.Member
 import com.chat.joycom.ui.BaseViewModel
@@ -62,6 +63,8 @@ class NewGroupViewModel : BaseViewModel() {
             avatar = "jeff555"
         ),
     )
+
+    val showSearchBool = mutableStateOf(false)
 
     private var selectList = mutableStateListOf<Member>()
 

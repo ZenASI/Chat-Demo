@@ -145,8 +145,7 @@ class AddGroupActivity : BaseActivity() {
                                 },
                                 textFullWeightEnable = true,
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(70.dp),
+                                    .fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(5.dp)
                             )
                             IconTextH(
@@ -163,8 +162,7 @@ class AddGroupActivity : BaseActivity() {
                                     .clickable {
                                         timeLimitedShowState = true
                                     }
-                                    .fillMaxWidth()
-                                    .height(70.dp),
+                                    .fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             )
                             IconTextH(
@@ -178,8 +176,7 @@ class AddGroupActivity : BaseActivity() {
                                     .clickable {
                                         GroupPermissionActivity.start(context)
                                     }
-                                    .fillMaxWidth()
-                                    .height(70.dp),
+                                    .fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             )
                             Text(

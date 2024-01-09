@@ -146,7 +146,6 @@ fun UserInfo() {
                     },
                     horizontalArrangement = Arrangement.Start,
                     modifier = Modifier
-                        .height(80.dp)
                         .fillMaxWidth()
                         .clickable {
                             scope
@@ -163,7 +162,6 @@ fun UserInfo() {
                     text = { Text(stringResource(id = R.string.add_new_account)) },
                     horizontalArrangement = Arrangement.Start,
                     modifier = Modifier
-                        .height(80.dp)
                         .fillMaxWidth()
                         .clickable {
                             scope
@@ -218,7 +216,6 @@ fun UserOperateFeature() {
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(90.dp)
                     .clickable {
 
                     },

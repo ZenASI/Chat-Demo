@@ -141,7 +141,6 @@ class AboutMeActivity : BaseActivity() {
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(60.dp)
                                         .combinedClickable(
                                             onClick = { viewModel.upDateSelect(about) },
                                             onLongClick = { itemIsExpanded = true }

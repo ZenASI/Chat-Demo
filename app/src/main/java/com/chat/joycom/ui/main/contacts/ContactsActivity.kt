@@ -5,6 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -17,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import com.chat.joycom.R
 import com.chat.joycom.ui.BaseActivity
 import com.chat.joycom.ui.commom.JoyComAppBar
+import com.chat.joycom.ui.commom.TopBarContactSearch
 import com.chat.joycom.ui.theme.JoyComTheme
 
 class ContactsActivity : BaseActivity() {
@@ -39,18 +42,25 @@ class ContactsActivity : BaseActivity() {
             JoyComTheme {
                 Scaffold(
                     topBar = {
-                        JoyComAppBar(
-                            title = {
-                                Column {
-                                    Text(text = stringResource(id = R.string.select_contact))
-                                    Text(
-                                        text = stringResource(id = R.string.per_contacts, 3),
-                                        fontSize = 14.sp
-                                    )
-                                }
-                            },
-                            acton = { ContactsTopBarActions() }
-                        )
+                        if (viewModel.showSearchBool.value) {
+                            TopBarContactSearch(clickBack = {
+                                viewModel.showSearchBool.value =
+                                    viewModel.showSearchBool.value.not()
+                            })
+                        } else {
+                            JoyComAppBar(
+                                title = {
+                                    Column {
+                                        Text(text = stringResource(id = R.string.select_contact))
+                                        Text(
+                                            text = stringResource(id = R.string.per_contacts, 3),
+                                            fontSize = 14.sp
+                                        )
+                                    }
+                                },
+                                acton = { ContactsTopBarActions() }
+                            )
+                        }
                     }
                 ) { paddingValues ->
                     ContactsColumn(modifier = Modifier.padding(paddingValues))

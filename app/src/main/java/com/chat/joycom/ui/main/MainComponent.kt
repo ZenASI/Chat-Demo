@@ -24,13 +24,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -56,6 +56,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -67,8 +68,10 @@ import com.chat.joycom.model.Group
 import com.chat.joycom.network.UrlPath
 import com.chat.joycom.network.UrlPath.getFileFullUrl
 import com.chat.joycom.ui.chat.ChatActivity
+import com.chat.joycom.ui.commom.IconTextH
 import com.chat.joycom.ui.commom.PermissionType
 import com.chat.joycom.ui.commom.TopBarIcon
+import com.chat.joycom.ui.main.contacts.add.group.NewGroupActivity
 import com.chat.joycom.ui.setting.SettingActivity
 import com.chat.joycom.ui.theme.JoyComDropDownTheme
 import com.chat.joycom.ui.theme.OnTabSelectDark
@@ -82,12 +85,50 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 
 @Composable
 fun CallScene(viewModel: MainActivityViewModel = viewModel()) {
-    Box(
+    val list = remember {
+        viewModel.phoneCallList
+    }
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
+        IconTextH(
+            icon = {
+                Icon(
+                    painterResource(id = R.drawable.ic_link),
+                    "",
+                    modifier = Modifier.size(40.dp)
+                )
+            },
+            text = {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Text(text = stringResource(id = R.string.build_call_link), fontSize = 22.sp)
+                    Text(text = stringResource(id = R.string.build_call_link_desc))
+                }
+            },
+            textFullWeightEnable = true,
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = Modifier
+                .clickable {}
+                .padding(horizontal = 20.dp)
+        )
+        if (list.isEmpty()) {
+            Text(
+                text = stringResource(id = R.string.hint_phone_call_list_empty),
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+                    .wrapContentHeight(Alignment.CenterVertically),
+                textAlign = TextAlign.Center,
+                fontSize = 20.sp
+            )
+        } else {
+            LazyColumn() {
 
+            }
+        }
     }
 }
 
@@ -102,7 +143,11 @@ fun CommunityScene(viewModel: MainActivityViewModel = viewModel()) {
         verticalArrangement = Arrangement.spacedBy(15.dp)
     ) {
         Image(painterResource(id = R.drawable.ic_bg), "")
-        Text(text = stringResource(id = R.string.keep_community_linking), fontWeight = FontWeight.Bold, fontSize = 26.sp)
+        Text(
+            text = stringResource(id = R.string.keep_community_linking),
+            fontWeight = FontWeight.Bold,
+            fontSize = 26.sp
+        )
         Text(text = stringResource(id = R.string.keep_community_linking_desc))
         Text(text = stringResource(id = R.string.keep_community_linking_sample))
         Button(
@@ -130,63 +175,51 @@ fun ChatScene(viewModel: MainActivityViewModel = viewModel()) {
             item(key = index) {
                 when (item) {
                     is Contact -> {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight()
-                                .clip(RoundedCornerShape(5.dp))
-                                .clickable {
-                                    ChatActivity.start(context, item, null, false)
-                                },
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            AsyncImage(
-                                model = ImageRequest.Builder(LocalContext.current)
-                                    .data(UrlPath.GET_FILE.getFileFullUrl() + item.avatar)
-                                    .crossfade(true).build(),
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .padding(start = 10.dp)
-                                    .width(50.dp)
-                                    .height(50.dp)
-                                    .clip(CircleShape)
-                                    .align(Alignment.CenterVertically),
-                                placeholder = painterResource(id = R.drawable.ic_def_user),
-                                error = painterResource(id = R.drawable.ic_def_user),
-                                contentScale = ContentScale.Crop,
-                            )
-                            Text(text = item.nickname)
-                        }
+                        IconTextH(
+                            icon = {
+                                AsyncImage(
+                                    model = ImageRequest.Builder(LocalContext.current)
+                                        .data(UrlPath.GET_FILE.getFileFullUrl() + item.avatar)
+                                        .crossfade(true).build(),
+                                    contentDescription = "",
+                                    modifier = Modifier
+                                        .padding(start = 10.dp)
+                                        .size(55.dp)
+                                        .clip(CircleShape),
+                                    placeholder = painterResource(id = R.drawable.ic_def_user),
+                                    error = painterResource(id = R.drawable.ic_def_user),
+                                    contentScale = ContentScale.Crop,
+                                )
+                            },
+                            text = { Text(text = item.nickname) },
+                            modifier = Modifier.fillMaxWidth().clickable {
+                                ChatActivity.start(context = context, contact = item, isGroup = false)
+                            }
+                        )
                     }
 
                     is Group -> {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight()
-                                .clip(RoundedCornerShape(5.dp))
-                                .clickable {
-                                    ChatActivity.start(context, null, item, true)
-                                },
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            AsyncImage(
-                                model = ImageRequest.Builder(LocalContext.current)
-                                    .data(UrlPath.GET_FILE.getFileFullUrl() + item.avatar)
-                                    .crossfade(true).build(),
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .padding(start = 10.dp)
-                                    .width(50.dp)
-                                    .height(50.dp)
-                                    .clip(CircleShape)
-                                    .align(Alignment.CenterVertically),
-                                placeholder = painterResource(id = R.drawable.ic_def_group),
-                                error = painterResource(id = R.drawable.ic_def_group),
-                                contentScale = ContentScale.Crop,
-                            )
-                            Text(text = item.groupName)
-                        }
+                        IconTextH(
+                            icon = {
+                                AsyncImage(
+                                    model = ImageRequest.Builder(LocalContext.current)
+                                        .data(UrlPath.GET_FILE.getFileFullUrl() + item.avatar)
+                                        .crossfade(true).build(),
+                                    contentDescription = "",
+                                    modifier = Modifier
+                                        .padding(start = 10.dp)
+                                        .size(55.dp)
+                                        .clip(CircleShape),
+                                    placeholder = painterResource(id = R.drawable.ic_def_group),
+                                    error = painterResource(id = R.drawable.ic_def_group),
+                                    contentScale = ContentScale.Crop,
+                                )
+                            },
+                            text = {Text(text = item.groupName)},
+                            modifier = Modifier.fillMaxWidth().clickable {
+                                ChatActivity.start(context = context, group = item, isGroup = true)
+                            }
+                        )
                     }
                 }
             }
@@ -343,7 +376,7 @@ fun MainTopBarAction(pagerState: PagerState) {
                                 isExpanded = false
                                 when (it) {
                                     MainDropDown.Setting -> SettingActivity.start(context)
-
+                                    MainDropDown.CreateGroup -> NewGroupActivity.start(context)
                                     else -> {
 
                                     }
