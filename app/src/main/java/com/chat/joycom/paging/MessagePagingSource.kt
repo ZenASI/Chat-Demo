@@ -49,8 +49,8 @@ class MessagePagingSource(val selfId: Long = 0L, val id: Long, val roomUtils: Ro
             try {
                 val result = if (selfId == 0L) {
                     listOf(
-                        Message.getFakeMsg(), Message.getFakeMsg(), Message.getFakeMsg(),
-                        Message.getFakeMsg(), Message.getFakeMsg(), Message.getFakeMsg()
+                        Message.getFakeMsg(true), Message.getFakeMsg(true), Message.getFakeMsg(true),
+                        Message.getFakeMsg(true), Message.getFakeMsg(true), Message.getFakeMsg(true)
                     )
 //                    roomUtils.pagingMessageByGroupId(id, offset, limit)
                 } else {

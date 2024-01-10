@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -102,126 +103,136 @@ fun NewGroupSelectContactRow(viewModel: NewGroupViewModel = viewModel()) {
 
 @Composable
 fun NewGroupColumnList(viewModel: NewGroupViewModel = viewModel()) {
-    val context = LocalContext.current
-    val onContactList = remember { viewModel.onContactList }
-    val inviteList = remember { viewModel.inviteList }
     LazyColumn() {
         item {
-            Text(
-                text = stringResource(id = R.string.on_joycom_contact),
-                modifier = Modifier.padding(horizontal = 10.dp)
-            )
+            NewGroupQueryColumn()
         }
+        item {
+            NewGroupBottomColumn()
+        }
+    }
+}
+
+@Composable
+fun NewGroupQueryColumn(viewModel: NewGroupViewModel = viewModel()) {
+    val onContactList = remember { viewModel.onContactList }
+    val inviteList = remember { viewModel.inviteList }
+    Column {
+        Text(
+            text = stringResource(id = R.string.on_joycom_contact),
+            modifier = Modifier.padding(horizontal = 10.dp)
+        )
         onContactList.forEachIndexed { index, member ->
-            item {
-                IconTextH(
-                    icon = {
-                        Box(modifier = Modifier.size(55.dp)) {
-                            Image(
-                                painterResource(id = R.drawable.ic_def_user),
-                                "",
-                                modifier = Modifier
-                                    .size(50.dp)
-                                    .align(Alignment.CenterStart)
-                            )
-                            if (member.isSelect) {
-                                Image(
-                                    Icons.Filled.Check,
-                                    "",
-                                    modifier = Modifier
-                                        .align(Alignment.BottomEnd)
-                                        .background(
-                                            MaterialTheme.colorScheme.primaryContainer,
-                                            CircleShape
-                                        )
-                                )
-                            }
-                        }
-                    },
-                    text = {
-                        Text(
-                            text = member.nickname,
-                            fontSize = 20.sp
-                        )
-                    },
-                    modifier = Modifier
-                        .clickable {
-                            onContactList[index].isSelect = onContactList[index].isSelect.not()
-                        }
-                        .fillMaxWidth()
-                        .padding(horizontal = 10.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                )
-            }
-        }
-        item {
-            Text(
-                text = stringResource(id = R.string.invite_to_use_joycom),
-                modifier = Modifier.padding(horizontal = 10.dp)
-            )
-        }
-        inviteList.forEachIndexed { index, member ->
-            item {
-                IconTextH(
-                    icon = {
-                        Box(modifier = Modifier.size(55.dp)) {
-                            Image(
-                                painterResource(id = R.drawable.ic_def_user),
-                                "",
-                                modifier = Modifier
-                                    .size(50.dp)
-                                    .align(Alignment.Center)
-                            )
-                            if (member.isSelect) {
-                                Image(
-                                    Icons.Filled.Check,
-                                    "",
-                                    modifier = Modifier
-                                        .align(Alignment.BottomEnd)
-                                        .background(
-                                            MaterialTheme.colorScheme.primaryContainer,
-                                            CircleShape
-                                        )
-                                )
-                            }
-                        }
-                    },
-                    text = {
-                        Text(
-                            text = member.nickname,
-                            fontSize = 20.sp
-                        )
-                    },
-                    modifier = Modifier
-                        .clickable {
-                            inviteList[index].isSelect = inviteList[index].isSelect.not()
-                        }
-                        .fillMaxWidth()
-                        .padding(horizontal = 10.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                )
-            }
-        }
-        item {
             IconTextH(
                 icon = {
-                    Image(
-                        painterResource(id = R.drawable.ic_def_user),
-                        "",
-                        modifier = Modifier
-                            .size(50.dp)
+                    Box(modifier = Modifier.size(55.dp)) {
+                        Image(
+                            painterResource(id = R.drawable.ic_def_user),
+                            "",
+                            modifier = Modifier
+                                .size(50.dp)
+                                .align(Alignment.CenterStart)
+                        )
+                        if (member.isSelect) {
+                            Image(
+                                Icons.Filled.Check,
+                                "",
+                                modifier = Modifier
+                                    .align(Alignment.BottomEnd)
+                                    .background(
+                                        MaterialTheme.colorScheme.primaryContainer,
+                                        CircleShape
+                                    )
+                            )
+                        }
+                    }
+                },
+                text = {
+                    Text(
+                        text = member.nickname,
+                        fontSize = 20.sp
                     )
                 },
-                text = { Text(text = stringResource(id = R.string.add_new_contact)) },
                 modifier = Modifier
-                    .fillMaxWidth()
                     .clickable {
-                        AddContactActivity.start(context)
+                        onContactList[index].isSelect = onContactList[index].isSelect.not()
                     }
+                    .fillMaxWidth()
                     .padding(horizontal = 10.dp),
-
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            )
+        }
+        Text(
+            text = stringResource(id = R.string.invite_to_use_joycom),
+            modifier = Modifier.padding(horizontal = 10.dp)
+        )
+        inviteList.forEachIndexed { index, member ->
+            IconTextH(
+                icon = {
+                    Box(modifier = Modifier.size(55.dp)) {
+                        Image(
+                            painterResource(id = R.drawable.ic_def_user),
+                            "",
+                            modifier = Modifier
+                                .size(50.dp)
+                                .align(Alignment.Center)
+                        )
+                        if (member.isSelect) {
+                            Image(
+                                Icons.Filled.Check,
+                                "",
+                                modifier = Modifier
+                                    .align(Alignment.BottomEnd)
+                                    .background(
+                                        MaterialTheme.colorScheme.primaryContainer,
+                                        CircleShape
+                                    )
+                            )
+                        }
+                    }
+                },
+                text = {
+                    Text(
+                        text = member.nickname,
+                        fontSize = 20.sp
+                    )
+                },
+                modifier = Modifier
+                    .clickable {
+                        inviteList[index].isSelect = inviteList[index].isSelect.not()
+                    }
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             )
         }
+    }
+}
+
+@Composable
+fun NewGroupBottomColumn(viewModel: NewGroupViewModel = viewModel()) {
+    val context = LocalContext.current
+    Column {
+        if (viewModel.showSearchBool) {
+            Text(text = stringResource(id = R.string.more), Modifier.padding(horizontal = 10.dp))
+        }
+        IconTextH(
+            icon = {
+                Image(
+                    painterResource(id = R.drawable.ic_add_person),
+                    "",
+                    modifier = Modifier
+                        .size(50.dp)
+                )
+            },
+            text = { Text(text = stringResource(id = R.string.add_new_contact)) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    AddContactActivity.start(context)
+                }
+                .padding(horizontal = 10.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+        )
     }
 }

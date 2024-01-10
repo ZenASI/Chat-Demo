@@ -76,7 +76,7 @@ data class Message(
     companion object {
         const val TABLE_NAME = "MessageEntity"
 
-        fun getFakeMsg() = Message(
+        fun getFakeMsg(isGroup:Boolean = false) = Message(
             id = Random.nextLong(),
             atUserIds = "",
             autoDel = 0,
@@ -89,8 +89,8 @@ data class Message(
             sendStatus = 0,
             sendTicks = System.currentTimeMillis(),
             sendTime = "${SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(System.currentTimeMillis())}",
-            toGroupId = 0,
-            toUserId = 0
+            toGroupId = if (isGroup) 123 else 0,
+            toUserId = if (isGroup) 0 else 456
         )
     }
 
@@ -99,9 +99,6 @@ data class Message(
 
     @Ignore
     var isSelect: Boolean = false
-
-    @Ignore
-    var msgContent: Content? = null
 
     @Ignore
     var showIcon = true

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -60,11 +61,16 @@ class NewGroupActivity : BaseActivity() {
             JoyComTheme {
                 Scaffold(
                     topBar = {
-                        if (viewModel.showSearchBool.value) {
-                            TopBarContactSearch {
-                                viewModel.showSearchBool.value =
-                                    viewModel.showSearchBool.value.not()
-                            }
+                        if (viewModel.showSearchBool) {
+                            TopBarContactSearch(
+                                clickBack = {
+                                    viewModel.showSearchBool =
+                                        viewModel.showSearchBool.not()
+                                },
+                                updateText = {
+                                    viewModel.searchInputText.value = it
+                                },
+                            )
                         } else {
                             JoyComAppBar(
                                 title = {
@@ -80,8 +86,8 @@ class NewGroupActivity : BaseActivity() {
                                     TopBarIcon(
                                         R.drawable.ic_search,
                                         onClick = {
-                                            viewModel.showSearchBool.value =
-                                                viewModel.showSearchBool.value.not()
+                                            viewModel.showSearchBool =
+                                                viewModel.showSearchBool.not()
                                         })
                                 }
                             )
@@ -101,7 +107,8 @@ class NewGroupActivity : BaseActivity() {
                     Column(
                         modifier = Modifier
                             .padding(paddingValues)
-                            .fillMaxSize(),
+                            .fillMaxSize()
+                            .imePadding(),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         Spacer(modifier = Modifier.size(15.dp))

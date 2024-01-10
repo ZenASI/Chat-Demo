@@ -172,4 +172,9 @@
     <string name="hint_phone_call_list_empty">如要與JoyCom聯絡人開始通話，請點擊螢幕下方的</string>
 
     <string name="pls_input_name_or_phone_number">請輸入名稱或電話號碼</string>
+
+    <string name="more">更多</string>
+    <string name="not_found_key">未找到\'%s\'</string>
+
+    <string name="share_content">我們JoyCom上聊吧!可免費傳送訊息和通話，簡單、快速又安全。馬上到此下載:https://whatsapp.com/dl/</string>
 </resources>

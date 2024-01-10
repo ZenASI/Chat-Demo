@@ -288,7 +288,7 @@ fun MainTableRow(currentScene: JoyComScene, onClick: (Int) -> Unit) {
                 unselectedContentColor = unSelectColor
             ) {
                 if (index == 0) {
-                    Icon(painterResource(id = R.drawable.ic_group), "")
+                    Icon(painterResource(id = R.drawable.ic_group3), "")
                 } else {
                     Text(
                         text = stringResource(id = item.sceneName),

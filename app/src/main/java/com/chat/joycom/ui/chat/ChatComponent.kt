@@ -274,7 +274,6 @@ fun SelfMsg(message: Message, modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .background(MaterialTheme.colorScheme.background)
             .padding(3.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -363,12 +362,14 @@ fun OtherMsg(message: Message, modifier: Modifier = Modifier) {
 
     val nickName = remember(groupContact, contact) {
         derivedStateOf {
-            if (message.isGroup) groupContact.value?.nickname else contact.value?.nickname
+            "Jeff"
+//            if (message.isGroup) groupContact.value?.nickname else contact.value?.nickname
         }
     }
     val phone = remember(groupContact, contact) {
         derivedStateOf {
-            if (message.isGroup) "" else "+" + contact.value?.countryCode + contact.value?.phoneNumber
+            "+886987654321"
+//            if (message.isGroup) "" else "+" + contact.value?.countryCode + contact.value?.phoneNumber
         }
     }
 
@@ -376,7 +377,6 @@ fun OtherMsg(message: Message, modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .background(MaterialTheme.colorScheme.background)
             .padding(3.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -438,25 +438,27 @@ fun OtherMsg(message: Message, modifier: Modifier = Modifier) {
                         // reply
                         // TODO: reply layout
                         // name and phone
-                        Row(
-                            modifier = Modifier
-                                .padding(horizontal = 3.dp)
-                                .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(
-                                text = nickName.value ?: "",
-                                maxLines = 1,
-                                textAlign = TextAlign.Start,
+                        if (message.isGroup){
+                            Row(
                                 modifier = Modifier
-                            )
-                            Spacer(modifier = Modifier.size(5.dp))
-                            Text(
-                                text = phone.value,
-                                maxLines = 1,
-                                textAlign = TextAlign.End,
-                                modifier = Modifier
-                            )
+                                    .padding(horizontal = 3.dp)
+                                    .fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = nickName.value ?: "",
+                                    maxLines = 1,
+                                    textAlign = TextAlign.Start,
+                                    modifier = Modifier
+                                )
+                                Spacer(modifier = Modifier.size(5.dp))
+                                Text(
+                                    text = phone.value,
+                                    maxLines = 1,
+                                    textAlign = TextAlign.End,
+                                    modifier = Modifier
+                                )
+                            }
                         }
                         // image or not
                         // TODO: image from user

@@ -20,6 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,6 +39,8 @@ import com.chat.joycom.ui.commom.CirclePath
 import com.chat.joycom.ui.commom.JoyComAppBar
 import com.chat.joycom.ui.commom.TopBarContactSearch
 import com.chat.joycom.ui.theme.JoyComTheme
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class ContactsActivity : BaseActivity() {
 
@@ -59,11 +62,18 @@ class ContactsActivity : BaseActivity() {
             JoyComTheme {
                 Scaffold(
                     topBar = {
-                        if (viewModel.showSearchBool.value) {
-                            TopBarContactSearch(clickBack = {
-                                viewModel.showSearchBool.value =
-                                    viewModel.showSearchBool.value.not()
-                            })
+                        val searchState = viewModel.showSearchBool
+                        if (searchState) {
+                            TopBarContactSearch(
+                                clickBack = {
+                                    viewModel.showSearchBool =
+                                        viewModel.showSearchBool.not()
+                                    viewModel.searchInputText.value = ""
+                                },
+                                updateText = {
+                                    viewModel.searchInputText.value = it
+                                }
+                            )
                         } else {
                             JoyComAppBar(
                                 title = {

@@ -3,13 +3,7 @@ package com.chat.joycom.ui.commom
 import androidx.activity.ComponentActivity
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationVector1D
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.TwoWayConverter
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.animateValue
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -20,7 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.GenericShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -29,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -61,6 +56,7 @@ import com.chat.joycom.ui.theme.JoyComTopBarSearchTheme
 import com.chat.joycom.ui.theme.JoyComTopBarTheme
 import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @Composable
 fun TopBarIcon(@DrawableRes drawableId: Int, onClick: () -> Unit) {
@@ -68,6 +64,7 @@ fun TopBarIcon(@DrawableRes drawableId: Int, onClick: () -> Unit) {
         painterResource(id = drawableId),
         "",
         modifier = Modifier
+            .clip(CircleShape)
             .size(30.dp)
             .clickable {
                 onClick.invoke()
@@ -102,7 +99,7 @@ fun JoyComAppBar(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBarContactSearch(clickBack: () -> Unit) {
+fun TopBarContactSearch(clickBack: () -> Unit, updateText: (String) -> Unit) {
     val searchBgColor = if (isSystemInDarkTheme()) Color(0xFF202C33) else Color.LightGray
     var searchInput by remember {
         mutableStateOf("")
@@ -112,12 +109,18 @@ fun TopBarContactSearch(clickBack: () -> Unit) {
     }
     val focusRequester = remember { FocusRequester() }
 
-
     val scope = rememberCoroutineScope()
     val res = LocalContext.current.resources
     val config = LocalConfiguration.current
     val screenWidth = TypedValueCompat.dpToPx(config.screenWidthDp.toFloat(), res.displayMetrics)
-    val animationOffset by remember { mutableStateOf(Offset(screenWidth * .95f, TypedValueCompat.dpToPx(56f, res.displayMetrics))) }
+    val animationOffset by remember {
+        mutableStateOf(
+            Offset(
+                screenWidth * .95f,
+                TypedValueCompat.dpToPx(56f, res.displayMetrics)
+            )
+        )
+    }
     val revealSize = remember { Animatable(0f) }
     LaunchedEffect(Unit) {
         awaitFrame()
@@ -154,7 +157,10 @@ fun TopBarContactSearch(clickBack: () -> Unit) {
                     }
                     DefaultInput(
                         inputText = searchInput,
-                        onValueChange = { searchInput = it },
+                        onValueChange = {
+                            searchInput = it
+                            updateText.invoke(it)
+                        },
                         modifier = Modifier
                             .weight(1f)
                             .focusRequester(focusRequester),

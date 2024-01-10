@@ -54,6 +54,8 @@
         <activity android:name="com.chat.joycom.ui.main.contacts.add.group.NewGroupActivity" />
         <activity android:name="com.chat.joycom.ui.main.contacts.add.group.AddGroupActivity" />
         <activity android:name="com.chat.joycom.ui.main.contacts.add.group.GroupPermissionActivity" />
+        <activity android:name="com.chat.joycom.ui.web.WebActivity" />
+        <activity android:name="com.chat.joycom.ui.setting.account.AccountActivity" />
     </application>
 
 </manifest>

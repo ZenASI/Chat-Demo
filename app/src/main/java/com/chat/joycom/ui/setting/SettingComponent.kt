@@ -1,5 +1,7 @@
 package com.chat.joycom.ui.setting
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -51,9 +53,62 @@ import com.chat.joycom.network.UrlPath
 import com.chat.joycom.network.UrlPath.getFileFullUrl
 import com.chat.joycom.ui.commom.IconTextH
 import com.chat.joycom.ui.main.MainActivityViewModel
+import com.chat.joycom.ui.setting.account.AccountActivity
 import com.chat.joycom.ui.setting.qrcode.QRCodeActivity
 import com.chat.joycom.ui.setting.user.UserInfoActivity
 import kotlinx.coroutines.launch
+import kotlin.reflect.jvm.internal.impl.descriptors.Visibilities.Local
+
+enum class SettingFeatures(
+    @StringRes val title: Int,
+    @StringRes val content: Int? = null,
+    @DrawableRes val icon: Int,
+) {
+    Account(
+        title = R.string.account,
+        content = R.string.account_desc,
+        icon = R.drawable.ic_key,
+    ),
+    Privacy(
+        title = R.string.privacy,
+        content = R.string.privacy_desc,
+        icon = R.drawable.ic_lock
+    ),
+    Avatar(
+        title = R.string.avatar,
+        content = R.string.avatar_desc,
+        icon = R.drawable.ic_emoji
+    ),
+    Conversation(
+        title = R.string.conversation,
+        content = R.string.conversation_desc,
+        icon = R.drawable.ic_chat
+    ),
+    Notification(
+        title = R.string.notification,
+        content = R.string.notification_desc,
+        icon = R.drawable.ic_notifications
+    ),
+    Storage(
+        title = R.string.storage,
+        content = R.string.storage_desc,
+        icon = R.drawable.ic_storage
+    ),
+    Language(
+        title = R.string.app_language,
+        content = R.string.app_language_desc,
+        icon = R.drawable.ic_language
+    ),
+    Help(
+        title = R.string.help,
+        content = R.string.help_desc,
+        icon = R.drawable.ic_help
+    ),
+    Invite(
+        title = R.string.invite_friends,
+        icon = R.drawable.ic_group2
+    ),
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -139,10 +194,12 @@ fun UserInfo() {
                         )
                     },
                     text = { Text(member?.nickname ?: "", modifier = Modifier.weight(1f)) },
-                    action = { Image(
-                        Icons.Filled.Check, "", modifier = Modifier.background(
-                            MaterialTheme.colorScheme.primary, CircleShape
-                        ))
+                    action = {
+                        Image(
+                            Icons.Filled.Check, "", modifier = Modifier.background(
+                                MaterialTheme.colorScheme.primary, CircleShape
+                            )
+                        )
                     },
                     horizontalArrangement = Arrangement.Start,
                     modifier = Modifier
@@ -179,16 +236,16 @@ fun UserInfo() {
 }
 
 @Composable
-fun UserOperateFeature() {
-    val viewModel: SettingViewModel = viewModel()
+fun UserOperateFeature(viewModel: SettingViewModel = viewModel()) {
     val settingFeatures = SettingFeatures.values().toList()
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
             .background(MaterialTheme.colorScheme.background),
     ) {
-        settingFeatures.forEach { item ->
+        settingFeatures.forEachIndexed { index, item ->
             IconTextH(
                 icon = {
                     Box(modifier = Modifier.size(60.dp)) {
@@ -200,7 +257,6 @@ fun UserOperateFeature() {
                                 .align(Alignment.Center)
                         )
                     }
-
                 },
                 text = {
                     Column(
@@ -217,7 +273,9 @@ fun UserOperateFeature() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-
+                        when(index){
+                            0 -> AccountActivity.start(context)
+                        }
                     },
                 horizontalArrangement = Arrangement.Start,
             )

@@ -1,11 +1,14 @@
 package com.chat.joycom.ui.main.contacts.add.group
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.chat.joycom.R
 import com.chat.joycom.model.Member
 import com.chat.joycom.ui.BaseViewModel
 import com.chat.joycom.ui.UiEvent
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlin.random.Random
 
 class NewGroupViewModel : BaseViewModel() {
@@ -64,9 +67,13 @@ class NewGroupViewModel : BaseViewModel() {
         ),
     )
 
-    val showSearchBool = mutableStateOf(false)
+    var showSearchBool by mutableStateOf(false)
 
     private var selectList = mutableStateListOf<Member>()
+
+    val searchInputText = MutableStateFlow("")
+
+    val searchContactList = MutableStateFlow(emptyList<Member>())
 
     fun updateSelectList() {
         val result = onContactList.filter { it.isSelect } + inviteList.filter { it.isSelect }
