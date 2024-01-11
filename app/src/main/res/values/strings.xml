@@ -154,10 +154,10 @@
 
     <string name="file">文件</string>
     <string name="audio">音訊</string>
-    <string name="local">位置</string>
+    <string name="location">位置</string>
     <string name="vote">投票</string>
     
-    <string name="save_notify">安全通知</string>
+    <string name="safe_notify">安全通知</string>
     <string name="email_address">電子郵件地址</string>
     <string name="two_step_verify">雙步驟驗證</string>
     <string name="modify_phone">變更電話號碼</string>
@@ -179,4 +179,30 @@
     <string name="not_found_key">未找到\'%s\'</string>
 
     <string name="share_content">我們JoyCom上聊吧!可免費傳送訊息和通話，簡單、快速又安全。馬上到此下載:https://whatsapp.com/dl/</string>
+
+    <string name="open_in_browser">在瀏覽器中開啟</string>
+    <string name="share">分享</string>
+    <string name="copy_link">複製連結</string>
+    <string name="copy_link_success">以複製連結</string>
+    
+    <string name="safe_notify_desc">端對端加密確保只有您和您對象，可以存取您們之間的個人訊息和對話。即使是JoyCom也無法讀取或聽取。這包括您的:</string>
+    
+    <string name="text_and_audio_msg">文字和語音訊息</string>
+    <string name="audio_and_video_call">語音和視像通話</string>
+    <string name="photo_and_video_and_file">照片、影片和文件</string>
+    <string name="share_location">分享位置</string>
+    <string name="dynamic_update">動態更新</string>
+
+    <string name="device_show_safe_notify">在此裝置顯示安全通知</string>
+    <string name="device_show_safe_notify_desc">如果經端對端加密對話中聯絡人的安全碼有變更，您將會收到通知。若有多部裝置，則需要再想收到通知的每部裝置商都啟用本設定。</string>
+
+    <string name="add_new_email_address">新增電子郵件地址</string>
+    <string name="add_new_email_address_desc">電子郵件地址可以讓您存取帳號:此資料將保密。</string>
+    <string name="hint_add_new_email_address">我們將會傳送驗證碼至此電子郵件地址。</string>
+
+    <string name="next_step">下一步</string>
+
+    <string name="from_contacts">From Contacts</string>
+
+    <string name="share_link">分享連結</string>
 </resources>

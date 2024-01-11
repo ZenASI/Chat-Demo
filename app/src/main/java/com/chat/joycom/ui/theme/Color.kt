@@ -106,3 +106,6 @@ val OnFabLight = Color.White
 //val RadioUnSelectDark = Color(0xFF3B4A54)
 //val RadioUnSelectLight = Color(0xFF8696A0)
 
+val HyperLinkTextDark = Color(0xFF54C0EF)
+val HyperLinkTextLight = Color(0xFF017EB5)
+

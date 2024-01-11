@@ -99,7 +99,11 @@ fun JoyComAppBar(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBarContactSearch(clickBack: () -> Unit, updateText: (String) -> Unit) {
+fun TopBarContactSearch(
+    clickBack: () -> Unit,
+    updateText: (String) -> Unit,
+    enableSwitchBoard: Boolean = true
+) {
     val searchBgColor = if (isSystemInDarkTheme()) Color(0xFF202C33) else Color.LightGray
     var searchInput by remember {
         mutableStateOf("")
@@ -168,11 +172,13 @@ fun TopBarContactSearch(clickBack: () -> Unit, updateText: (String) -> Unit) {
                         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = keyType),
                         singleLine = true
                     )
-                    TopBarIcon(drawableId = if (keyType == KeyboardType.Text) R.drawable.ic_key_number else R.drawable.ic_keyboard) {
-                        keyType = if (keyType == KeyboardType.Text) {
-                            KeyboardType.Number
-                        } else {
-                            KeyboardType.Text
+                    if (enableSwitchBoard){
+                        TopBarIcon(drawableId = if (keyType == KeyboardType.Text) R.drawable.ic_key_number else R.drawable.ic_keyboard) {
+                            keyType = if (keyType == KeyboardType.Text) {
+                                KeyboardType.Number
+                            } else {
+                                KeyboardType.Text
+                            }
                         }
                     }
                     Spacer(modifier = Modifier.size(10.dp))

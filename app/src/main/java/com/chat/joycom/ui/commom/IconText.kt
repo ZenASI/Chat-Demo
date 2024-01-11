@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -41,9 +42,10 @@ fun IconTextH(
     spaceWeightEnable: Pair<Boolean, Boolean> = Pair(false, false),
     verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
+    height: Dp = 80.dp,
 ) {
     Row(
-        modifier = modifier.heightIn(min = 80.dp),
+        modifier = modifier.heightIn(min = height),
         verticalAlignment = verticalAlignment,
         horizontalArrangement = horizontalArrangement,
     ) {

@@ -97,7 +97,6 @@ fun ChatInput(
     onMessage: ((message: Message) -> Unit)? = null,
     id: Long?,
 ) {
-    val context = LocalContext.current
     val res = LocalContext.current.resources
     val imeState = WindowInsets.isImeVisible // for keyboard show/hide bool
     val imeBottom = WindowInsets.ime.getBottom(LocalDensity.current)
@@ -135,7 +134,6 @@ fun ChatInput(
     var popUpShowState by remember {
         mutableStateOf(false)
     }
-
 
     Column(
         modifier = modifier
@@ -237,11 +235,9 @@ fun ChatInput(
                     Modifier
                         .size(56.dp)
                         .scale(.6f)
+                        .clip(CircleShape)
                         .clickable {
-                            if (!imeState) {
-                                focusRequester.requestFocus()
-                                keyboardController?.show()
-                            }
+
                         }
                 )
                 DefaultInput(
@@ -531,7 +527,7 @@ private fun genChatPopUpItem(): List<Pair<Int, Int>> =
         Pair(R.string.camera, R.drawable.ic_camera),
         Pair(R.string.gallery, R.drawable.ic_image),
         Pair(R.string.audio, R.drawable.ic_head_phone),
-        Pair(R.string.local, R.drawable.ic_local),
+        Pair(R.string.location, R.drawable.ic_location),
         Pair(R.string.contacts, R.drawable.ic_contacts),
         Pair(R.string.vote, R.drawable.ic_vote),
     )

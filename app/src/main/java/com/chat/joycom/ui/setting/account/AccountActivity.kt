@@ -12,6 +12,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -47,32 +48,39 @@ class AccountActivity : BaseActivity() {
                     }
                 ) { paddingValues ->
                     val optionList = listOf(
-                        R.string.save_notify,
-                        R.string.email_address,
-                        R.string.two_step_verify,
-                        R.string.modify_phone,
-                        R.string.require_account_info,
-                        R.string.add_new_account,
-                        R.string.delete_account
+                        Pair(R.string.safe_notify, R.drawable.ic_safe_notify),
+                        Pair(R.string.email_address, R.drawable.ic_email),
+                        Pair(R.string.two_step_verify, R.drawable.ic_two_step_verify),
+                        Pair(R.string.modify_phone, R.drawable.ic_modify_phone),
+                        Pair(R.string.require_account_info, R.drawable.ic_safe_notify),
+                        Pair(R.string.add_new_account, R.drawable.ic_add_person),
+                        Pair(R.string.delete_account, R.drawable.ic_delete),
                     )
-                    val optionIconList = listOf(
-                        R.drawable.ic_safe_notify,
-                        R.drawable.ic_email,
-                        R.drawable.ic_two_step_verify,
-                        R.drawable.ic_modify_phone,
-                        R.drawable.ic_safe_notify,
-                        R.drawable.ic_add_person,
-                        R.drawable.ic_delete
-                    )
+                    val context = LocalContext.current
                     Column(Modifier.padding(paddingValues)) {
-                        optionList.forEachIndexed { index, id ->
+                        optionList.forEachIndexed { index, item ->
                             IconTextH(
-                                icon = { Icon(painterResource(id = optionIconList[index]), "", modifier = Modifier.size(40.dp)) },
-                                text = { Text(text = stringResource(id = id), modifier = Modifier.padding(start = 10.dp)) },
+                                icon = {
+                                    Icon(
+                                        painterResource(id = item.second),
+                                        "",
+                                        modifier = Modifier.size(40.dp)
+                                    )
+                                },
+                                text = {
+                                    Text(
+                                        text = stringResource(id = item.first),
+                                        modifier = Modifier.padding(start = 10.dp)
+                                    )
+                                },
                                 spaceWeightEnable = Pair(false, true),
                                 modifier = Modifier
                                     .clickable {
-
+                                        when (index){
+//                                            0 -> SafetyNotifyActivity.start(context)
+//                                            1 -> EmailActivity.start(context)
+                                            else -> {}
+                                        }
                                     }
                                     .padding(horizontal = 10.dp)
                             )

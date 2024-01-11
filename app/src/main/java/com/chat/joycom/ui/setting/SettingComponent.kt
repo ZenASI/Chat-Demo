@@ -52,6 +52,7 @@ import com.chat.joycom.network.UrlPath.getFileFullUrl
 import com.chat.joycom.ui.commom.IconTextH
 import com.chat.joycom.ui.main.MainActivityViewModel
 import com.chat.joycom.ui.setting.account.AccountActivity
+import com.chat.joycom.ui.setting.invite.InviteFriendsActivity
 import com.chat.joycom.ui.setting.qrcode.QRCodeActivity
 import com.chat.joycom.ui.setting.user.UserInfoActivity
 import kotlinx.coroutines.launch
@@ -195,7 +196,7 @@ fun UserOperateFeature(viewModel: SettingViewModel = viewModel()) {
             IconTextH(
                 icon = {
                     Box(modifier = Modifier.size(60.dp)) {
-                        Image(
+                        Icon(
                             painter = painterResource(id = item.third),
                             contentDescription = "",
                             modifier = Modifier
@@ -221,6 +222,7 @@ fun UserOperateFeature(viewModel: SettingViewModel = viewModel()) {
                     .clickable {
                         when (index) {
                             0 -> AccountActivity.start(context)
+                            8 -> InviteFriendsActivity.start(context)
                         }
                     },
                 horizontalArrangement = Arrangement.Start,
