@@ -1,9 +1,13 @@
 package com.chat.joycom.ui.chat
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.TwoWayConverter
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateValue
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,12 +35,12 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -58,6 +62,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -65,6 +70,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.core.util.TypedValueCompat
@@ -130,56 +136,79 @@ fun ChatInput(
         mutableStateOf(false)
     }
 
+
     Column(
         modifier = modifier
-//            .imePadding()
             .wrapContentHeight()
             .padding(horizontal = 5.dp),
     ) {
+        val animationProgress by animateFloatAsState(
+            targetValue = if (popUpShowState) 1f else 0f,
+            animationSpec = tween(durationMillis = 300, easing = LinearEasing), label = ""
+        )
+
+        val transition = updateTransition(targetState = animationProgress, label = "")
+        val res = LocalContext.current.resources
         Popup(
             onDismissRequest = { popUpShowState = false },
             alignment = Alignment.BottomCenter,
+            offset = IntOffset(0, -TypedValueCompat.dpToPx(60f, res.displayMetrics).toInt())
         ) {
-            AnimatedVisibility(visible = popUpShowState, enter = fadeIn(), exit = fadeOut()) {
-                val popUpStringList = listOf(
-                    R.string.file,
-                    R.string.camera,
-                    R.string.gallery,
-                    R.string.audio,
-                    R.string.local,
-                    R.string.contacts,
-                    R.string.vote
-                )
-                val popUpDrawableList = listOf(
-                    R.drawable.ic_file,
-                    R.drawable.ic_camera,
-                    R.drawable.ic_image,
-                    R.drawable.ic_head_phone,
-                    R.drawable.ic_local,
-                    R.drawable.ic_contacts,
-                    R.drawable.ic_vote
-                )
+            val animatedShape by transition.animateValue(
+                TwoWayConverter(
+                    convertToVector = { AnimationVector1D(0f) },
+                    convertFromVector = { GenericShape { _, _ -> } }
+                ),
+                label = ""
+            ) { progress ->
+                GenericShape { size, _ ->
+                    val centerH = size.width / 2f
+                    val multiplierW = 1.5f + size.height / size.width
+
+                    moveTo(
+                        x = centerH - centerH * progress * multiplierW,
+                        y = size.height,
+                    )
+
+                    val currentWidth = (centerH * progress * multiplierW * 2.5f)
+
+                    cubicTo(
+                        x1 = centerH - centerH * progress * 1.5f,
+                        y1 = size.height - currentWidth * 0.5f,
+                        x2 = centerH + centerH * progress * 1.5f,
+                        y2 = size.height - currentWidth * 0.5f,
+                        x3 = centerH + centerH * progress * multiplierW,
+                        y3 = size.height,
+                    )
+
+                    close()
+                }
+            }
+            if (animationProgress != 0f) {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(3),
                     modifier = Modifier
                         .fillMaxWidth(.95f)
-                        .padding(bottom = 70.dp)
-                        .background(MaterialTheme.colorScheme.background, RoundedCornerShape(8.dp)),
+                        .graphicsLayer {
+                            clip = true
+                            shape = animatedShape
+                        }
+                        .background(Color.Gray, RoundedCornerShape(8.dp)),
                     contentPadding = PaddingValues(horizontal = 20.dp, vertical = 25.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    popUpStringList.forEachIndexed { index, id ->
+                    genChatPopUpItem().forEachIndexed { index, item ->
                         item {
                             IconTextV(
                                 icon = {
                                     Icon(
-                                        painterResource(id = popUpDrawableList[index]),
+                                        painterResource(id = item.second),
                                         "",
                                         modifier = Modifier.size(50.dp)
                                     )
                                 },
-                                text = { Text(text = stringResource(id = id)) },
+                                text = { Text(text = stringResource(id = item.first)) },
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 modifier = Modifier.clickable {
                                     popUpShowState = false
@@ -217,7 +246,7 @@ fun ChatInput(
                 )
                 DefaultInput(
                     inputText = inputText,
-                    onValueChange = {inputText = it},
+                    onValueChange = { inputText = it },
                     hint = R.string.send_msg,
                     modifier = Modifier
                         .heightIn(min = 56.dp, max = 112.dp)
@@ -438,7 +467,7 @@ fun OtherMsg(message: Message, modifier: Modifier = Modifier) {
                         // reply
                         // TODO: reply layout
                         // name and phone
-                        if (message.isGroup){
+                        if (message.isGroup) {
                             Row(
                                 modifier = Modifier
                                     .padding(horizontal = 3.dp)
@@ -495,3 +524,14 @@ fun ChatTopBarAction() {
         TopBarIcon(R.drawable.ic_more_vert, onClick = {})
     }
 }
+
+private fun genChatPopUpItem(): List<Pair<Int, Int>> =
+    listOf(
+        Pair(R.string.file, R.drawable.ic_file),
+        Pair(R.string.camera, R.drawable.ic_camera),
+        Pair(R.string.gallery, R.drawable.ic_image),
+        Pair(R.string.audio, R.drawable.ic_head_phone),
+        Pair(R.string.local, R.drawable.ic_local),
+        Pair(R.string.contacts, R.drawable.ic_contacts),
+        Pair(R.string.vote, R.drawable.ic_vote),
+    )

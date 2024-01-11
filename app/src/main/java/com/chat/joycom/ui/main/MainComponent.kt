@@ -32,8 +32,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
@@ -42,7 +40,6 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -68,12 +65,12 @@ import com.chat.joycom.model.Group
 import com.chat.joycom.network.UrlPath
 import com.chat.joycom.network.UrlPath.getFileFullUrl
 import com.chat.joycom.ui.chat.ChatActivity
+import com.chat.joycom.ui.commom.DropdownColumn
 import com.chat.joycom.ui.commom.IconTextH
 import com.chat.joycom.ui.commom.PermissionType
 import com.chat.joycom.ui.commom.TopBarIcon
 import com.chat.joycom.ui.main.contacts.add.group.NewGroupActivity
 import com.chat.joycom.ui.setting.SettingActivity
-import com.chat.joycom.ui.theme.JoyComDropDownTheme
 import com.chat.joycom.ui.theme.OnTabSelectDark
 import com.chat.joycom.ui.theme.OnTabSelectLight
 import com.chat.joycom.ui.theme.OnTabUnSelectDark
@@ -192,9 +189,15 @@ fun ChatScene(viewModel: MainActivityViewModel = viewModel()) {
                                 )
                             },
                             text = { Text(text = item.nickname) },
-                            modifier = Modifier.fillMaxWidth().clickable {
-                                ChatActivity.start(context = context, contact = item, isGroup = false)
-                            }
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    ChatActivity.start(
+                                        context = context,
+                                        contact = item,
+                                        isGroup = false
+                                    )
+                                }
                         )
                     }
 
@@ -215,10 +218,16 @@ fun ChatScene(viewModel: MainActivityViewModel = viewModel()) {
                                     contentScale = ContentScale.Crop,
                                 )
                             },
-                            text = {Text(text = item.groupName)},
-                            modifier = Modifier.fillMaxWidth().clickable {
-                                ChatActivity.start(context = context, group = item, isGroup = true)
-                            }
+                            text = { Text(text = item.groupName) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    ChatActivity.start(
+                                        context = context,
+                                        group = item,
+                                        isGroup = true
+                                    )
+                                }
                         )
                     }
                 }
@@ -329,15 +338,6 @@ fun MainTopBarAction(pagerState: PagerState) {
     var isExpanded by remember {
         mutableStateOf(false)
     }
-    val dropDownList by remember(pagerState) {
-        derivedStateOf {
-            if (pagerState.currentPage == 1) {
-                MainDropDown.values().toList()
-            } else {
-                listOf(MainDropDown.Setting)
-            }
-        }
-    }
     val context = LocalContext.current
     Row(
         horizontalArrangement = Arrangement.spacedBy(15.dp),
@@ -363,29 +363,38 @@ fun MainTopBarAction(pagerState: PagerState) {
                 R.drawable.ic_more_vert,
                 onClick = { isExpanded = true }
             )
-            JoyComDropDownTheme {
-                DropdownMenu(
-                    expanded = isExpanded,
-                    onDismissRequest = { isExpanded = false },
+            DropdownColumn(
+                showState = isExpanded,
+                onDismissRequest = { isExpanded = false },
+                itemList = genMainDropdownMenuItem(pagerState.currentPage),
+                itemClick = { stringRes ->
+                    isExpanded = false
+                    when (stringRes) {
+                        R.string.setting -> SettingActivity.start(context)
+                        R.string.create_group -> NewGroupActivity.start(context)
+                        else -> {
 
-                    ) {
-                    dropDownList.forEach {
-                        DropdownMenuItem(
-                            text = { Text(text = stringResource(id = it.itemName)) },
-                            onClick = {
-                                isExpanded = false
-                                when (it) {
-                                    MainDropDown.Setting -> SettingActivity.start(context)
-                                    MainDropDown.CreateGroup -> NewGroupActivity.start(context)
-                                    else -> {
-
-                                    }
-                                }
-                            })
+                        }
                     }
                 }
-            }
+            )
         }
     }
 }
+
+private fun genMainDropdownMenuItem(page: Int) =
+    if (page == 1) {
+        listOf(
+            R.string.create_group,
+            R.string.create_broadcast,
+            R.string.linked_device,
+            R.string.marked_msg,
+            R.string.setting,
+        )
+    } else {
+        listOf(
+            R.string.setting,
+        )
+    }
+
 

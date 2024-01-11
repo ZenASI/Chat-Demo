@@ -14,11 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,12 +32,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chat.joycom.R
+import com.chat.joycom.ui.commom.DropdownColumn
 import com.chat.joycom.ui.commom.IconTextH
 import com.chat.joycom.ui.commom.TopBarIcon
 import com.chat.joycom.ui.main.contacts.add.contacts.AddContactActivity
 import com.chat.joycom.ui.main.contacts.add.group.NewGroupActivity
 import com.chat.joycom.ui.setting.qrcode.QRCodeActivity
-import com.chat.joycom.ui.theme.JoyComDropDownTheme
 import com.chat.joycom.ui.web.WebActivity
 
 @Composable
@@ -69,18 +66,14 @@ fun ContactsTopBarActions(viewModel: ContactsViewModel = viewModel()) {
                     )
                 )
             }
-            JoyComDropDownTheme {
-                DropdownMenu(expanded = isExpanded, onDismissRequest = { isExpanded = false }) {
-                    menuList.forEach {
-                        DropdownMenuItem(
-                            text = { Text(text = stringResource(id = it)) },
-                            onClick = {
-                                isExpanded = false
-                            }
-                        )
-                    }
+            DropdownColumn(
+                showState = isExpanded,
+                onDismissRequest = { isExpanded = false },
+                itemList = menuList,
+                itemClick = {
+                    isExpanded = false
                 }
-            }
+            )
         }
     }
 }
@@ -104,6 +97,7 @@ fun ContactsColumn(modifier: Modifier = Modifier, viewModel: ContactsViewModel =
 
 @Composable
 fun ContactMergeColumn(viewModel: ContactsViewModel = viewModel()) {
+    val context = LocalContext.current
     val onContactList = remember {
         viewModel.onContactList
     }
@@ -157,7 +151,15 @@ fun ContactMergeColumn(viewModel: ContactsViewModel = viewModel()) {
             text = { Text(text = it.nickname, fontSize = 20.sp) },
             action = {
                 Button(
-                    onClick = {},
+                    onClick = {
+                        val sendIntent: Intent = Intent().apply {
+                            action = Intent.ACTION_SEND
+                            putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_content))
+                            type = "text/plain"
+                        }
+                        val shareIntent = Intent.createChooser(sendIntent, null)
+                        context.startActivity(shareIntent)
+                    },
                     modifier = Modifier.padding(horizontal = 10.dp)
                 ) {
                     Text(text = stringResource(id = R.string.invite))
@@ -165,7 +167,15 @@ fun ContactMergeColumn(viewModel: ContactsViewModel = viewModel()) {
             },
             spaceWeightEnable = Pair(false, true),
             modifier = Modifier
-                .clickable { }
+                .clickable {
+                    val sendIntent: Intent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_content))
+                        type = "text/plain"
+                    }
+                    val shareIntent = Intent.createChooser(sendIntent, null)
+                    context.startActivity(shareIntent)
+                }
                 .fillMaxWidth()
                 .padding(horizontal = 10.dp)
         )
@@ -313,7 +323,10 @@ fun ContactBottomColumn(viewModel: ContactsViewModel = viewModel()) {
             },
             modifier = Modifier
                 .clickable {
-                    WebActivity.start(context, "https://faq.whatsapp.com/1183494482518500?locale=zh_TW")
+                    WebActivity.start(
+                        context,
+                        "https://faq.whatsapp.com/1183494482518500?locale=zh_TW"
+                    )
                 }
                 .fillMaxWidth()
                 .padding(horizontal = 10.dp)

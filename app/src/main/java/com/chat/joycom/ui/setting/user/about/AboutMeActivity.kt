@@ -6,31 +6,23 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -43,10 +35,10 @@ import androidx.lifecycle.DEFAULT_ARGS_KEY
 import androidx.lifecycle.viewmodel.MutableCreationExtras
 import com.chat.joycom.R
 import com.chat.joycom.ui.BaseActivity
+import com.chat.joycom.ui.commom.DropdownColumn
 import com.chat.joycom.ui.commom.IconTextH
 import com.chat.joycom.ui.commom.JoyComAppBar
 import com.chat.joycom.ui.commom.TopBarIcon
-import com.chat.joycom.ui.theme.JoyComDropDownTheme
 import com.chat.joycom.ui.theme.JoyComTheme
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
@@ -95,15 +87,14 @@ class AboutMeActivity : BaseActivity() {
                         acton = {
                             Box {
                                 TopBarIcon(R.drawable.ic_more_vert, onClick = { isExpanded = true })
-                                JoyComDropDownTheme {
-                                    DropdownMenu(
-                                        expanded = isExpanded,
-                                        onDismissRequest = { isExpanded = false }) {
-                                        DropdownMenuItem(
-                                            text = { Text(text = stringResource(id = R.string.delete_all)) },
-                                            onClick = { isExpanded = false })
+                                DropdownColumn(
+                                    showState = isExpanded,
+                                    onDismissRequest = { isExpanded = false },
+                                    itemList = listOf(R.string.delete_all),
+                                    itemClick = {
+                                        isExpanded = false
                                     }
-                                }
+                                )
                             }
                         }
                     )
@@ -146,17 +137,16 @@ class AboutMeActivity : BaseActivity() {
                                             onLongClick = { itemIsExpanded = true }
                                         )
                                 )
-                                DropdownMenu(
-                                    expanded = itemIsExpanded,
-                                    offset = DpOffset(offset.value.x.dp, 0.dp),
-                                    onDismissRequest = { itemIsExpanded = false }) {
-                                    DropdownMenuItem(
-                                        text = { Text(text = stringResource(id = R.string.delete)) },
-                                        onClick = {
-                                            itemIsExpanded = false
-                                            viewModel.deleteAbout(about)
-                                        })
-                                }
+                                DropdownColumn(
+                                    showState = itemIsExpanded,
+                                    onDismissRequest = { itemIsExpanded = false  },
+                                    itemList = listOf(R.string.delete),
+                                    itemClick = {
+                                        itemIsExpanded = false
+                                        viewModel.deleteAbout(about)
+                                    },
+                                    offset = DpOffset(offset.value.x.dp, 0.dp)
+                                )
                             }
                         }
                     }

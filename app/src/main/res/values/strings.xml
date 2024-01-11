@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">JoyCom</string>
 
+    <string name="empty"></string>
+
     <string name="community">社群</string>
     <string name="chat">對話</string>
     <string name="update">更新</string>

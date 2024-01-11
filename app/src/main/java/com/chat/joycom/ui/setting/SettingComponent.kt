@@ -1,7 +1,5 @@
 package com.chat.joycom.ui.setting
 
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -57,58 +55,6 @@ import com.chat.joycom.ui.setting.account.AccountActivity
 import com.chat.joycom.ui.setting.qrcode.QRCodeActivity
 import com.chat.joycom.ui.setting.user.UserInfoActivity
 import kotlinx.coroutines.launch
-import kotlin.reflect.jvm.internal.impl.descriptors.Visibilities.Local
-
-enum class SettingFeatures(
-    @StringRes val title: Int,
-    @StringRes val content: Int? = null,
-    @DrawableRes val icon: Int,
-) {
-    Account(
-        title = R.string.account,
-        content = R.string.account_desc,
-        icon = R.drawable.ic_key,
-    ),
-    Privacy(
-        title = R.string.privacy,
-        content = R.string.privacy_desc,
-        icon = R.drawable.ic_lock
-    ),
-    Avatar(
-        title = R.string.avatar,
-        content = R.string.avatar_desc,
-        icon = R.drawable.ic_emoji
-    ),
-    Conversation(
-        title = R.string.conversation,
-        content = R.string.conversation_desc,
-        icon = R.drawable.ic_chat
-    ),
-    Notification(
-        title = R.string.notification,
-        content = R.string.notification_desc,
-        icon = R.drawable.ic_notifications
-    ),
-    Storage(
-        title = R.string.storage,
-        content = R.string.storage_desc,
-        icon = R.drawable.ic_storage
-    ),
-    Language(
-        title = R.string.app_language,
-        content = R.string.app_language_desc,
-        icon = R.drawable.ic_language
-    ),
-    Help(
-        title = R.string.help,
-        content = R.string.help_desc,
-        icon = R.drawable.ic_help
-    ),
-    Invite(
-        title = R.string.invite_friends,
-        icon = R.drawable.ic_group2
-    ),
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -237,7 +183,7 @@ fun UserInfo() {
 
 @Composable
 fun UserOperateFeature(viewModel: SettingViewModel = viewModel()) {
-    val settingFeatures = SettingFeatures.values().toList()
+
     val context = LocalContext.current
     Column(
         modifier = Modifier
@@ -245,12 +191,12 @@ fun UserOperateFeature(viewModel: SettingViewModel = viewModel()) {
             .wrapContentHeight()
             .background(MaterialTheme.colorScheme.background),
     ) {
-        settingFeatures.forEachIndexed { index, item ->
+        genSettingFeaturesItem().forEachIndexed { index, item ->
             IconTextH(
                 icon = {
                     Box(modifier = Modifier.size(60.dp)) {
                         Image(
-                            painter = painterResource(id = item.icon),
+                            painter = painterResource(id = item.third),
                             contentDescription = "",
                             modifier = Modifier
                                 .size(30.dp)
@@ -263,17 +209,17 @@ fun UserOperateFeature(viewModel: SettingViewModel = viewModel()) {
                         modifier = Modifier
                             .weight(1f)
                     ) {
-                        Text(text = stringResource(id = item.title), maxLines = 1)
-                        item.content?.let {
+                        Text(text = stringResource(id = item.first), maxLines = 1)
+                        if (stringResource(item.second).isNotEmpty()){
                             Spacer(modifier = Modifier.size(1.dp))
-                            Text(text = stringResource(id = it), maxLines = 1)
+                            Text(text = stringResource(id = item.second), maxLines = 1)
                         }
                     }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        when(index){
+                        when (index) {
                             0 -> AccountActivity.start(context)
                         }
                     },
@@ -282,3 +228,16 @@ fun UserOperateFeature(viewModel: SettingViewModel = viewModel()) {
         }
     }
 }
+
+private fun genSettingFeaturesItem() =
+    listOf(
+        Triple(R.string.account, R.string.account_desc, R.drawable.ic_key),
+        Triple(R.string.privacy, R.string.privacy_desc, R.drawable.ic_lock),
+        Triple(R.string.avatar, R.string.avatar_desc, R.drawable.ic_emoji),
+        Triple(R.string.conversation, R.string.conversation_desc, R.drawable.ic_chat),
+        Triple(R.string.notification, R.string.notification_desc, R.drawable.ic_notifications),
+        Triple(R.string.storage, R.string.storage_desc, R.drawable.ic_storage),
+        Triple(R.string.app_language, R.string.app_language_desc, R.drawable.ic_language),
+        Triple(R.string.help, R.string.help_desc, R.drawable.ic_help),
+        Triple(R.string.invite_friends, R.string.empty, R.drawable.ic_group2),
+    )
