@@ -143,9 +143,7 @@ class ChatActivity : BaseActivity() {
                             modifier = Modifier
                         )
                     },
-                    modifier = Modifier
-                        .navigationBarsPadding()
-
+                    modifier = Modifier.navigationBarsPadding()
                 ) { paddingValues ->
                     val memberInfo = viewModel.memberInfo.collectAsState(initial = null).value
                     val pagingList = viewModel.pagingMessage.collectAsLazyPagingItems()

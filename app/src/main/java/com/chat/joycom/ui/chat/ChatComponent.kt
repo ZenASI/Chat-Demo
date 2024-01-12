@@ -1,5 +1,7 @@
 package com.chat.joycom.ui.chat
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.TwoWayConverter
@@ -48,9 +50,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -64,6 +68,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -86,6 +91,11 @@ import com.chat.joycom.network.UrlPath.getFileFullUrl
 import com.chat.joycom.ui.commom.DefaultInput
 import com.chat.joycom.ui.commom.IconTextV
 import com.chat.joycom.ui.commom.TopBarIcon
+import kotlinx.coroutines.android.awaitFrame
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import timber.log.Timber
+import kotlin.math.max
 
 @OptIn(
     ExperimentalLayoutApi::class, ExperimentalComposeUiApi::class
@@ -97,42 +107,64 @@ fun ChatInput(
     onMessage: ((message: Message) -> Unit)? = null,
     id: Long?,
 ) {
-    val res = LocalContext.current.resources
-    val imeState = WindowInsets.isImeVisible // for keyboard show/hide bool
-    val imeBottom = WindowInsets.ime.getBottom(LocalDensity.current)
-    val keyboardController = LocalSoftwareKeyboardController.current // show/hide keyboard
+    var popUpShowState by remember {
+        mutableStateOf(false)
+    }
     val focusRequester = remember { FocusRequester() }
     var inputText by rememberSaveable {
         mutableStateOf("")
     }
-    val rightIcon by remember {
+    val sendIconType by remember {
         derivedStateOf {
             if (inputText.isEmpty()) R.drawable.ic_mic else R.drawable.ic_send
         }
     }
-    val imeHeightDP = rememberSaveable {
-        mutableFloatStateOf(0f) // 紀錄鍵盤最大值
+    var isTypeKeyBoard by remember {
+        mutableStateOf(false)
     }
-    LaunchedEffect(imeBottom) {
-        if (imeState)
-            imeHeightDP.floatValue = maxOf(
-                imeHeightDP.floatValue,
-                TypedValueCompat.pxToDp(imeBottom.toFloat(), res.displayMetrics)
-            )
+    val keyBoardType by remember {
+        derivedStateOf {
+            if (isTypeKeyBoard) R.drawable.ic_keyboard else R.drawable.ic_emoji
+        }
     }
-
-    val bottomHeight = animateDpAsState(
-        targetValue = if (imeState) imeHeightDP.floatValue.dp else 0.dp,
-        label = "",
-    )
-
     val scrollState = rememberScrollState(0)
     LaunchedEffect(scrollState.maxValue) {
         scrollState.animateScrollTo(scrollState.maxValue)
     }
 
-    var popUpShowState by remember {
-        mutableStateOf(false)
+    val res = LocalContext.current.resources
+    val config = LocalConfiguration.current
+    val imeState = WindowInsets.isImeVisible // for keyboard show/hide bool
+    val imeBottom = WindowInsets.ime.getBottom(LocalDensity.current)
+    val keyboardController = LocalSoftwareKeyboardController.current // show/hide keyboard
+
+    var limitReduceCount by remember {
+        mutableIntStateOf(0)
+    }
+
+    var defaultHeightDp by remember {
+        mutableFloatStateOf((config.screenHeightDp / 3).toFloat())
+    }
+
+    var keyBoardHeightDp by remember {
+        mutableFloatStateOf(0f)
+    }
+
+    var bottomHeightDp by remember {
+        mutableFloatStateOf(0f)
+    }
+
+    LaunchedEffect(imeBottom) {
+        if (imeBottom != 0) {
+            val imeBottomDp = TypedValueCompat.pxToDp(imeBottom.toFloat(), res.displayMetrics)
+            keyBoardHeightDp = maxOf(keyBoardHeightDp, imeBottomDp)
+            bottomHeightDp = maxOf(defaultHeightDp, imeBottomDp)
+        }
+    }
+
+    BackHandler(bottomHeightDp > 0f) {
+        isTypeKeyBoard = false
+        bottomHeightDp = 0f
     }
 
     Column(
@@ -140,84 +172,7 @@ fun ChatInput(
             .wrapContentHeight()
             .padding(horizontal = 5.dp),
     ) {
-        val animationProgress by animateFloatAsState(
-            targetValue = if (popUpShowState) 1f else 0f,
-            animationSpec = tween(durationMillis = 300, easing = LinearEasing), label = ""
-        )
-
-        val transition = updateTransition(targetState = animationProgress, label = "")
-        val res = LocalContext.current.resources
-        Popup(
-            onDismissRequest = { popUpShowState = false },
-            alignment = Alignment.BottomCenter,
-            offset = IntOffset(0, -TypedValueCompat.dpToPx(60f, res.displayMetrics).toInt())
-        ) {
-            val animatedShape by transition.animateValue(
-                TwoWayConverter(
-                    convertToVector = { AnimationVector1D(0f) },
-                    convertFromVector = { GenericShape { _, _ -> } }
-                ),
-                label = ""
-            ) { progress ->
-                GenericShape { size, _ ->
-                    val centerH = size.width / 2f
-                    val multiplierW = 1.5f + size.height / size.width
-
-                    moveTo(
-                        x = centerH - centerH * progress * multiplierW,
-                        y = size.height,
-                    )
-
-                    val currentWidth = (centerH * progress * multiplierW * 2.5f)
-
-                    cubicTo(
-                        x1 = centerH - centerH * progress * 1.5f,
-                        y1 = size.height - currentWidth * 0.5f,
-                        x2 = centerH + centerH * progress * 1.5f,
-                        y2 = size.height - currentWidth * 0.5f,
-                        x3 = centerH + centerH * progress * multiplierW,
-                        y3 = size.height,
-                    )
-
-                    close()
-                }
-            }
-            if (animationProgress != 0f) {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(3),
-                    modifier = Modifier
-                        .fillMaxWidth(.95f)
-                        .graphicsLayer {
-                            clip = true
-                            shape = animatedShape
-                        }
-                        .background(Color.Gray, RoundedCornerShape(8.dp)),
-                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 25.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    genChatPopUpItem().forEachIndexed { index, item ->
-                        item {
-                            IconTextV(
-                                icon = {
-                                    Icon(
-                                        painterResource(id = item.second),
-                                        "",
-                                        modifier = Modifier.size(50.dp)
-                                    )
-                                },
-                                text = { Text(text = stringResource(id = item.first)) },
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier.clickable {
-                                    popUpShowState = false
-                                }
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
+        ChatPopUpMenu(popUpShowState, onDismiss = { popUpShowState = it })
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(5.dp),
@@ -230,14 +185,24 @@ fun ChatInput(
                 verticalAlignment = Alignment.Bottom
             ) {
                 Icon(
-                    painterResource(id = R.drawable.ic_emoji),
+                    painterResource(id = keyBoardType),
                     "",
                     Modifier
                         .size(56.dp)
                         .scale(.6f)
                         .clip(CircleShape)
                         .clickable {
+                            if (isTypeKeyBoard) {
+                                keyboardController?.show()
+                                focusRequester.requestFocus()
 
+                            } else {
+                                if (bottomHeightDp == 0f) {
+                                    bottomHeightDp = defaultHeightDp
+                                }
+                                keyboardController?.hide()
+                            }
+                            isTypeKeyBoard = isTypeKeyBoard.not()
                         }
                 )
                 DefaultInput(
@@ -270,7 +235,7 @@ fun ChatInput(
                 )
             }
             Icon(
-                painterResource(id = rightIcon),
+                painterResource(id = sendIconType),
                 "",
                 modifier = Modifier
                     .size(60.dp)
@@ -283,9 +248,92 @@ fun ChatInput(
         }
         Box(
             modifier = Modifier
+                .animateContentSize()
                 .fillMaxWidth()
-                .height(bottomHeight.value)
+                .height(bottomHeightDp.dp)
         ) {
+        }
+    }
+}
+
+@Composable
+fun ChatPopUpMenu(showState: Boolean, onDismiss: (Boolean) -> Unit) {
+    val animationProgress by animateFloatAsState(
+        targetValue = if (showState) 1f else 0f,
+        animationSpec = tween(durationMillis = 300, easing = LinearEasing), label = ""
+    )
+
+    val transition = updateTransition(targetState = animationProgress, label = "")
+    val res = LocalContext.current.resources
+
+    Popup(
+        onDismissRequest = { onDismiss.invoke(false) },
+        alignment = Alignment.BottomCenter,
+        offset = IntOffset(0, -TypedValueCompat.dpToPx(60f, res.displayMetrics).toInt())
+    ) {
+        val animatedShape by transition.animateValue(
+            TwoWayConverter(
+                convertToVector = { AnimationVector1D(0f) },
+                convertFromVector = { GenericShape { _, _ -> } }
+            ),
+            label = ""
+        ) { progress ->
+            GenericShape { size, _ ->
+                val centerH = size.width / 2f
+                val multiplierW = 1.5f + size.height / size.width
+
+                moveTo(
+                    x = centerH - centerH * progress * multiplierW,
+                    y = size.height,
+                )
+
+                val currentWidth = (centerH * progress * multiplierW * 2.5f)
+
+                cubicTo(
+                    x1 = centerH - centerH * progress * 1.5f,
+                    y1 = size.height - currentWidth * 0.5f,
+                    x2 = centerH + centerH * progress * 1.5f,
+                    y2 = size.height - currentWidth * 0.5f,
+                    x3 = centerH + centerH * progress * multiplierW,
+                    y3 = size.height,
+                )
+
+                close()
+            }
+        }
+        if (animationProgress != 0f) {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(3),
+                modifier = Modifier
+                    .fillMaxWidth(.95f)
+                    .graphicsLayer {
+                        clip = true
+                        shape = animatedShape
+                    }
+                    .background(Color.Gray, RoundedCornerShape(8.dp)),
+                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 25.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                genChatPopUpItem().forEachIndexed { index, item ->
+                    item {
+                        IconTextV(
+                            icon = {
+                                Icon(
+                                    painterResource(id = item.second),
+                                    "",
+                                    modifier = Modifier.size(50.dp)
+                                )
+                            },
+                            text = { Text(text = stringResource(id = item.first)) },
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.clickable {
+                                onDismiss.invoke(false)
+                            }
+                        )
+                    }
+                }
+            }
         }
     }
 }
