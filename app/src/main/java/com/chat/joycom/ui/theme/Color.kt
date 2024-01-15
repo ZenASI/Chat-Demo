@@ -109,3 +109,18 @@ val OnFabLight = Color.White
 val HyperLinkTextDark = Color(0xFF54C0EF)
 val HyperLinkTextLight = Color(0xFF017EB5)
 
+/**
+ * [JoyComChipTheme]
+ */
+val ChipSurfaceDark = Color(0xFF26353D)
+val ChipSurfaceLight = Color(0xFFE9EDEF)
+val ChipIconDark = Color(0xFF8696A0)
+val ChipIconLight = Color(0xFF667781)
+
+/**
+ * [JoyComChipSelectTheme]
+ */
+val ChipSelectDark = Color(0xFF00A884)
+val ChipSelectLight = Color(0xFF008069)
+
+

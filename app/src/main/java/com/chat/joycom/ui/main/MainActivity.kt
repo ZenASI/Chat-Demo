@@ -34,6 +34,7 @@ import com.chat.joycom.R
 import com.chat.joycom.ui.BaseActivity
 import com.chat.joycom.ui.UiEvent
 import com.chat.joycom.ui.commom.JoyComAppBar
+import com.chat.joycom.ui.commom.JoyComTopSearchBar
 import com.chat.joycom.ui.commom.PermissionDescAlert
 import com.chat.joycom.ui.commom.PermissionType
 import com.chat.joycom.ui.login.LoginActivity
@@ -83,16 +84,30 @@ class MainActivity : BaseActivity() {
                 Scaffold(
                     topBar = {
                         Column {
-                            JoyComAppBar(
-                                showBack = false,
-                                title = { Text(text = stringResource(id = R.string.app_name)) },
-                                acton = { MainTopBarAction(pagerState) }
-                            )
-                            MainTableRow(
-                                currentScene = joyComScenesList[pagerState.currentPage],
-                                onClick = { ordinal ->
-                                    scope.launch { pagerState.animateScrollToPage(ordinal) }
-                                })
+                            if (viewModel.searchState) {
+                                JoyComTopSearchBar(
+                                    clickBack = {
+                                        viewModel.searchState = viewModel.searchState.not()
+                                    },
+                                    updateText = { viewModel.queryFromInputText(it) },
+                                    hint = R.string.search_three_dot,
+                                    isMsgSearch = pagerState.currentPage == 1,
+                                    chipClick = { pos ->
+                                        viewModel.updateSearchFilter(pos)
+                                    },
+                                )
+                            } else {
+                                JoyComAppBar(
+                                    showBack = false,
+                                    title = { Text(text = stringResource(id = R.string.app_name)) },
+                                    acton = { MainTopBarAction(pagerState) }
+                                )
+                                MainTableRow(
+                                    currentScene = joyComScenesList[pagerState.currentPage],
+                                    onClick = { ordinal ->
+                                        scope.launch { pagerState.animateScrollToPage(ordinal) }
+                                    })
+                            }
                         }
                     },
                     floatingActionButton = {

@@ -31,7 +31,7 @@ import com.chat.joycom.R
 import com.chat.joycom.ui.BaseActivity
 import com.chat.joycom.ui.UiEvent
 import com.chat.joycom.ui.commom.JoyComAppBar
-import com.chat.joycom.ui.commom.TopBarContactSearch
+import com.chat.joycom.ui.commom.JoyComTopSearchBar
 import com.chat.joycom.ui.commom.TopBarIcon
 import com.chat.joycom.ui.theme.JoyComFabTheme
 import com.chat.joycom.ui.theme.JoyComTheme
@@ -62,7 +62,7 @@ class NewGroupActivity : BaseActivity() {
                 Scaffold(
                     topBar = {
                         if (viewModel.showSearchBool) {
-                            TopBarContactSearch(
+                            JoyComTopSearchBar(
                                 clickBack = {
                                     viewModel.showSearchBool =
                                         viewModel.showSearchBool.not()
@@ -70,6 +70,8 @@ class NewGroupActivity : BaseActivity() {
                                 updateText = {
                                     viewModel.searchInputText.value = it
                                 },
+                                enableSwitchBoard = true,
+                                hint = R.string.pls_input_name_or_phone_number
                             )
                         } else {
                             JoyComAppBar(

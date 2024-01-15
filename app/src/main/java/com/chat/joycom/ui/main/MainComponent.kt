@@ -162,73 +162,85 @@ fun CommunityScene(viewModel: MainActivityViewModel = viewModel()) {
 fun ChatScene(viewModel: MainActivityViewModel = viewModel()) {
     val listFlow = viewModel.combineFlow().collectAsState(initial = mutableListOf()).value
     val context = LocalContext.current
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        listFlow.forEachIndexed { index, item ->
-            item(key = index) {
-                when (item) {
-                    is Contact -> {
-                        IconTextH(
-                            icon = {
-                                AsyncImage(
-                                    model = ImageRequest.Builder(LocalContext.current)
-                                        .data(UrlPath.GET_FILE.getFileFullUrl() + item.avatar)
-                                        .crossfade(true).build(),
-                                    contentDescription = "",
-                                    modifier = Modifier
-                                        .padding(start = 10.dp)
-                                        .size(55.dp)
-                                        .clip(CircleShape),
-                                    placeholder = painterResource(id = R.drawable.ic_def_user),
-                                    error = painterResource(id = R.drawable.ic_def_user),
-                                    contentScale = ContentScale.Crop,
-                                )
-                            },
-                            text = { Text(text = item.nickname) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    ChatActivity.start(
-                                        context = context,
-                                        contact = item,
-                                        isGroup = false
+    val filterState = viewModel.filterState
+    val searchText = viewModel.searchText
+    if (filterState || searchText.isNotEmpty()) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Text(
+                text = stringResource(id = R.string.no_search_result), modifier = Modifier.align(
+                    Alignment.Center
+                )
+            )
+        }
+    } else {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            listFlow.forEachIndexed { index, item ->
+                item(key = index) {
+                    when (item) {
+                        is Contact -> {
+                            IconTextH(
+                                icon = {
+                                    AsyncImage(
+                                        model = ImageRequest.Builder(LocalContext.current)
+                                            .data(UrlPath.GET_FILE.getFileFullUrl() + item.avatar)
+                                            .crossfade(true).build(),
+                                        contentDescription = "",
+                                        modifier = Modifier
+                                            .padding(start = 10.dp)
+                                            .size(55.dp)
+                                            .clip(CircleShape),
+                                        placeholder = painterResource(id = R.drawable.ic_def_user),
+                                        error = painterResource(id = R.drawable.ic_def_user),
+                                        contentScale = ContentScale.Crop,
                                     )
-                                }
-                        )
-                    }
+                                },
+                                text = { Text(text = item.nickname) },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        ChatActivity.start(
+                                            context = context,
+                                            contact = item,
+                                            isGroup = false
+                                        )
+                                    }
+                            )
+                        }
 
-                    is Group -> {
-                        IconTextH(
-                            icon = {
-                                AsyncImage(
-                                    model = ImageRequest.Builder(LocalContext.current)
-                                        .data(UrlPath.GET_FILE.getFileFullUrl() + item.avatar)
-                                        .crossfade(true).build(),
-                                    contentDescription = "",
-                                    modifier = Modifier
-                                        .padding(start = 10.dp)
-                                        .size(55.dp)
-                                        .clip(CircleShape),
-                                    placeholder = painterResource(id = R.drawable.ic_def_group),
-                                    error = painterResource(id = R.drawable.ic_def_group),
-                                    contentScale = ContentScale.Crop,
-                                )
-                            },
-                            text = { Text(text = item.groupName) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    ChatActivity.start(
-                                        context = context,
-                                        group = item,
-                                        isGroup = true
+                        is Group -> {
+                            IconTextH(
+                                icon = {
+                                    AsyncImage(
+                                        model = ImageRequest.Builder(LocalContext.current)
+                                            .data(UrlPath.GET_FILE.getFileFullUrl() + item.avatar)
+                                            .crossfade(true).build(),
+                                        contentDescription = "",
+                                        modifier = Modifier
+                                            .padding(start = 10.dp)
+                                            .size(55.dp)
+                                            .clip(CircleShape),
+                                        placeholder = painterResource(id = R.drawable.ic_def_group),
+                                        error = painterResource(id = R.drawable.ic_def_group),
+                                        contentScale = ContentScale.Crop,
                                     )
-                                }
-                        )
+                                },
+                                text = { Text(text = item.groupName) },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        ChatActivity.start(
+                                            context = context,
+                                            group = item,
+                                            isGroup = true
+                                        )
+                                    }
+                            )
+                        }
                     }
                 }
             }
@@ -312,7 +324,7 @@ fun MainTableRow(currentScene: JoyComScene, onClick: (Int) -> Unit) {
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalPermissionsApi::class)
 @Composable
-fun MainTopBarAction(pagerState: PagerState) {
+fun MainTopBarAction(pagerState: PagerState, viewModel: MainActivityViewModel = viewModel()) {
     var showPermissionDesc by remember {
         mutableStateOf(false)
     }
@@ -355,7 +367,9 @@ fun MainTopBarAction(pagerState: PagerState) {
         ) {
             TopBarIcon(
                 R.drawable.ic_search,
-                onClick = {},
+                onClick = {
+                    viewModel.searchState = viewModel.searchState.not()
+                },
             )
         }
         Box {

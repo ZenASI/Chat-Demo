@@ -205,4 +205,14 @@
     <string name="from_contacts">From Contacts</string>
 
     <string name="share_link">分享連結</string>
+
+    <string name="search_three_dot">搜尋…</string>
+
+    <string name="unread">未讀</string>
+    <string name="photo">照片</string>
+    <string name="video">影片</string>
+    <string name="link">連結</string>
+    <string name="gif">GIF</string>
+
+    <string name="no_search_result">無搜尋結果</string>
 </resources>

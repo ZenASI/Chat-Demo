@@ -6,7 +6,6 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
@@ -14,7 +13,7 @@ import androidx.compose.ui.res.stringResource
 import com.chat.joycom.R
 import com.chat.joycom.ui.BaseActivity
 import com.chat.joycom.ui.commom.JoyComAppBar
-import com.chat.joycom.ui.commom.TopBarContactSearch
+import com.chat.joycom.ui.commom.JoyComTopSearchBar
 import com.chat.joycom.ui.commom.TopBarIcon
 import com.chat.joycom.ui.theme.JoyComTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,7 +40,7 @@ class InviteFriendsActivity : BaseActivity() {
                 Scaffold(
                     topBar = {
                         if (viewModel.showSearchBool) {
-                            TopBarContactSearch(
+                            JoyComTopSearchBar(
                                 clickBack = {
                                     viewModel.showSearchBool =
                                         viewModel.showSearchBool.not()
@@ -49,7 +48,6 @@ class InviteFriendsActivity : BaseActivity() {
                                 updateText = {
                                     viewModel.searchInputText.value = it
                                 },
-                                enableSwitchBoard = false
                             )
                         } else {
                             JoyComAppBar(

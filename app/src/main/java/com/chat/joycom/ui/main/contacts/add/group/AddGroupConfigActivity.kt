@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -42,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import com.chat.joycom.R
 import com.chat.joycom.model.Member
 import com.chat.joycom.ui.BaseActivity
+import com.chat.joycom.ui.commom.DefaultInput
 import com.chat.joycom.ui.commom.GroupIconSelectSheet
 import com.chat.joycom.ui.commom.IconTextH
 import com.chat.joycom.ui.commom.IconTextV
@@ -94,7 +96,8 @@ class AddGroupActivity : BaseActivity() {
                                     Icon(Icons.Filled.Check, "")
                                 }
                             }
-                        }
+                        },
+                        modifier = Modifier.imePadding()
                     ) { paddingValues ->
                         val context = LocalContext.current
                         var groupName by remember {
@@ -129,11 +132,13 @@ class AddGroupActivity : BaseActivity() {
                                     )
                                 },
                                 text = {
-                                    TextField(
-                                        value = groupName,
+                                    DefaultInput(
+                                        inputText = groupName,
                                         onValueChange = { groupName = it },
-                                        label = { Text(text = stringResource(id = R.string.hint_group_name)) },
-                                        modifier = Modifier.fillMaxWidth()
+                                        hint = R.string.hint_group_name,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        singleLine = true,
+                                        enableBottomLine = true
                                     )
                                 },
                                 action = {

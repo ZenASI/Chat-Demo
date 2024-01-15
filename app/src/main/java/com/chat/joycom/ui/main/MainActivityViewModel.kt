@@ -1,7 +1,9 @@
 package com.chat.joycom.ui.main
 
 import android.os.Parcelable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
@@ -41,6 +43,10 @@ class MainActivityViewModel @Inject constructor(
     private val moshi: Moshi
 ) : BaseViewModel() {
 
+    var searchState by mutableStateOf(false)
+    var searchText by mutableStateOf("")
+    var filterState by mutableStateOf(false)
+
     val userInfo = AccountFlow.stateFlow
     val memberInfo = MemberFlow.stateFlow
     private val sid = mutableStateOf("")
@@ -52,37 +58,55 @@ class MainActivityViewModel @Inject constructor(
     //    private val groupsFlow = roomUtils.findAllGroup().distinctUntilChanged()
 //    private val contactsFlow = roomUtils.findAllContact().distinctUntilChanged()
     private val groupsFlow = flow<List<Group>> {
-        emit(listOf<Group>(
-            Group(id = Random.nextLong(), avatar = UUID.randomUUID().toString(), groupId = Random.nextLong(), groupName = "group_1", isNoDisturb = 0, userId = 0L),
-            Group(id = Random.nextLong(), avatar = UUID.randomUUID().toString(), groupId = Random.nextLong(), groupName = "group_1", isNoDisturb = 0, userId = 0L),
-        ))
+        emit(
+            listOf<Group>(
+                Group(
+                    id = Random.nextLong(),
+                    avatar = UUID.randomUUID().toString(),
+                    groupId = Random.nextLong(),
+                    groupName = "group_1",
+                    isNoDisturb = 0,
+                    userId = 0L
+                ),
+                Group(
+                    id = Random.nextLong(),
+                    avatar = UUID.randomUUID().toString(),
+                    groupId = Random.nextLong(),
+                    groupName = "group_1",
+                    isNoDisturb = 0,
+                    userId = 0L
+                ),
+            )
+        )
 
     }
     private val contactsFlow = flow<List<Contact>> {
-        emit(listOf<Contact>(
-            Contact(
-                id = Random.nextLong(),
-                avatar = UUID.randomUUID().toString(),
-                userId = Random.nextLong(),
-                nickname = "contact_1",
-                account = "contact_1",
-                countryCode = "",
-                phoneNumber = "",
-                isNoDisturb = 0,
-                friendRemark = ""
-            ),
-            Contact(
-                id = Random.nextLong(),
-                avatar = UUID.randomUUID().toString(),
-                userId = Random.nextLong(),
-                nickname = "contact_2",
-                account = "contact_2",
-                countryCode = "",
-                phoneNumber = "",
-                isNoDisturb = 0,
-                friendRemark = ""
-            ),
-        ))
+        emit(
+            listOf<Contact>(
+                Contact(
+                    id = Random.nextLong(),
+                    avatar = UUID.randomUUID().toString(),
+                    userId = Random.nextLong(),
+                    nickname = "contact_1",
+                    account = "contact_1",
+                    countryCode = "",
+                    phoneNumber = "",
+                    isNoDisturb = 0,
+                    friendRemark = ""
+                ),
+                Contact(
+                    id = Random.nextLong(),
+                    avatar = UUID.randomUUID().toString(),
+                    userId = Random.nextLong(),
+                    nickname = "contact_2",
+                    account = "contact_2",
+                    countryCode = "",
+                    phoneNumber = "",
+                    isNoDisturb = 0,
+                    friendRemark = ""
+                ),
+            )
+        )
     }
 
     fun combineFlow(): Flow<List<Parcelable>> {
@@ -172,5 +196,13 @@ class MainActivityViewModel @Inject constructor(
                 socketUtils.send(json)
             }
         }
+    }
+
+    fun updateSearchFilter(pos: Int?) {
+        filterState = pos != null
+    }
+
+    fun queryFromInputText(text: String) {
+        searchText = text
     }
 }
