@@ -1,5 +1,6 @@
 package com.chat.joycom.ui.chat
 
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.AnimationVector1D
@@ -28,6 +29,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.isImeVisible
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -72,6 +74,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -79,6 +82,10 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.core.util.TypedValueCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsAnimationCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -132,21 +139,18 @@ fun ChatInput(
         scrollState.animateScrollTo(scrollState.maxValue)
     }
 
+    val view = LocalView.current
     val res = LocalContext.current.resources
     val config = LocalConfiguration.current
-    val imeState = WindowInsets.isImeVisible // for keyboard show/hide bool
+    val imeState = WindowInsets.isImeVisible
     val imeBottom = WindowInsets.ime.getBottom(LocalDensity.current)
     val keyboardController = LocalSoftwareKeyboardController.current // show/hide keyboard
 
-    var limitReduceCount by remember {
-        mutableIntStateOf(0)
+    val defaultHeightDp by remember {
+        mutableFloatStateOf((config.screenHeightDp / 4).toFloat())
     }
 
-    var defaultHeightDp by remember {
-        mutableFloatStateOf((config.screenHeightDp / 3).toFloat())
-    }
-
-    var keyBoardHeightDp by remember {
+    var recordHeightDp by remember {
         mutableFloatStateOf(0f)
     }
 
@@ -154,11 +158,19 @@ fun ChatInput(
         mutableFloatStateOf(0f)
     }
 
+    LaunchedEffect(Unit) {
+        ViewCompat.setWindowInsetsAnimationCallback(view, KeyBoardAnimateCallBack())
+        focusRequester.requestFocus()
+    }
+
     LaunchedEffect(imeBottom) {
-        if (imeBottom != 0) {
-            val imeBottomDp = TypedValueCompat.pxToDp(imeBottom.toFloat(), res.displayMetrics)
-            keyBoardHeightDp = maxOf(keyBoardHeightDp, imeBottomDp)
-            bottomHeightDp = maxOf(defaultHeightDp, imeBottomDp)
+        val imeBottomDp = TypedValueCompat.pxToDp(imeBottom.toFloat(), res.displayMetrics)
+        Timber.d("LaunchedEffect imeBottomDp => $imeBottomDp, isTypeKeyBoard => $isTypeKeyBoard")
+        if (imeBottom == 0) {
+
+        } else {
+            recordHeightDp = imeBottomDp
+            bottomHeightDp = imeBottomDp
         }
     }
 
@@ -195,10 +207,13 @@ fun ChatInput(
                             if (isTypeKeyBoard) {
                                 keyboardController?.show()
                                 focusRequester.requestFocus()
-
                             } else {
                                 if (bottomHeightDp == 0f) {
-                                    bottomHeightDp = defaultHeightDp
+                                    bottomHeightDp = if (recordHeightDp != 0f) {
+                                        recordHeightDp
+                                    } else {
+                                        defaultHeightDp
+                                    }
                                 }
                                 keyboardController?.hide()
                             }
@@ -579,3 +594,32 @@ private fun genChatPopUpItem(): List<Pair<Int, Int>> =
         Pair(R.string.contacts, R.drawable.ic_contacts),
         Pair(R.string.vote, R.drawable.ic_vote),
     )
+
+
+private fun KeyBoardAnimateCallBack() =
+    object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
+        override fun onProgress(
+            insets: WindowInsetsCompat,
+            runningAnimations: MutableList<WindowInsetsAnimationCompat>
+        ): WindowInsetsCompat {
+            return insets
+        }
+
+        override fun onPrepare(animation: WindowInsetsAnimationCompat) {
+            super.onPrepare(animation)
+            Timber.d("onPrepare")
+        }
+
+        override fun onStart(
+            animation: WindowInsetsAnimationCompat,
+            bounds: WindowInsetsAnimationCompat.BoundsCompat
+        ): WindowInsetsAnimationCompat.BoundsCompat {
+            Timber.d("onStart")
+            return super.onStart(animation, bounds)
+        }
+
+        override fun onEnd(animation: WindowInsetsAnimationCompat) {
+            super.onEnd(animation)
+            Timber.d("onEnd")
+        }
+    }
