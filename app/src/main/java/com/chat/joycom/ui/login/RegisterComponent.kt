@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chat.joycom.ui.commom.OtpInput
 import com.chat.joycom.ui.commom.PhoneInput
-import com.utkuglsvn.countrycodepicker.libData.utils.getLibCountries
 
 @Composable
 fun RegisterView() {
@@ -33,9 +32,7 @@ fun RegisterView() {
         mutableStateOf("")
     }
 
-    var cc by remember {
-        mutableStateOf(getLibCountries().single { it.countryCode == "tw" })
-    }
+
     var otp by rememberSaveable {
         mutableStateOf("111111")
     }
@@ -51,18 +48,15 @@ fun RegisterView() {
                 value = nickName,
                 onValueChange = { nickName = it },
                 label = { Text(text = "name", color = Color.Gray) })
-            PhoneInput(
-                inputText = phone,
-                updateText = { phone = it },
-                defaultCountry = cc,
-                pickCountry = { cc = it })
+
             OtpInput(
                 isEnable = phone.isNotEmpty(),
                 otpText = otp,
                 updateOtp = { otp = it },
-                sentSms = {viewModel.sendSms(cc.countryPhoneCode, phone)})
+                sentSms = {}
+            )
             Button(onClick = {
-                viewModel.goRegister(nickName, cc.countryPhoneCode, phone, otp)
+
             }) {
                 Text(text = "Register")
             }

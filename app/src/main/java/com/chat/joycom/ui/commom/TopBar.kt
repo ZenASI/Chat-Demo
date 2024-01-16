@@ -214,11 +214,15 @@ fun JoyComTopSearchBar(
                                 onCancel = {
                                     selectFilterPos = null
                                     chipClick.invoke(null)
-                                }
+                                },
+                                filterType = selectFilterPos
                             )
                         }
                         if (enableSwitchBoard) {
-                            KeyBoardTypeSwitcher(keyType = keyType, typeChange = { keyType = it })
+                            KeyBoardTypeSwitcher(
+                                keyType = keyType,
+                                typeChange = { keyType = it }
+                            )
                         }
                         Spacer(modifier = Modifier.size(10.dp))
                     }
@@ -255,14 +259,17 @@ fun JoyComTopSearchBar(
 private fun FilterListState(
     isListGrid: Boolean,
     listTypeChange: (Boolean) -> Unit,
-    onCancel: () -> Unit
+    onCancel: () -> Unit,
+    filterType: Int?
 ) {
-    TopBarIcon(
-        if (isListGrid) R.drawable.ic_grid else R.drawable.ic_list,
-        onClick = {
-            listTypeChange.invoke(isListGrid.not())
-        })
-    Spacer(modifier = Modifier.size(10.dp))
+    if (filterType == 1 || filterType == 4){
+        TopBarIcon(
+            if (isListGrid) R.drawable.ic_grid else R.drawable.ic_list,
+            onClick = {
+                listTypeChange.invoke(isListGrid.not())
+            })
+        Spacer(modifier = Modifier.size(10.dp))
+    }
     TopBarIcon(
         R.drawable.ic_add,
         modifier = Modifier.rotate(45f),

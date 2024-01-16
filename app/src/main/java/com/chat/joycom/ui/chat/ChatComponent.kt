@@ -160,7 +160,7 @@ fun ChatInput(
 
     LaunchedEffect(Unit) {
         ViewCompat.setWindowInsetsAnimationCallback(view, KeyBoardAnimateCallBack())
-        focusRequester.requestFocus()
+//        focusRequester.requestFocus()
     }
 
     LaunchedEffect(imeBottom) {

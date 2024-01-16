@@ -16,4 +16,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "JoyCom"
 include(":app")
+include(":ccp")
  

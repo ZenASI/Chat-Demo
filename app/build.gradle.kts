@@ -92,6 +92,7 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.core:core-ktx:+")
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+    implementation(project(mapOf("path" to ":ccp")))
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -134,9 +135,6 @@ dependencies {
 
     val compose_permission_version = "0.32.0"
     implementation("com.google.accompanist:accompanist-permissions:$compose_permission_version")
-
-    val ccp_version = "1.0.5"
-    implementation ("com.github.UtkuGlsvn:ComposeCountryCodePicker:${ccp_version}")
 
     val datastore_version = "1.0.0"
     implementation ("androidx.datastore:datastore-preferences:$datastore_version")

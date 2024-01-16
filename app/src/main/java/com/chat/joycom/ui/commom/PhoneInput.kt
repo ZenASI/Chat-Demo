@@ -46,22 +46,14 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.utkuglsvn.countrycodepicker.libData.CountryCode
-import com.utkuglsvn.countrycodepicker.libData.utils.getFlagMasterResID
-import com.utkuglsvn.countrycodepicker.libData.utils.getLibCountries
-import com.utkuglsvn.countrycodepicker.libUtils.searchCountryList
 
 @Composable
 fun PhoneInput(
     inputText: String,
     modifier: Modifier = Modifier,
-    defaultCountry: CountryCode = getLibCountries().single { it.countryCode == "cn" },
-    updateText: (text: String) -> Unit,
-    pickCountry: (cc: CountryCode) -> Unit
+
 ) {
     var isOpenDialog by remember { mutableStateOf(false) }
-    val countryList: List<CountryCode> = getLibCountries()
-    var searchValue by remember { mutableStateOf("") }
 
     Row(
         modifier = modifier
@@ -76,16 +68,12 @@ fun PhoneInput(
                 .padding(horizontal = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(painterResource(id = getFlagMasterResID(defaultCountry.countryCode)), "")
-            Spacer(modifier = Modifier.padding(3.dp))
-            Text(text = defaultCountry.countryPhoneCode)
-            Spacer(modifier = Modifier.padding(3.dp))
-            Text(text = defaultCountry.countryCode)
+
         }
         TextField(
             value = inputText,
             onValueChange = {
-                updateText(it)
+
             },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             label = { Text(text = "phone", color = Color.Gray) }
@@ -104,46 +92,8 @@ fun PhoneInput(
                     ) {
                     Column {
 
-                        searchValue = DialogSearchView(
-                            textColor = Color.Black,
-                            hintColor = Color.Gray,
-                            textSelectColor = Color(0xff3898f0),
-                        )
-
                         LazyColumn {
-                            items(
-                                (if (searchValue.isEmpty()) {
-                                    countryList
-                                } else {
-                                    countryList.searchCountryList(searchValue)
-                                })
-                            ) { countryItem ->
-                                Row(
-                                    Modifier
-                                        .padding(
-                                            horizontal = 18.dp,
-                                            vertical = 18.dp
-                                        )
-                                        .clickable {
-                                            pickCountry(countryItem)
-                                            isOpenDialog = false
-                                        }) {
-                                    Image(
-                                        painter = painterResource(
-                                            id = getFlagMasterResID(
-                                                countryItem.countryCode
-                                            )
-                                        ), contentDescription = null,
-                                        Modifier.size(width = 36.dp, height = 22.dp),
-                                        contentScale = ContentScale.Crop
-                                    )
-                                    Text(
-                                        countryItem.countryName,
-                                        Modifier.padding(horizontal = 18.dp),
-                                        color = Color.Black,
-                                    )
-                                }
-                            }
+
                         }
                     }
                 }

@@ -17,9 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.chat.joycom.ui.commom.OtpInput
 import com.chat.joycom.ui.commom.PhoneInput
-import com.utkuglsvn.countrycodepicker.libData.utils.getLibCountries
 
 @Composable
 fun LoginView(viewModel: LoginViewModel = viewModel()) {
@@ -37,24 +35,14 @@ fun LoginView(viewModel: LoginViewModel = viewModel()) {
             var otp by rememberSaveable {
                 mutableStateOf("111111")
             }
-            var cc by remember {
-                mutableStateOf(getLibCountries().single { it.countryCode == "tw" })
-            }
+
             PhoneInput(
                 inputText = phone,
-                updateText = { phone = it },
-                pickCountry = { cc = it },
-                defaultCountry = cc,
+
             )
 
-            OtpInput(
-                isEnable = phone.isNotEmpty(),
-                otpText = otp,
-                updateOtp = { otp = it },
-                sentSms = { viewModel.sendSms(cc.countryPhoneCode, phone) })
-
             Button(onClick = {
-                viewModel.goLogin(cc.countryPhoneCode, phone, otp)
+
             }) {
                 Text(text = "Login")
             }
