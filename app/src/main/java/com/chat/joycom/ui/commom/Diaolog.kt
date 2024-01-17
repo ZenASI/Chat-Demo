@@ -1,19 +1,26 @@
 package com.chat.joycom.ui.commom
 
+import android.view.Gravity
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -33,12 +40,24 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogWindowProvider
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.chat.joycom.R
+import com.chat.joycom.network.UrlPath
+import com.chat.joycom.network.UrlPath.getFileFullUrl
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -264,6 +283,87 @@ fun GroupIconSelectSheet(showState: (Boolean) -> Unit) {
                         }
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun InfoCardDialog(showState: (Boolean) -> Unit, title: String, callBack: () -> Unit) {
+    val backgroundColor = MaterialTheme.colorScheme.background
+    Dialog(
+        onDismissRequest = { showState.invoke(false) },
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = Modifier.background(backgroundColor)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
+            ) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(UrlPath.GET_FILE.getFileFullUrl() + "")
+                        .crossfade(true).build(),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    placeholder = painterResource(id = R.drawable.ic_def_user),
+                    error = painterResource(id = R.drawable.ic_def_user),
+                    contentScale = ContentScale.FillWidth,
+                )
+                Text(
+                    text = title,
+                    fontSize = 26.sp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.Gray.copy(alpha = .5f)),
+                    color = Color.White
+                )
+            }
+            Row(modifier = Modifier.fillMaxWidth().height(40.dp), verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    painterResource(id = R.drawable.ic_chat),
+                    "",
+                    modifier = Modifier
+                        .size(30.dp)
+                        .weight(1f)
+                        .clickable {
+                            callBack.invoke()
+                        }
+                )
+                Icon(
+                    painterResource(id = R.drawable.ic_phone),
+                    "",
+                    modifier = Modifier
+                        .size(30.dp)
+                        .weight(1f)
+                        .clickable {
+                            callBack.invoke()
+                        }
+                )
+                Icon(
+                    painterResource(id = R.drawable.ic_videocam),
+                    "",
+                    modifier = Modifier
+                        .size(30.dp)
+                        .weight(1f)
+                        .clickable {
+                            callBack.invoke()
+                        }
+                )
+                Icon(
+                    painterResource(id = R.drawable.ic_info),
+                    "",
+                    modifier = Modifier
+                        .size(30.dp)
+                        .weight(1f)
+                        .clickable {
+                            callBack.invoke()
+                        }
+                )
             }
         }
     }

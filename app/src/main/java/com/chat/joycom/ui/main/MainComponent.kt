@@ -2,7 +2,6 @@ package com.chat.joycom.ui.main
 
 import android.Manifest
 import android.os.Build
-import android.os.Parcelable
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
@@ -22,7 +21,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -35,10 +33,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
@@ -55,12 +50,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -78,6 +71,7 @@ import com.chat.joycom.ui.chat.ChatActivity
 import com.chat.joycom.ui.commom.BadgeView
 import com.chat.joycom.ui.commom.DropdownColumn
 import com.chat.joycom.ui.commom.IconTextH
+import com.chat.joycom.ui.commom.InfoCardDialog
 import com.chat.joycom.ui.commom.PermissionType
 import com.chat.joycom.ui.commom.TopBarIcon
 import com.chat.joycom.ui.main.contacts.add.group.NewGroupActivity
@@ -375,6 +369,9 @@ private fun genMainDropdownMenuItem(page: Int) =
 @Composable
 fun ContactMsgItem(contact: Contact) {
     val context = LocalContext.current
+    var infoShowState by remember {
+        mutableStateOf(false)
+    }
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(5.dp),
@@ -392,7 +389,10 @@ fun ContactMsgItem(contact: Contact) {
             contentDescription = "",
             modifier = Modifier
                 .size(55.dp)
-                .clip(CircleShape),
+                .clip(CircleShape)
+                .clickable {
+                    infoShowState = true
+                },
             placeholder = painterResource(id = R.drawable.ic_def_user),
             error = painterResource(id = R.drawable.ic_def_user),
             contentScale = ContentScale.Crop,
@@ -425,10 +425,20 @@ fun ContactMsgItem(contact: Contact) {
             }
         }
     }
+    if (infoShowState) {
+        InfoCardDialog(
+            showState = { infoShowState = it },
+            contact.nickname,
+            callBack = { infoShowState = false }
+        )
+    }
 }
 
 @Composable
 private fun GroupMsgItem(group: Group) {
+    var infoShowState by remember {
+        mutableStateOf(false)
+    }
     val context = LocalContext.current
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -447,7 +457,10 @@ private fun GroupMsgItem(group: Group) {
             contentDescription = "",
             modifier = Modifier
                 .size(55.dp)
-                .clip(CircleShape),
+                .clip(CircleShape)
+                .clickable {
+                    infoShowState = true
+                },
             placeholder = painterResource(id = R.drawable.ic_def_group),
             error = painterResource(id = R.drawable.ic_def_group),
             contentScale = ContentScale.Crop,
@@ -473,6 +486,13 @@ private fun GroupMsgItem(group: Group) {
                 BadgeView(100)
             }
         }
+    }
+    if (infoShowState) {
+        InfoCardDialog(
+            showState = { infoShowState = it },
+            group.groupName,
+            callBack = { infoShowState = false }
+        )
     }
 }
 
