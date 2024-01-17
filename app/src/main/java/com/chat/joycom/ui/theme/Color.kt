@@ -123,4 +123,10 @@ val ChipIconLight = Color(0xFF667781)
 val ChipSelectDark = Color(0xFF00A884)
 val ChipSelectLight = Color(0xFF008069)
 
+/**
+ * [JoyComBadgeTheme]
+ */
+val BadgeDark = Color(0xFF00A884)
+val BadgeLight = Color(0xFF25D366)
+
 

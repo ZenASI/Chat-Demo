@@ -1,5 +1,6 @@
 package com.chat.joycom.ui.setting.qrcode
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -34,14 +35,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.core.graphics.applyCanvas
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chat.joycom.R
+import com.chat.joycom.ui.commom.DropdownColumn
 import com.chat.joycom.ui.commom.PermissionDescAlert
 import com.chat.joycom.ui.commom.PermissionType
 import com.chat.joycom.ui.commom.QrcodeCamera
@@ -56,6 +63,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
+import kotlin.math.roundToInt
 
 @Composable
 fun MyQrcode(viewModel: QRCodeViewModel = viewModel()) {
@@ -186,6 +194,9 @@ fun QrcodeTabRow(currentScene: QRCodeScene, onClick: (Int) -> Unit) {
 
 @Composable
 fun QrcodeTopBarAction() {
+    var showState by remember {
+        mutableStateOf(false)
+    }
     Row(horizontalArrangement = Arrangement.spacedBy(15.dp)) {
         TopBarIcon(R.drawable.ic_share, onClick = {
 //            val sendIntent = Intent().apply {
@@ -196,6 +207,18 @@ fun QrcodeTopBarAction() {
 //            val shareIntent = Intent.createChooser(sendIntent, null)
 //            startActivity(shareIntent)
         })
-        TopBarIcon(R.drawable.ic_more_vert, onClick = {})
+        Box() {
+            TopBarIcon(R.drawable.ic_more_vert, onClick = {
+                showState = true
+            })
+            DropdownColumn(
+                showState = showState,
+                onDismissRequest = { showState = false },
+                itemList = listOf(R.string.reset_qrcode),
+                itemClick = {
+                    showState = false
+                }
+            )
+        }
     }
 }

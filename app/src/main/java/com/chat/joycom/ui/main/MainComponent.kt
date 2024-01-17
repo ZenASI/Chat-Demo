@@ -2,6 +2,7 @@ package com.chat.joycom.ui.main
 
 import android.Manifest
 import android.os.Build
+import android.os.Parcelable
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
@@ -18,7 +19,10 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,7 +35,10 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
@@ -48,12 +55,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -65,6 +75,7 @@ import com.chat.joycom.model.Group
 import com.chat.joycom.network.UrlPath
 import com.chat.joycom.network.UrlPath.getFileFullUrl
 import com.chat.joycom.ui.chat.ChatActivity
+import com.chat.joycom.ui.commom.BadgeView
 import com.chat.joycom.ui.commom.DropdownColumn
 import com.chat.joycom.ui.commom.IconTextH
 import com.chat.joycom.ui.commom.PermissionType
@@ -177,69 +188,19 @@ fun ChatScene(viewModel: MainActivityViewModel = viewModel()) {
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
+            item {
+                Spacer(modifier = Modifier.size(5.dp))
+            }
             listFlow.forEachIndexed { index, item ->
                 item(key = index) {
                     when (item) {
                         is Contact -> {
-                            IconTextH(
-                                icon = {
-                                    AsyncImage(
-                                        model = ImageRequest.Builder(LocalContext.current)
-                                            .data(UrlPath.GET_FILE.getFileFullUrl() + item.avatar)
-                                            .crossfade(true).build(),
-                                        contentDescription = "",
-                                        modifier = Modifier
-                                            .padding(start = 10.dp)
-                                            .size(55.dp)
-                                            .clip(CircleShape),
-                                        placeholder = painterResource(id = R.drawable.ic_def_user),
-                                        error = painterResource(id = R.drawable.ic_def_user),
-                                        contentScale = ContentScale.Crop,
-                                    )
-                                },
-                                text = { Text(text = item.nickname) },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        ChatActivity.start(
-                                            context = context,
-                                            contact = item,
-                                            isGroup = false
-                                        )
-                                    }
-                            )
+                            ContactMsgItem(item)
                         }
 
                         is Group -> {
-                            IconTextH(
-                                icon = {
-                                    AsyncImage(
-                                        model = ImageRequest.Builder(LocalContext.current)
-                                            .data(UrlPath.GET_FILE.getFileFullUrl() + item.avatar)
-                                            .crossfade(true).build(),
-                                        contentDescription = "",
-                                        modifier = Modifier
-                                            .padding(start = 10.dp)
-                                            .size(55.dp)
-                                            .clip(CircleShape),
-                                        placeholder = painterResource(id = R.drawable.ic_def_group),
-                                        error = painterResource(id = R.drawable.ic_def_group),
-                                        contentScale = ContentScale.Crop,
-                                    )
-                                },
-                                text = { Text(text = item.groupName) },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        ChatActivity.start(
-                                            context = context,
-                                            group = item,
-                                            isGroup = true
-                                        )
-                                    }
-                            )
+                            GroupMsgItem(item)
                         }
                     }
                 }
@@ -410,5 +371,109 @@ private fun genMainDropdownMenuItem(page: Int) =
             R.string.setting,
         )
     }
+
+@Composable
+fun ContactMsgItem(contact: Contact) {
+    val context = LocalContext.current
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(5.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                ChatActivity.start(context, contact = contact, isGroup = false)
+            }
+            .padding(horizontal = 10.dp, vertical = 20.dp)
+    ) {
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(UrlPath.GET_FILE.getFileFullUrl() + "")
+                .crossfade(true).build(),
+            contentDescription = "",
+            modifier = Modifier
+                .size(55.dp)
+                .clip(CircleShape),
+            placeholder = painterResource(id = R.drawable.ic_def_user),
+            error = painterResource(id = R.drawable.ic_def_user),
+            contentScale = ContentScale.Crop,
+        )
+        Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
+            Row {
+                Text(text = contact.nickname, fontSize = 20.sp)
+                Spacer(modifier = Modifier.weight(1f))
+                Text(text = "10:42")
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(5.dp),
+                modifier = Modifier.height(IntrinsicSize.Max)
+            ) {
+//                Image(
+//                    painterResource(id = R.drawable.ic_read_checked),
+//                    "",
+//                    modifier = Modifier.fillMaxHeight(),
+//                    contentScale = ContentScale.FillHeight
+//                )
+                Text(
+                    text = "Hi, hi~~~",
+                    fontSize = 20.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                BadgeView(1)
+            }
+        }
+    }
+}
+
+@Composable
+private fun GroupMsgItem(group: Group) {
+    val context = LocalContext.current
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(5.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                ChatActivity.start(context, group = group, isGroup = true)
+            }
+            .padding(horizontal = 10.dp, vertical = 20.dp)
+    ) {
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(UrlPath.GET_FILE.getFileFullUrl() + "")
+                .crossfade(true).build(),
+            contentDescription = "",
+            modifier = Modifier
+                .size(55.dp)
+                .clip(CircleShape),
+            placeholder = painterResource(id = R.drawable.ic_def_group),
+            error = painterResource(id = R.drawable.ic_def_group),
+            contentScale = ContentScale.Crop,
+        )
+        Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
+            Row {
+                Text(text = group.groupName, fontSize = 20.sp)
+                Spacer(modifier = Modifier.weight(1f))
+                Text(text = "10:42")
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(5.dp),
+                modifier = Modifier.height(IntrinsicSize.Max)
+            ) {
+                Text(
+                    text = "Hi, hi~~",
+                    fontSize = 20.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                BadgeView(100)
+            }
+        }
+    }
+}
 
 

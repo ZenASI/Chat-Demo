@@ -95,8 +95,8 @@ class AddContactActivity : BaseActivity() {
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.fillMaxWidth(.9f)
                         ) {
-                            Image(
-                                painterResource(id = R.drawable.ic_def_user),
+                            Icon(
+                                painterResource(id = R.drawable.ic_person),
                                 "",
                                 modifier = Modifier.size(40.dp)
                             )

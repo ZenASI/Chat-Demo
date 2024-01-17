@@ -215,4 +215,6 @@
     <string name="gif">GIF</string>
 
     <string name="no_search_result">無搜尋結果</string>
+
+    <string name="reset_qrcode">重設QR條碼</string>
 </resources>
