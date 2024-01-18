@@ -10,11 +10,9 @@ import androidx.compose.animation.core.animateValue
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -61,15 +59,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -95,9 +90,10 @@ import com.chat.joycom.ext.toTopTimeFormat
 import com.chat.joycom.model.Message
 import com.chat.joycom.network.UrlPath
 import com.chat.joycom.network.UrlPath.getFileFullUrl
-import com.chat.joycom.ui.commom.BubbleShape
 import com.chat.joycom.ui.commom.DefaultInput
 import com.chat.joycom.ui.commom.IconTextV
+import com.chat.joycom.ui.commom.OtherBubbleShape
+import com.chat.joycom.ui.commom.SelfBubbleShape
 import com.chat.joycom.ui.commom.TopBarIcon
 import timber.log.Timber
 
@@ -162,7 +158,8 @@ fun ChatInput(
 
     LaunchedEffect(imeBottom) {
         val imeBottomDp = TypedValueCompat.pxToDp(imeBottom.toFloat(), res.displayMetrics)
-        val navigationBarBottomDp = TypedValueCompat.pxToDp(navigationBarBottom.toFloat(), res.displayMetrics)
+        val navigationBarBottomDp =
+            TypedValueCompat.pxToDp(navigationBarBottom.toFloat(), res.displayMetrics)
         Timber.d("LaunchedEffect imeBottomDp => $imeBottomDp, isTypeKeyBoard => $isTypeKeyBoard")
         if (imeBottom == 0) {
 
@@ -252,9 +249,11 @@ fun ChatInput(
                 "",
                 modifier = Modifier
                     .size(60.dp)
+                    .clip(CircleShape)
                     .background(Color.Green, CircleShape)
                     .clickable {
-
+                        keyboardController?.hide()
+                        bottomHeightDp = 0f
                     }
                     .padding(10.dp)
             )
@@ -356,6 +355,7 @@ fun ChatPopUpMenu(showState: Boolean, onDismiss: (Boolean) -> Unit) {
 fun SelfMsg(message: Message, modifier: Modifier = Modifier) {
     val viewModel: ChatViewModel = viewModel()
     val memberInfo = viewModel.memberInfo.collectAsState(initial = null)
+    val res = LocalContext.current.resources
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -386,14 +386,7 @@ fun SelfMsg(message: Message, modifier: Modifier = Modifier) {
                     Column(
                         modifier = Modifier
                             .wrapContentWidth()
-                            .clip(
-                                RoundedCornerShape(
-                                    topStart = 8.dp,
-                                    bottomStart = 8.dp,
-                                    topEnd = 8.dp
-                                )
-                            )
-                            .background(Color.Green.copy(alpha = .5f))
+                            .background(Color.Green.copy(alpha = .5f), SelfBubbleShape(45f))
                             .align(Alignment.CenterEnd)
                     ) {
                         // replay
@@ -403,7 +396,10 @@ fun SelfMsg(message: Message, modifier: Modifier = Modifier) {
                             text = message.content,
                             modifier = Modifier
                                 .align(Alignment.Start)
-                                .padding(horizontal = 3.dp)
+                                .padding(
+                                    start = 3.dp,
+                                    end = TypedValueCompat.pxToDp(40f, res.displayMetrics).dp
+                                )
                                 .combinedClickable(
                                     onClick = {},
                                     onLongClick = {}
@@ -414,7 +410,7 @@ fun SelfMsg(message: Message, modifier: Modifier = Modifier) {
 
                         // time and read
                         Row(
-                            modifier = Modifier.align(Alignment.End),
+                            modifier = Modifier.align(Alignment.End).padding(end = TypedValueCompat.pxToDp(40f, res.displayMetrics).dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.End
                         ) {
@@ -435,10 +431,8 @@ fun SelfMsg(message: Message, modifier: Modifier = Modifier) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OtherMsg(message: Message, modifier: Modifier = Modifier) {
-
     val viewModel: ChatViewModel = viewModel()
     val fromUserId = remember { mutableLongStateOf(message.fromUserId) }
-
     val groupContactList = viewModel.groupContactList.collectAsState(initial = mutableListOf())
     val groupContact = remember(fromUserId, groupContactList) {
         derivedStateOf {
@@ -511,7 +505,7 @@ fun OtherMsg(message: Message, modifier: Modifier = Modifier) {
                     }
                     Column(
                         modifier = Modifier
-                            .background(Color.DarkGray.copy(alpha = .5f), BubbleShape(45f))
+                            .background(Color.DarkGray.copy(alpha = .5f), OtherBubbleShape(45f))
                             .fillMaxWidth(.9f),
                         verticalArrangement = Arrangement.spacedBy(3.dp)
                     ) {
@@ -521,7 +515,12 @@ fun OtherMsg(message: Message, modifier: Modifier = Modifier) {
                         if (message.isGroup) {
                             Row(
                                 modifier = Modifier
-                                    .padding(start = TypedValueCompat.pxToDp(40f, res.displayMetrics).dp, end = 3.dp)
+                                    .padding(
+                                        start = TypedValueCompat.pxToDp(
+                                            40f,
+                                            res.displayMetrics
+                                        ).dp, end = 3.dp
+                                    )
                                     .fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
@@ -546,7 +545,12 @@ fun OtherMsg(message: Message, modifier: Modifier = Modifier) {
                         Text(
                             text = message.content,
                             modifier = Modifier
-                                .padding(start = TypedValueCompat.pxToDp(40f, res.displayMetrics).dp, end = 3.dp)
+                                .padding(
+                                    start = TypedValueCompat.pxToDp(
+                                        40f,
+                                        res.displayMetrics
+                                    ).dp, end = 3.dp
+                                )
                                 .align(Alignment.Start)
                                 .combinedClickable(
                                     onClick = {},

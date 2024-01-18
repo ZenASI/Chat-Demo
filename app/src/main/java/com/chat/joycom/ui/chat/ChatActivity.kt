@@ -105,7 +105,6 @@ class ChatActivity : BaseActivity() {
         }
     }
 
-    @OptIn(ExperimentalLayoutApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val title = if (isGroupBool) group?.groupName else contact?.nickname
@@ -161,13 +160,18 @@ class ChatActivity : BaseActivity() {
                             state = lazyState,
                             reverseLayout = true
                         ) {
-                            items(count = pagingList.itemCount) {
-                                val item = pagingList[it]
+                            items(count = pagingList.itemCount) { pos ->
+                                val item = pagingList[pos]
                                 item?.let {
-                                    when (item.fromUserId) {
-                                        memberInfo.userId -> SelfMsg(message = item)
-                                        else -> OtherMsg(message = item)
+                                    if (pos % 2 == 0){
+                                        SelfMsg(message = item)
+                                    }else{
+                                        OtherMsg(message = item)
                                     }
+//                                    when (item.fromUserId) {
+//                                        memberInfo.userId -> SelfMsg(message = item)
+//                                        else -> OtherMsg(message = item)
+//                                    }
                                 }
                             }
                         }
