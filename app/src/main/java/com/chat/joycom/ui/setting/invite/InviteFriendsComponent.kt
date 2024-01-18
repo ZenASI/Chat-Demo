@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chat.joycom.R
+import com.chat.joycom.ext.startShareIntent
 import com.chat.joycom.ui.commom.IconTextH
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat
@@ -51,14 +52,7 @@ fun InviteFriendsTopColumn() {
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable {
-                    val sendIntent: Intent = Intent().apply {
-                        action = Intent.ACTION_SEND
-                        putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_content))
-                        type = "text/plain"
-                    }
-
-                    val shareIntent = Intent.createChooser(sendIntent, null)
-                    context.startActivity(shareIntent)
+                    context.startShareIntent()
                 }
                 .padding(horizontal = 10.dp)
         )

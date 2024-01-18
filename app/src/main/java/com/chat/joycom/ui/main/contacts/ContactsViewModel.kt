@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -26,19 +27,19 @@ class ContactsViewModel @Inject constructor() : BaseViewModel() {
             userId = Random.nextLong(),
             accountName = "jeff111",
             nickname = "jeff111",
-            avatar = "jeff111"
+            avatar = "https://picsum.photos/200?random=10"
         ),
         Member(
             userId = Random.nextLong(),
             accountName = "jeff222",
             nickname = "jeff222",
-            avatar = "jeff222"
+            avatar = "https://picsum.photos/200?random=11"
         ),
         Member(
             userId = Random.nextLong(),
             accountName = "jeff333",
             nickname = "jeff333",
-            avatar = "jeff333"
+            avatar = "https://picsum.photos/200?random=12"
         )
     )
 
@@ -47,19 +48,19 @@ class ContactsViewModel @Inject constructor() : BaseViewModel() {
             userId = Random.nextLong(),
             accountName = "jeff111",
             nickname = "jeff111",
-            avatar = "jeff111"
+            avatar = "https://picsum.photos/200?random=13"
         ),
         Member(
             userId = Random.nextLong(),
             accountName = "jeff222",
             nickname = "jeff222",
-            avatar = "jeff222"
+            avatar = "https://picsum.photos/200?random=14"
         ),
         Member(
             userId = Random.nextLong(),
             accountName = "jeff333",
             nickname = "jeff333",
-            avatar = "jeff333"
+            avatar = "https://picsum.photos/200?random=15"
         ),
     )
 
@@ -75,8 +76,11 @@ class ContactsViewModel @Inject constructor() : BaseViewModel() {
                 .debounce(500)
                 .distinctUntilChanged()
                 .collectLatest {
-                    // TODO: filter onContactList inviteList
-                    searchContactList.emit(emptyList())
+                    val tempInviteList = inviteList.filter {
+                        it.nickname.contains(searchInputText.value)
+                    }
+                    Timber.d(tempInviteList.size.toString())
+                    searchContactList.emit(tempInviteList)
                 }
         }
     }

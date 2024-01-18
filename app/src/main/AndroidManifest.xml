@@ -57,7 +57,7 @@
         <activity android:name="com.chat.joycom.ui.web.WebActivity" />
         <activity android:name="com.chat.joycom.ui.setting.account.AccountActivity" />
         <activity android:name="com.chat.joycom.ui.setting.account.SafetyNotifyActivity" />
-        <activity android:name="com.chat.joycom.ui.setting.account.EmailActivity" />
+        <activity android:name="com.chat.joycom.ui.setting.account.email.EmailActivity" />
         <activity android:name="com.chat.joycom.ui.setting.invite.InviteFriendsActivity" />
     </application>
 

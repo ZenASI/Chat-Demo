@@ -59,9 +59,8 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserInfo() {
+fun UserInfo(viewModel: SettingViewModel = viewModel()) {
     val context = LocalContext.current
-    val viewModel: MainActivityViewModel = viewModel()
     val member = viewModel.memberInfo.collectAsState(initial = null).value
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()

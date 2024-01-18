@@ -1,5 +1,6 @@
 package com.chat.joycom.ext
 
+import android.util.Patterns
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -37,4 +38,12 @@ fun String.toCrc32Value(): Long {
     val crc32 = CRC32()
     crc32.update(this.toByteArray())
     return crc32.value
+}
+
+fun String.isValidEmail(): Boolean {
+    return if (this.isEmpty()) {
+        false
+    } else {
+        Patterns.EMAIL_ADDRESS.matcher(this).matches()
+    }
 }

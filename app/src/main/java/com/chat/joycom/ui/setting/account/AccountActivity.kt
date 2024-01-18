@@ -20,6 +20,7 @@ import com.chat.joycom.R
 import com.chat.joycom.ui.BaseActivity
 import com.chat.joycom.ui.commom.IconTextH
 import com.chat.joycom.ui.commom.JoyComAppBar
+import com.chat.joycom.ui.setting.account.email.EmailActivity
 import com.chat.joycom.ui.theme.JoyComTheme
 import dagger.hilt.android.AndroidEntryPoint
 

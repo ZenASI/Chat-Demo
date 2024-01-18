@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -65,8 +66,6 @@ import coil.request.ImageRequest
 import com.chat.joycom.R
 import com.chat.joycom.model.Contact
 import com.chat.joycom.model.Group
-import com.chat.joycom.network.UrlPath
-import com.chat.joycom.network.UrlPath.getFileFullUrl
 import com.chat.joycom.ui.chat.ChatActivity
 import com.chat.joycom.ui.commom.BadgeView
 import com.chat.joycom.ui.commom.DropdownColumn
@@ -384,7 +383,7 @@ fun ContactMsgItem(contact: Contact) {
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(UrlPath.GET_FILE.getFileFullUrl() + "")
+                .data(contact.avatar)
                 .crossfade(true).build(),
             contentDescription = "",
             modifier = Modifier
@@ -408,12 +407,12 @@ fun ContactMsgItem(contact: Contact) {
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
                 modifier = Modifier.height(IntrinsicSize.Max)
             ) {
-//                Image(
-//                    painterResource(id = R.drawable.ic_read_checked),
-//                    "",
-//                    modifier = Modifier.fillMaxHeight(),
-//                    contentScale = ContentScale.FillHeight
-//                )
+                Image(
+                    painterResource(id = R.drawable.ic_read_checked),
+                    "",
+                    modifier = Modifier.fillMaxHeight(),
+                    contentScale = ContentScale.FillHeight
+                )
                 Text(
                     text = "Hi, hi~~~",
                     fontSize = 20.sp,
@@ -429,7 +428,8 @@ fun ContactMsgItem(contact: Contact) {
         InfoCardDialog(
             showState = { infoShowState = it },
             contact.nickname,
-            callBack = { infoShowState = false }
+            imgUrl = contact.avatar,
+            callBack = { infoShowState = false },
         )
     }
 }
@@ -452,7 +452,7 @@ private fun GroupMsgItem(group: Group) {
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(UrlPath.GET_FILE.getFileFullUrl() + "")
+                .data(group.avatar)
                 .crossfade(true).build(),
             contentDescription = "",
             modifier = Modifier
@@ -491,7 +491,8 @@ private fun GroupMsgItem(group: Group) {
         InfoCardDialog(
             showState = { infoShowState = it },
             group.groupName,
-            callBack = { infoShowState = false }
+            imgUrl = group.avatar,
+            callBack = { infoShowState = false },
         )
     }
 }

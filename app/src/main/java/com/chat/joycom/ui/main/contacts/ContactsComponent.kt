@@ -1,6 +1,6 @@
 package com.chat.joycom.ui.main.contacts
 
-import android.content.Intent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,9 +13,11 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,15 +25,23 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.chat.joycom.R
+import com.chat.joycom.ext.startShareIntent
 import com.chat.joycom.ui.commom.DropdownColumn
 import com.chat.joycom.ui.commom.IconTextH
 import com.chat.joycom.ui.commom.TopBarIcon
@@ -39,14 +49,30 @@ import com.chat.joycom.ui.main.contacts.add.contacts.AddContactActivity
 import com.chat.joycom.ui.main.contacts.add.group.NewGroupActivity
 import com.chat.joycom.ui.setting.qrcode.QRCodeActivity
 import com.chat.joycom.ui.web.WebActivity
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun ContactsTopBarActions(viewModel: ContactsViewModel = viewModel()) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     var isExpanded by remember {
         mutableStateOf(false)
     }
-    Row(horizontalArrangement = Arrangement.spacedBy(15.dp)) {
+    var showLoading by remember {
+        mutableStateOf(false)
+    }
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(15.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        AnimatedVisibility(visible = showLoading) {
+            CircularProgressIndicator(
+                color = Color.White,
+                modifier = Modifier.size(30.dp),
+                strokeWidth = 2.dp
+            )
+        }
         TopBarIcon(
             R.drawable.ic_search,
             onClick = {
@@ -72,6 +98,26 @@ fun ContactsTopBarActions(viewModel: ContactsViewModel = viewModel()) {
                 itemList = menuList,
                 itemClick = {
                     isExpanded = false
+                    when (it) {
+                        R.string.refresh -> {
+                            scope.launch {
+                                showLoading = true
+                                delay(2000)
+                                showLoading = false
+                            }
+                        }
+
+                        R.string.invite_friends -> {
+                            context.startShareIntent()
+                        }
+
+                        R.string.help -> {
+                            WebActivity.start(
+                                context,
+                                "https://faq.whatsapp.com/1183494482518500?locale=zh_TW"
+                            )
+                        }
+                    }
                 }
             )
         }
@@ -80,9 +126,11 @@ fun ContactsTopBarActions(viewModel: ContactsViewModel = viewModel()) {
 
 @Composable
 fun ContactsColumn(modifier: Modifier = Modifier, viewModel: ContactsViewModel = viewModel()) {
-    LazyColumn(modifier = modifier
-        .fillMaxSize()
-        .imePadding()) {
+    LazyColumn(
+        modifier = modifier
+            .fillMaxSize()
+            .imePadding()
+    ) {
         item {
             ContactTopColumn()
         }
@@ -106,10 +154,6 @@ fun ContactMergeColumn(viewModel: ContactsViewModel = viewModel()) {
         viewModel.inviteList
     }
 
-    val searchText = remember {
-        viewModel.searchInputText
-    }
-
     val queryList = viewModel.searchContactList.collectAsState()
 
     Text(
@@ -119,11 +163,17 @@ fun ContactMergeColumn(viewModel: ContactsViewModel = viewModel()) {
     onContactList.forEach {
         IconTextH(
             icon = {
-                Image(
-                    painterResource(id = R.drawable.ic_def_user),
-                    "",
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(it.avatar)
+                        .crossfade(true).build(),
+                    contentDescription = "",
                     modifier = Modifier
-                        .size(40.dp)
+                        .size(55.dp)
+                        .clip(CircleShape),
+                    placeholder = painterResource(id = R.drawable.ic_def_user),
+                    error = painterResource(id = R.drawable.ic_def_user),
+                    contentScale = ContentScale.Crop
                 )
             },
             text = { Text(text = it.nickname, fontSize = 20.sp) },
@@ -141,24 +191,24 @@ fun ContactMergeColumn(viewModel: ContactsViewModel = viewModel()) {
     inviteList.forEach {
         IconTextH(
             icon = {
-                Image(
-                    painterResource(id = R.drawable.ic_def_user),
-                    "",
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(it.avatar)
+                        .crossfade(true).build(),
+                    contentDescription = "",
                     modifier = Modifier
-                        .size(40.dp)
+                        .size(55.dp)
+                        .clip(CircleShape),
+                    placeholder = painterResource(id = R.drawable.ic_def_user),
+                    error = painterResource(id = R.drawable.ic_def_user),
+                    contentScale = ContentScale.Crop
                 )
             },
             text = { Text(text = it.nickname, fontSize = 20.sp) },
             action = {
                 Button(
                     onClick = {
-                        val sendIntent: Intent = Intent().apply {
-                            action = Intent.ACTION_SEND
-                            putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_content))
-                            type = "text/plain"
-                        }
-                        val shareIntent = Intent.createChooser(sendIntent, null)
-                        context.startActivity(shareIntent)
+                        context.startShareIntent()
                     },
                     modifier = Modifier.padding(horizontal = 10.dp)
                 ) {
@@ -168,13 +218,7 @@ fun ContactMergeColumn(viewModel: ContactsViewModel = viewModel()) {
             spaceWeightEnable = Pair(false, true),
             modifier = Modifier
                 .clickable {
-                    val sendIntent: Intent = Intent().apply {
-                        action = Intent.ACTION_SEND
-                        putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_content))
-                        type = "text/plain"
-                    }
-                    val shareIntent = Intent.createChooser(sendIntent, null)
-                    context.startActivity(shareIntent)
+                    context.startShareIntent()
                 }
                 .fillMaxWidth()
                 .padding(horizontal = 10.dp)
@@ -188,21 +232,21 @@ fun ContactTopColumn(viewModel: ContactsViewModel = viewModel()) {
     val featureList by remember {
         mutableStateOf(
             listOf(
-                R.string.new_group,
-                R.string.add_new_contact,
-                R.string.new_community,
+                Pair(R.string.new_group, R.drawable.ic_group2),
+                Pair(R.string.add_new_contact, R.drawable.ic_add_person),
+                Pair(R.string.new_community, R.drawable.ic_group3),
             )
         )
     }
     val inputText = viewModel.searchInputText.collectAsState()
     if (inputText.value.isEmpty()) {
         Column {
-            featureList.forEachIndexed { index, id ->
+            featureList.forEachIndexed { index, pairItem ->
                 IconTextH(
                     icon = {
                         Image(
                             painterResource(
-                                id = R.drawable.ic_def_group
+                                id = pairItem.second
                             ),
                             "",
                             modifier = Modifier
@@ -210,11 +254,11 @@ fun ContactTopColumn(viewModel: ContactsViewModel = viewModel()) {
                         )
                     },
                     text = {
-                        Text(text = stringResource(id = id), fontSize = 20.sp)
+                        Text(text = stringResource(id = pairItem.first), fontSize = 20.sp)
                     },
                     action = {
                         if (index == 1) {
-                            Image(
+                            Icon(
                                 painterResource(id = R.drawable.ic_qr_code),
                                 "",
                                 modifier = Modifier
@@ -244,7 +288,6 @@ fun ContactTopColumn(viewModel: ContactsViewModel = viewModel()) {
                         }
                         .fillMaxWidth()
                         .padding(horizontal = 10.dp),
-
                     )
             }
         }
@@ -263,7 +306,7 @@ fun ContactBottomColumn(viewModel: ContactsViewModel = viewModel()) {
                         painterResource(id = R.drawable.ic_add_person),
                         "",
                         modifier = Modifier
-                            .size(40.dp)
+                            .size(50.dp)
                     )
                 },
                 text = {
@@ -295,13 +338,7 @@ fun ContactBottomColumn(viewModel: ContactsViewModel = viewModel()) {
             },
             modifier = Modifier
                 .clickable {
-                    val sendIntent: Intent = Intent().apply {
-                        action = Intent.ACTION_SEND
-                        putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_content))
-                        type = "text/plain"
-                    }
-                    val shareIntent = Intent.createChooser(sendIntent, null)
-                    context.startActivity(shareIntent)
+                    context.startShareIntent()
                 }
                 .fillMaxWidth()
                 .padding(horizontal = 10.dp)

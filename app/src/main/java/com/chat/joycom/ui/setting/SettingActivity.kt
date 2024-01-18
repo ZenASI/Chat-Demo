@@ -21,6 +21,7 @@ import com.chat.joycom.R
 import com.chat.joycom.ui.BaseActivity
 import com.chat.joycom.ui.UiEvent
 import com.chat.joycom.ui.commom.JoyComAppBar
+import com.chat.joycom.ui.commom.JoyComTopSearchBar
 import com.chat.joycom.ui.commom.TopBarIcon
 import com.chat.joycom.ui.login.LoginActivity
 import com.chat.joycom.ui.theme.JoyComTheme
@@ -46,10 +47,22 @@ class SettingActivity : BaseActivity() {
             JoyComTheme {
                 Scaffold(
                     topBar = {
-                        JoyComAppBar(
-                            title = { Text(text = stringResource(id = R.string.setting)) },
-                            acton = { TopBarIcon(R.drawable.ic_search, onClick = {}) }
-                        )
+                        if (viewModel.searchState) {
+                            JoyComTopSearchBar(
+                                clickBack = { viewModel.searchState = viewModel.searchState.not() },
+                                updateText = {},
+                                hint = R.string.search_three_dot_en_ver
+                            )
+                        } else {
+                            JoyComAppBar(
+                                title = { Text(text = stringResource(id = R.string.setting)) },
+                                acton = {
+                                    TopBarIcon(R.drawable.ic_search, onClick = {
+                                        viewModel.searchState = viewModel.searchState.not()
+                                    })
+                                }
+                            )
+                        }
                     },
                 ) { paddingValues ->
                     Column(

@@ -62,7 +62,7 @@ class MainActivityViewModel @Inject constructor(
             listOf<Group>(
                 Group(
                     id = Random.nextLong(),
-                    avatar = UUID.randomUUID().toString(),
+                    avatar = "https://picsum.photos/200?random=2",
                     groupId = Random.nextLong(),
                     groupName = "App Team RD",
                     isNoDisturb = 0,
@@ -70,7 +70,7 @@ class MainActivityViewModel @Inject constructor(
                 ),
                 Group(
                     id = Random.nextLong(),
-                    avatar = UUID.randomUUID().toString(),
+                    avatar = "https://picsum.photos/200?random=3",
                     groupId = Random.nextLong(),
                     groupName = "App Team",
                     isNoDisturb = 0,
@@ -85,7 +85,7 @@ class MainActivityViewModel @Inject constructor(
             listOf<Contact>(
                 Contact(
                     id = Random.nextLong(),
-                    avatar = UUID.randomUUID().toString(),
+                    avatar = "https://picsum.photos/200?random=4",
                     userId = Random.nextLong(),
                     nickname = "Jeff",
                     account = "Jeff",
@@ -96,7 +96,7 @@ class MainActivityViewModel @Inject constructor(
                 ),
                 Contact(
                     id = Random.nextLong(),
-                    avatar = UUID.randomUUID().toString(),
+                    avatar = "https://picsum.photos/200?random=5",
                     userId = Random.nextLong(),
                     nickname = "Kale",
                     account = "Kale",

@@ -207,6 +207,7 @@
     <string name="share_link">分享連結</string>
 
     <string name="search_three_dot">搜尋…</string>
+    <string name="search_three_dot_en_ver">Search…</string>
 
     <string name="unread">未讀</string>
     <string name="photo">照片</string>
@@ -217,4 +218,6 @@
     <string name="no_search_result">無搜尋結果</string>
 
     <string name="reset_qrcode">重設QR條碼</string>
+
+    <string name="your_contact_list_updated">您的聯絡人清單已更新。</string>
 </resources>

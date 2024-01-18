@@ -41,7 +41,7 @@ fun IconTextH(
     textFullWeightEnable: Boolean = false,
     spaceWeightEnable: Pair<Boolean, Boolean> = Pair(false, false),
     verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
-    horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(10.dp),
     height: Dp = 80.dp,
 ) {
     Row(

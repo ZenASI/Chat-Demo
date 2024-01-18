@@ -1,4 +1,4 @@
-package com.chat.joycom.ui.setting.account
+package com.chat.joycom.ui.setting.account.email
 
 import android.content.Context
 import android.content.Intent
@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.chat.joycom.R
+import com.chat.joycom.ext.isValidEmail
 import com.chat.joycom.ui.BaseActivity
 import com.chat.joycom.ui.commom.DefaultInput
 import com.chat.joycom.ui.commom.JoyComAppBar
@@ -96,7 +97,7 @@ class EmailActivity : BaseActivity() {
                         Button(
                             onClick = {},
                             modifier = Modifier.fillMaxWidth(),
-                            enabled = emailInput.isNotEmpty()
+                            enabled = emailInput.isValidEmail()
                         ) {
                             Text(text = stringResource(id = R.string.next_step))
                         }
