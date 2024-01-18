@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.isImeVisible
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -81,8 +82,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.updateBounds
 import androidx.core.util.TypedValueCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsAnimationCompat
@@ -142,6 +141,7 @@ fun ChatInput(
     val config = LocalConfiguration.current
     val imeState = WindowInsets.isImeVisible
     val imeBottom = WindowInsets.ime.getBottom(LocalDensity.current)
+    val navigationBarBottom = WindowInsets.navigationBars.getBottom(LocalDensity.current)
     val keyboardController = LocalSoftwareKeyboardController.current // show/hide keyboard
 
     val defaultHeightDp by remember {
@@ -162,12 +162,13 @@ fun ChatInput(
 
     LaunchedEffect(imeBottom) {
         val imeBottomDp = TypedValueCompat.pxToDp(imeBottom.toFloat(), res.displayMetrics)
+        val navigationBarBottomDp = TypedValueCompat.pxToDp(navigationBarBottom.toFloat(), res.displayMetrics)
         Timber.d("LaunchedEffect imeBottomDp => $imeBottomDp, isTypeKeyBoard => $isTypeKeyBoard")
         if (imeBottom == 0) {
 
         } else {
-            recordHeightDp = imeBottomDp
-            bottomHeightDp = imeBottomDp
+            recordHeightDp = imeBottomDp - navigationBarBottomDp + 3
+            bottomHeightDp = imeBottomDp - navigationBarBottomDp + 3
         }
     }
 
