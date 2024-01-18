@@ -1,21 +1,20 @@
 package com.chat.joycom.ui.chat
 
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.TwoWayConverter
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateValue
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.focusable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,7 +29,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.isImeVisible
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -53,23 +51,24 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -82,9 +81,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.updateBounds
 import androidx.core.util.TypedValueCompat
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsAnimationCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -96,14 +96,11 @@ import com.chat.joycom.ext.toTopTimeFormat
 import com.chat.joycom.model.Message
 import com.chat.joycom.network.UrlPath
 import com.chat.joycom.network.UrlPath.getFileFullUrl
+import com.chat.joycom.ui.commom.BubbleShape
 import com.chat.joycom.ui.commom.DefaultInput
 import com.chat.joycom.ui.commom.IconTextV
 import com.chat.joycom.ui.commom.TopBarIcon
-import kotlinx.coroutines.android.awaitFrame
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import timber.log.Timber
-import kotlin.math.max
 
 @OptIn(
     ExperimentalLayoutApi::class, ExperimentalComposeUiApi::class
@@ -437,6 +434,7 @@ fun SelfMsg(message: Message, modifier: Modifier = Modifier) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OtherMsg(message: Message, modifier: Modifier = Modifier) {
+
     val viewModel: ChatViewModel = viewModel()
     val fromUserId = remember { mutableLongStateOf(message.fromUserId) }
 
@@ -468,6 +466,7 @@ fun OtherMsg(message: Message, modifier: Modifier = Modifier) {
             .padding(3.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        val res = LocalContext.current.resources
         when (message.msgType) {
             -1 -> {
                 // top time
@@ -487,7 +486,7 @@ fun OtherMsg(message: Message, modifier: Modifier = Modifier) {
                         .width(IntrinsicSize.Min)
                         .padding(top = 3.dp)
                         .align(Alignment.Start),
-                    horizontalArrangement = Arrangement.spacedBy(3.dp)
+                    horizontalArrangement = Arrangement.spacedBy(1.dp)
                 ) {
                     if (message.showIcon) {
                         AsyncImage(
@@ -496,8 +495,7 @@ fun OtherMsg(message: Message, modifier: Modifier = Modifier) {
                                 .crossfade(true).build(),
                             contentDescription = "",
                             modifier = Modifier
-                                .width(50.dp)
-                                .height(50.dp)
+                                .size(30.dp)
                                 .clip(CircleShape)
                                 .align(Alignment.Top)
                                 .clickable {
@@ -508,18 +506,11 @@ fun OtherMsg(message: Message, modifier: Modifier = Modifier) {
                             error = painterResource(id = R.drawable.ic_def_user)
                         )
                     } else {
-                        Spacer(modifier = Modifier.size(50.dp))
+                        Spacer(modifier = Modifier.size(30.dp))
                     }
                     Column(
                         modifier = Modifier
-                            .clip(
-                                RoundedCornerShape(
-                                    bottomStart = 8.dp,
-                                    topEnd = 8.dp,
-                                    bottomEnd = 8.dp
-                                )
-                            )
-                            .background(Color.DarkGray.copy(alpha = .5f))
+                            .background(Color.DarkGray.copy(alpha = .5f), BubbleShape(45f))
                             .fillMaxWidth(.9f),
                         verticalArrangement = Arrangement.spacedBy(3.dp)
                     ) {
@@ -529,7 +520,7 @@ fun OtherMsg(message: Message, modifier: Modifier = Modifier) {
                         if (message.isGroup) {
                             Row(
                                 modifier = Modifier
-                                    .padding(horizontal = 3.dp)
+                                    .padding(start = TypedValueCompat.pxToDp(40f, res.displayMetrics).dp, end = 3.dp)
                                     .fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
@@ -554,7 +545,7 @@ fun OtherMsg(message: Message, modifier: Modifier = Modifier) {
                         Text(
                             text = message.content,
                             modifier = Modifier
-                                .padding(horizontal = 3.dp)
+                                .padding(start = TypedValueCompat.pxToDp(40f, res.displayMetrics).dp, end = 3.dp)
                                 .align(Alignment.Start)
                                 .combinedClickable(
                                     onClick = {},
