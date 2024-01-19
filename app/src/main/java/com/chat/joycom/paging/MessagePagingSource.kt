@@ -49,15 +49,15 @@ class MessagePagingSource(val selfId: Long = 0L, val id: Long, val roomUtils: Ro
             try {
                 val result = if (selfId == 0L) {
                     listOf(
-                        Message.getFakeMsg(true), Message.getFakeMsg(true), Message.getFakeMsg(true),
-                        Message.getFakeMsg(true), Message.getFakeMsg(true), Message.getFakeMsg(true)
+                        Message.getFakeMsg(true), Message.getFakeMsg(true, msgType = 3), Message.getFakeMsg(true, msgType = 3),
+                        Message.getFakeMsg(true, msgType = 4), Message.getFakeMsg(true, msgType = 4), Message.getFakeMsg(true)
                     )
 //                    roomUtils.pagingMessageByGroupId(id, offset, limit)
                 } else {
 //                    roomUtils.pagingMessageByUserId(selfId, id, offset, limit)
                     listOf(
-                        Message.getFakeMsg(), Message.getFakeMsg(), Message.getFakeMsg(),
-                        Message.getFakeMsg(), Message.getFakeMsg(), Message.getFakeMsg()
+                        Message.getFakeMsg(), Message.getFakeMsg(msgType = 3), Message.getFakeMsg(msgType = 3),
+                        Message.getFakeMsg(msgType = 4), Message.getFakeMsg(msgType = 4), Message.getFakeMsg()
                     )
                 }
                 result.zipWithNext { first, second ->

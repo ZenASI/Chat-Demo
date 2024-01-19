@@ -122,6 +122,8 @@ dependencies {
 
     val coil_version = "2.4.0"
     implementation("io.coil-kt:coil-compose:$coil_version")
+    implementation("io.coil-kt:coil-gif:$coil_version")
+    implementation("io.coil-kt:coil-video:$coil_version")
 
     val hilt_version by extra { "2.48.1" }
     implementation("com.google.dagger:hilt-android:$hilt_version")
@@ -166,4 +168,10 @@ dependencies {
     implementation ("androidx.camera:camera-view:${camerax_version}")
 
     implementation ("com.google.zxing:core:3.5.1")
+
+    val media3_version = "1.2.1"
+    // For media playback using ExoPlayer
+    implementation("androidx.media3:media3-exoplayer:$media3_version")
+    // For building media playback UIs
+    implementation("androidx.media3:media3-ui:$media3_version")
 }

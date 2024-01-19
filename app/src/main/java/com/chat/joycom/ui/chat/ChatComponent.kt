@@ -10,6 +10,7 @@ import androidx.compose.animation.core.animateValue
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -31,6 +32,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -40,8 +42,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -94,7 +94,9 @@ import com.chat.joycom.ui.commom.DefaultInput
 import com.chat.joycom.ui.commom.IconTextV
 import com.chat.joycom.ui.commom.OtherBubbleShape
 import com.chat.joycom.ui.commom.SelfBubbleShape
+import com.chat.joycom.ui.commom.SimpleUrlImage
 import com.chat.joycom.ui.commom.TopBarIcon
+import com.chat.joycom.ui.commom.UrlType
 import timber.log.Timber
 
 @OptIn(
@@ -392,8 +394,8 @@ fun SelfMsg(message: Message, modifier: Modifier = Modifier) {
                         // replay
                         // TODO: replay layout
                         // content
-                        Text(
-                            text = message.content,
+                        Content(
+                            message = message,
                             modifier = Modifier
                                 .align(Alignment.Start)
                                 .padding(
@@ -405,12 +407,13 @@ fun SelfMsg(message: Message, modifier: Modifier = Modifier) {
                                     onLongClick = {}
                                 )
                         )
-                        // image or not
-                        // TODO: image from user
 
                         // time and read
                         Row(
-                            modifier = Modifier.align(Alignment.End).padding(end = TypedValueCompat.pxToDp(40f, res.displayMetrics).dp),
+                            modifier = Modifier
+                                .align(Alignment.End)
+                                .padding(end = TypedValueCompat.pxToDp(40f, res.displayMetrics).dp),
+
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.End
                         ) {
@@ -419,7 +422,7 @@ fun SelfMsg(message: Message, modifier: Modifier = Modifier) {
                                 modifier = Modifier.wrapContentWidth(),
                                 maxLines = 1
                             )
-                            Icon(Icons.Filled.Check, "")
+                            Image(painterResource(id = R.drawable.ic_read_checked), "", modifier = Modifier.size(20.dp))
                         }
                     }
                 }
@@ -478,7 +481,6 @@ fun OtherMsg(message: Message, modifier: Modifier = Modifier) {
             else -> {
                 Row(
                     modifier = Modifier
-                        .width(IntrinsicSize.Min)
                         .padding(top = 3.dp)
                         .align(Alignment.Start),
                     horizontalArrangement = Arrangement.spacedBy(1.dp)
@@ -503,17 +505,55 @@ fun OtherMsg(message: Message, modifier: Modifier = Modifier) {
                     } else {
                         Spacer(modifier = Modifier.size(30.dp))
                     }
-                    Column(
+                    Box(
                         modifier = Modifier
-                            .background(Color.DarkGray.copy(alpha = .5f), OtherBubbleShape(45f))
-                            .fillMaxWidth(.9f),
-                        verticalArrangement = Arrangement.spacedBy(3.dp)
+                            .weight(1f)
                     ) {
-                        // reply
-                        // TODO: reply layout
-                        // name and phone
-                        if (message.isGroup) {
-                            Row(
+                        Column(
+                            modifier = Modifier
+                                .width(IntrinsicSize.Max)
+                                .background(
+                                    Color.DarkGray.copy(alpha = .5f),
+                                    OtherBubbleShape(45f)
+                                ),
+                            verticalArrangement = Arrangement.spacedBy(3.dp)
+                        ) {
+                            // reply
+                            // TODO: reply layout
+                            // name and phone
+                            if (message.isGroup) {
+                                Row(
+                                    modifier = Modifier
+                                        .padding(
+                                            start = TypedValueCompat.pxToDp(
+                                                40f,
+                                                res.displayMetrics
+                                            ).dp, end = 3.dp
+                                        )
+                                        .wrapContentWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(
+                                        text = nickName.value ?: "",
+                                        maxLines = 1,
+                                        textAlign = TextAlign.Start,
+                                        modifier = Modifier
+                                    )
+                                    Spacer(
+                                        modifier = Modifier
+                                            .widthIn(min = 10.dp)
+                                            .weight(1f)
+                                    )
+                                    Text(
+                                        text = phone.value,
+                                        maxLines = 1,
+                                        textAlign = TextAlign.End,
+                                        modifier = Modifier
+                                    )
+                                }
+                            }
+                            // content
+                            Content(
                                 modifier = Modifier
                                     .padding(
                                         start = TypedValueCompat.pxToDp(
@@ -521,50 +561,23 @@ fun OtherMsg(message: Message, modifier: Modifier = Modifier) {
                                             res.displayMetrics
                                         ).dp, end = 3.dp
                                     )
-                                    .fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text(
-                                    text = nickName.value ?: "",
-                                    maxLines = 1,
-                                    textAlign = TextAlign.Start,
-                                    modifier = Modifier
-                                )
-                                Spacer(modifier = Modifier.size(5.dp))
-                                Text(
-                                    text = phone.value,
-                                    maxLines = 1,
-                                    textAlign = TextAlign.End,
-                                    modifier = Modifier
-                                )
-                            }
+                                    .align(Alignment.Start)
+                                    .combinedClickable(
+                                        onClick = {},
+                                        onLongClick = {}
+                                    ),
+                                message = message
+                            )
+                            // time
+                            Text(
+                                text = message.sendTime.toSendTimeFormat(),
+                                modifier = Modifier
+                                    .align(Alignment.End)
+                                    .padding(horizontal = 3.dp)
+                            )
                         }
-                        // image or not
-                        // TODO: image from user
-                        // content
-                        Text(
-                            text = message.content,
-                            modifier = Modifier
-                                .padding(
-                                    start = TypedValueCompat.pxToDp(
-                                        40f,
-                                        res.displayMetrics
-                                    ).dp, end = 3.dp
-                                )
-                                .align(Alignment.Start)
-                                .combinedClickable(
-                                    onClick = {},
-                                    onLongClick = {}
-                                )
-                        )
-                        // time
-                        Text(
-                            text = message.sendTime.toSendTimeFormat(),
-                            modifier = Modifier
-                                .align(Alignment.End)
-                                .padding(horizontal = 3.dp)
-                        )
                     }
+                    Spacer(modifier = Modifier.size(30.dp))
                 }
             }
         }
@@ -619,3 +632,50 @@ private fun KeyBoardAnimateCallBack() =
             Timber.d("onEnd")
         }
     }
+
+@Composable
+private fun Content(modifier: Modifier = Modifier, message: Message) {
+    Box(modifier = modifier) {
+        when (message.msgType) {
+            2 -> {
+                // text
+                Text(text = message.content)
+            }
+
+            3 -> {
+                // image
+                // https://i.pinimg.com/originals/82/c4/8e/82c48eb9a933331ace3ed7e5ed172270.gif
+                val configuration = LocalConfiguration.current
+                SimpleUrlImage(
+                    url = "https://i.pinimg.com/originals/82/c4/8e/82c48eb9a933331ace3ed7e5ed172270.gif",
+                    modifier = Modifier
+                        .padding(top = 3.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .width((configuration.screenWidthDp / 2).dp)
+                        .clickable {
+
+                        },
+                    contentScale = ContentScale.FillWidth
+                )
+            }
+
+            4 -> {
+                // video
+                // "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                val configuration = LocalConfiguration.current
+                SimpleUrlImage(
+                    url = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                    modifier = Modifier
+                        .padding(top = 3.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .width((configuration.screenWidthDp / 2).dp)
+                        .clickable {
+
+                        },
+                    contentScale = ContentScale.FillWidth,
+                    urlType = UrlType.VideoFrame
+                )
+            }
+        }
+    }
+}
