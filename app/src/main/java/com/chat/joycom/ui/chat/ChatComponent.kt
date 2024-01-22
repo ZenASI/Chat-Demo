@@ -73,6 +73,8 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -114,12 +116,12 @@ fun ChatInput(
         mutableStateOf(false)
     }
     val focusRequester = remember { FocusRequester() }
-    var inputText by rememberSaveable {
-        mutableStateOf("")
+    var inputText by remember {
+        mutableStateOf(TextFieldValue("", TextRange.Zero))
     }
     val sendIconType by remember {
         derivedStateOf {
-            if (inputText.isEmpty()) R.drawable.ic_mic else R.drawable.ic_send
+            if (inputText.text.isEmpty()) R.drawable.ic_mic else R.drawable.ic_send
         }
     }
     var isTypeKeyBoard by remember {
@@ -268,7 +270,8 @@ fun ChatInput(
                 .height(bottomHeightDp.dp)
         ) {
             Emoji2KeyBoard(onEmojiPickListener = {
-                inputText += it.emoji
+                inputText = TextFieldValue(inputText.text + it.emoji, TextRange(inputText.text.length + 1))
+//                inputText += it.emoji
             })
         }
     }
