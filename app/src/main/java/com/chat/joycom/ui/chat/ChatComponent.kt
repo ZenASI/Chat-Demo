@@ -91,6 +91,7 @@ import com.chat.joycom.model.Message
 import com.chat.joycom.network.UrlPath
 import com.chat.joycom.network.UrlPath.getFileFullUrl
 import com.chat.joycom.ui.commom.DefaultInput
+import com.chat.joycom.ui.commom.Emoji2KeyBoard
 import com.chat.joycom.ui.commom.IconTextV
 import com.chat.joycom.ui.commom.OtherBubbleShape
 import com.chat.joycom.ui.commom.SelfBubbleShape
@@ -266,6 +267,9 @@ fun ChatInput(
                 .fillMaxWidth()
                 .height(bottomHeightDp.dp)
         ) {
+            Emoji2KeyBoard(onEmojiPickListener = {
+                inputText += it.emoji
+            })
         }
     }
 }
@@ -422,7 +426,11 @@ fun SelfMsg(message: Message, modifier: Modifier = Modifier) {
                                 modifier = Modifier.wrapContentWidth(),
                                 maxLines = 1
                             )
-                            Image(painterResource(id = R.drawable.ic_read_checked), "", modifier = Modifier.size(20.dp))
+                            Image(
+                                painterResource(id = R.drawable.ic_read_checked),
+                                "",
+                                modifier = Modifier.size(20.dp)
+                            )
                         }
                     }
                 }

@@ -174,4 +174,7 @@ dependencies {
     implementation("androidx.media3:media3-exoplayer:$media3_version")
     // For building media playback UIs
     implementation("androidx.media3:media3-ui:$media3_version")
+
+    val emoji_picker_version = "1.4.0"
+    implementation("androidx.emoji2:emoji2-emojipicker:$emoji_picker_version")
 }
