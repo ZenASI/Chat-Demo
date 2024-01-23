@@ -162,6 +162,9 @@
     <string name="two_step_verify">雙步驟驗證</string>
     <string name="two_step_verify_desc">開啟雙步驟驗證來提升帳號安全，當您使用電話號碼註冊JoyCom時，將需要輸入PIN碼。</string>
     <string name="modify_phone">變更電話號碼</string>
+    <string name="modify_phone_desc">變更您的號碼會轉移您的帳戶資訊、群組和設定。</string>
+    <string name="modify_phone_sub_desc1">執行操作之前，請確認您的新號碼可以接收到訊息或來電。</string>
+    <string name="modify_phone_sub_desc2">若您同時使用新手機與新號碼，請先在舊手機上變更您的號碼。</string>
     <string name="require_account_info">要求帳號資訊</string>
     <string name="delete_account">刪除帳號</string>
 

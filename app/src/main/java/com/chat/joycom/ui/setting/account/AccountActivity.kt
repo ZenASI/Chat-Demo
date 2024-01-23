@@ -81,6 +81,7 @@ class AccountActivity : BaseActivity() {
                                             0 -> SafetyNotifyActivity.start(context)
                                             1 -> EmailActivity.start(context)
                                             2 -> TwoStepVerifyActivity.start(context)
+                                            3 -> ModifyPhoneNumActivity.start(context)
                                             else -> {}
                                         }
                                     }
