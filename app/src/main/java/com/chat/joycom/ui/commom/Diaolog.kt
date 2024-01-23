@@ -39,18 +39,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.chat.joycom.R
-import com.chat.joycom.network.UrlPath
-import com.chat.joycom.network.UrlPath.getFileFullUrl
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -301,16 +296,13 @@ fun InfoCardDialog(
                     .fillMaxWidth()
                     .aspectRatio(1f)
             ) {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(imgUrl)
-                        .crossfade(true).build(),
-                    contentDescription = "",
+                SimpleUrlImage(
+                    url = imgUrl ,
                     modifier = Modifier
                         .fillMaxSize(),
                     placeholder = painterResource(id = R.drawable.ic_def_user),
                     error = painterResource(id = R.drawable.ic_def_user),
-                    contentScale = ContentScale.FillWidth,
+                    contentScale = ContentScale.FillWidth
                 )
                 Text(
                     text = title,
@@ -321,7 +313,9 @@ fun InfoCardDialog(
                     color = Color.White
                 )
             }
-            Row(modifier = Modifier.fillMaxWidth().height(40.dp), verticalAlignment = Alignment.CenterVertically) {
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .height(40.dp), verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     painterResource(id = R.drawable.ic_chat),
                     "",

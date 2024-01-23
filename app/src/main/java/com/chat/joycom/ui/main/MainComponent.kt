@@ -61,8 +61,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.chat.joycom.R
 import com.chat.joycom.model.Contact
 import com.chat.joycom.model.Group
@@ -72,6 +70,7 @@ import com.chat.joycom.ui.commom.DropdownColumn
 import com.chat.joycom.ui.commom.IconTextH
 import com.chat.joycom.ui.commom.InfoCardDialog
 import com.chat.joycom.ui.commom.PermissionType
+import com.chat.joycom.ui.commom.SimpleUrlImage
 import com.chat.joycom.ui.commom.TopBarIcon
 import com.chat.joycom.ui.main.contacts.add.group.NewGroupActivity
 import com.chat.joycom.ui.setting.SettingActivity
@@ -381,11 +380,8 @@ fun ContactMsgItem(contact: Contact) {
             }
             .padding(horizontal = 10.dp, vertical = 20.dp)
     ) {
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(contact.avatar)
-                .crossfade(true).build(),
-            contentDescription = "",
+        SimpleUrlImage(
+            url = contact.avatar,
             modifier = Modifier
                 .size(55.dp)
                 .clip(CircleShape)
@@ -394,7 +390,6 @@ fun ContactMsgItem(contact: Contact) {
                 },
             placeholder = painterResource(id = R.drawable.ic_def_user),
             error = painterResource(id = R.drawable.ic_def_user),
-            contentScale = ContentScale.Crop,
         )
         Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
             Row {
@@ -450,11 +445,8 @@ private fun GroupMsgItem(group: Group) {
             }
             .padding(horizontal = 10.dp, vertical = 20.dp)
     ) {
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(group.avatar)
-                .crossfade(true).build(),
-            contentDescription = "",
+        SimpleUrlImage(
+            url = group.avatar,
             modifier = Modifier
                 .size(55.dp)
                 .clip(CircleShape)
@@ -463,7 +455,6 @@ private fun GroupMsgItem(group: Group) {
                 },
             placeholder = painterResource(id = R.drawable.ic_def_group),
             error = painterResource(id = R.drawable.ic_def_group),
-            contentScale = ContentScale.Crop,
         )
         Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
             Row {

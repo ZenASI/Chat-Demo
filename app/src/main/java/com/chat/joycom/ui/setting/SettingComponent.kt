@@ -12,9 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -36,21 +34,17 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.chat.joycom.R
-import com.chat.joycom.network.UrlPath
-import com.chat.joycom.network.UrlPath.getFileFullUrl
 import com.chat.joycom.ui.commom.IconTextH
-import com.chat.joycom.ui.main.MainActivityViewModel
+import com.chat.joycom.ui.commom.SimpleUrlImage
 import com.chat.joycom.ui.setting.account.AccountActivity
 import com.chat.joycom.ui.setting.invite.InviteFriendsActivity
 import com.chat.joycom.ui.setting.qrcode.QRCodeActivity
@@ -75,20 +69,16 @@ fun UserInfo(viewModel: SettingViewModel = viewModel()) {
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(UrlPath.GET_FILE.getFileFullUrl() + member?.avatar)
-                .crossfade(true).build(),
-            contentDescription = "",
+        Spacer(modifier = Modifier.size(10.dp))
+        SimpleUrlImage(
+            url = "https://picsum.photos/200",
             modifier = Modifier
-                .padding(start = 10.dp)
-                .width(70.dp)
-                .height(70.dp)
-                .align(Alignment.CenterVertically),
+                .clip(CircleShape)
+                .size(70.dp),
             placeholder = painterResource(id = R.drawable.ic_def_user),
             error = painterResource(id = R.drawable.ic_def_user),
-            contentScale = ContentScale.Crop,
         )
+
         Spacer(modifier = Modifier.size(10.dp))
         Column(
             modifier = Modifier

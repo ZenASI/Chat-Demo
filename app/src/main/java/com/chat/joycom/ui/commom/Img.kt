@@ -1,17 +1,14 @@
 package com.chat.joycom.ui.commom
 
 import android.os.Build
-import android.os.ext.SdkExtensions
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -20,20 +17,20 @@ import coil.compose.AsyncImage
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.decode.VideoFrameDecoder
-import coil.request.ErrorResult
 import coil.request.ImageRequest
 import coil.request.videoFrameMillis
 import com.chat.joycom.R
-import timber.log.Timber
 
 @Composable
 fun SimpleUrlImage(
     url: String,
     modifier: Modifier = Modifier,
-    contentScale: ContentScale = ContentScale.Inside,
-    urlType: UrlType = UrlType.Image
+    contentScale: ContentScale = ContentScale.Crop,
+    urlType: UrlType = UrlType.Image,
+    error: Painter? = null,
+    placeholder: Painter? = null
 ) {
-    Box(modifier = Modifier.wrapContentSize()) {
+    Box(modifier = modifier) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(url)
@@ -55,13 +52,19 @@ fun SimpleUrlImage(
             contentDescription = "",
             modifier = modifier,
             contentScale = contentScale,
+            error = error,
+            placeholder = placeholder,
         )
         AnimatedVisibility(
             visible = urlType == UrlType.VideoFrame, modifier = Modifier.align(
                 Alignment.Center
             )
         ) {
-            Image(painterResource(id = R.drawable.ic_play_circle), "", modifier = Modifier.size(30.dp))
+            Image(
+                painterResource(id = R.drawable.ic_play_circle),
+                "",
+                modifier = Modifier.size(30.dp)
+            )
         }
     }
 }

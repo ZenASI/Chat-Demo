@@ -80,7 +80,7 @@ data class Message(
             id = Random.nextLong(),
             atUserIds = "",
             autoDel = 0,
-            content = "Random Long => ${Random.nextLong()}",
+            content = System.currentTimeMillis().toString(),
             encryptionType = 0,
             fromUserId = Random.nextLong(),
             msgId = Random.nextLong().toString(),

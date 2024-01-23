@@ -17,7 +17,6 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -27,7 +26,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.ime
-import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -68,6 +66,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
@@ -83,14 +82,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsAnimationCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.chat.joycom.R
 import com.chat.joycom.ext.toSendTimeFormat
 import com.chat.joycom.ext.toTopTimeFormat
 import com.chat.joycom.model.Message
-import com.chat.joycom.network.UrlPath
-import com.chat.joycom.network.UrlPath.getFileFullUrl
 import com.chat.joycom.ui.commom.DefaultInput
 import com.chat.joycom.ui.commom.Emoji2KeyBoard
 import com.chat.joycom.ui.commom.IconTextV
@@ -102,14 +97,14 @@ import com.chat.joycom.ui.commom.UrlType
 import timber.log.Timber
 
 @OptIn(
-    ExperimentalLayoutApi::class, ExperimentalComposeUiApi::class
+    ExperimentalComposeUiApi::class
 )
 @Composable
 fun ChatInput(
     isGroup: Boolean,
     modifier: Modifier = Modifier,
-    onMessage: ((message: Message) -> Unit)? = null,
     id: Long?,
+    viewModel: ChatViewModel = viewModel()
 ) {
     var popUpShowState by remember {
         mutableStateOf(false)
@@ -139,7 +134,7 @@ fun ChatInput(
     val view = LocalView.current
     val res = LocalContext.current.resources
     val config = LocalConfiguration.current
-    val imeState = WindowInsets.isImeVisible
+    val focusManager = LocalFocusManager.current
     val imeBottom = WindowInsets.ime.getBottom(LocalDensity.current)
     val navigationBarBottom = WindowInsets.navigationBars.getBottom(LocalDensity.current)
     val keyboardController = LocalSoftwareKeyboardController.current // show/hide keyboard
@@ -256,7 +251,10 @@ fun ChatInput(
                     .clip(CircleShape)
                     .background(Color.Green, CircleShape)
                     .clickable {
-                        keyboardController?.hide()
+                        // TODO: send msg
+                        inputText = TextFieldValue("", TextRange.Zero)
+                        isTypeKeyBoard = false
+                        focusManager.clearFocus()
                         bottomHeightDp = 0f
                     }
                     .padding(10.dp)
@@ -269,7 +267,8 @@ fun ChatInput(
                 .height(bottomHeightDp.dp)
         ) {
             Emoji2KeyBoard(onEmojiPickListener = {
-                inputText = TextFieldValue(inputText.text + it.emoji, TextRange(inputText.text.length + 1))
+                inputText =
+                    TextFieldValue(inputText.text + it.emoji, TextRange(inputText.text.length + 1))
             })
         }
     }
@@ -495,17 +494,14 @@ fun OtherMsg(message: Message, modifier: Modifier = Modifier) {
                     horizontalArrangement = Arrangement.spacedBy(1.dp)
                 ) {
                     if (message.showIcon) {
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(UrlPath.GET_FILE.getFileFullUrl() + if (message.isGroup) groupContact.value?.avatar else contact.value?.avatar)
-                                .crossfade(true).build(),
-                            contentDescription = "",
+                        SimpleUrlImage(
+                            url = "https://picsum.photos/200",
                             modifier = Modifier
                                 .size(30.dp)
                                 .clip(CircleShape)
                                 .align(Alignment.Top)
                                 .clickable {
-                                    // TODO: show user info card
+
                                 },
                             placeholder = painterResource(id = R.drawable.ic_def_user),
                             contentScale = ContentScale.Crop,

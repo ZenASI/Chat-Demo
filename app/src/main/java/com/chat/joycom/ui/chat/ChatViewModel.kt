@@ -1,6 +1,5 @@
 package com.chat.joycom.ui.chat
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,7 +18,6 @@ import com.chat.joycom.network.AppApiRepo
 import com.chat.joycom.paging.MessagePagingSource
 import com.chat.joycom.utils.RoomUtils
 import com.chat.joycom.utils.SocketUtils
-import com.squareup.moshi.Moshi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,7 +36,6 @@ class ChatViewModel @Inject constructor(
     private val socketUtils: SocketUtils,
     private val appApiRepo: AppApiRepo,
     private val savedStateHandle: SavedStateHandle,
-    private val moshi: Moshi,
 ) : ViewModel() {
     private val PAGING_SIZE = 30
     val memberInfo = MemberFlow.stateFlow
