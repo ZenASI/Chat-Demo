@@ -53,7 +53,6 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -73,6 +72,8 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -91,6 +92,7 @@ import com.chat.joycom.model.Message
 import com.chat.joycom.network.UrlPath
 import com.chat.joycom.network.UrlPath.getFileFullUrl
 import com.chat.joycom.ui.commom.DefaultInput
+import com.chat.joycom.ui.commom.Emoji2KeyBoard
 import com.chat.joycom.ui.commom.IconTextV
 import com.chat.joycom.ui.commom.OtherBubbleShape
 import com.chat.joycom.ui.commom.SelfBubbleShape
@@ -113,12 +115,12 @@ fun ChatInput(
         mutableStateOf(false)
     }
     val focusRequester = remember { FocusRequester() }
-    var inputText by rememberSaveable {
-        mutableStateOf("")
+    var inputText by remember {
+        mutableStateOf(TextFieldValue("", TextRange.Zero))
     }
     val sendIconType by remember {
         derivedStateOf {
-            if (inputText.isEmpty()) R.drawable.ic_mic else R.drawable.ic_send
+            if (inputText.text.isEmpty()) R.drawable.ic_mic else R.drawable.ic_send
         }
     }
     var isTypeKeyBoard by remember {
@@ -266,6 +268,9 @@ fun ChatInput(
                 .fillMaxWidth()
                 .height(bottomHeightDp.dp)
         ) {
+            Emoji2KeyBoard(onEmojiPickListener = {
+                inputText = TextFieldValue(inputText.text + it.emoji, TextRange(inputText.text.length + 1))
+            })
         }
     }
 }
@@ -422,7 +427,11 @@ fun SelfMsg(message: Message, modifier: Modifier = Modifier) {
                                 modifier = Modifier.wrapContentWidth(),
                                 maxLines = 1
                             )
-                            Image(painterResource(id = R.drawable.ic_read_checked), "", modifier = Modifier.size(20.dp))
+                            Image(
+                                painterResource(id = R.drawable.ic_read_checked),
+                                "",
+                                modifier = Modifier.size(20.dp)
+                            )
                         }
                     }
                 }
