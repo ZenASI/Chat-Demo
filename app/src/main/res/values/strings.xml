@@ -160,6 +160,7 @@
     <string name="safe_notify">安全通知</string>
     <string name="email_address">電子郵件地址</string>
     <string name="two_step_verify">雙步驟驗證</string>
+    <string name="two_step_verify_desc">開啟雙步驟驗證來提升帳號安全，當您使用電話號碼註冊JoyCom時，將需要輸入PIN碼。</string>
     <string name="modify_phone">變更電話號碼</string>
     <string name="require_account_info">要求帳號資訊</string>
     <string name="delete_account">刪除帳號</string>
@@ -175,6 +176,7 @@
 
     <string name="pls_input_name_or_phone_number">請輸入名稱或電話號碼</string>
 
+    <string name="open">開啟</string>
     <string name="more">更多</string>
     <string name="not_found_key">未找到\'%s\'</string>
 

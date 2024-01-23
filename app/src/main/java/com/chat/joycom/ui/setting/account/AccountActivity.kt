@@ -78,8 +78,9 @@ class AccountActivity : BaseActivity() {
                                 modifier = Modifier
                                     .clickable {
                                         when (index){
-//                                            0 -> SafetyNotifyActivity.start(context)
-//                                            1 -> EmailActivity.start(context)
+                                            0 -> SafetyNotifyActivity.start(context)
+                                            1 -> EmailActivity.start(context)
+                                            2 -> TwoStepVerifyActivity.start(context)
                                             else -> {}
                                         }
                                     }
