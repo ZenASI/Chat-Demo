@@ -10,7 +10,7 @@ import androidx.emoji2.emojipicker.EmojiViewItem
 
 // ref:https://issuetracker.google.com/issues/288261054
 @Composable
-fun Emoji2KeyBoard(onEmojiPickListener: (EmojiViewItem) -> Unit){
+fun Emoji2KeyBoard(onEmojiPickListener: (EmojiViewItem) -> Unit) {
     val context = LocalContext.current
     AndroidView(
         factory = {

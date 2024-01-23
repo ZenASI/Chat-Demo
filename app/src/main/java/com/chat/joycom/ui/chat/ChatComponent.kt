@@ -53,7 +53,6 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -271,7 +270,6 @@ fun ChatInput(
         ) {
             Emoji2KeyBoard(onEmojiPickListener = {
                 inputText = TextFieldValue(inputText.text + it.emoji, TextRange(inputText.text.length + 1))
-//                inputText += it.emoji
             })
         }
     }
