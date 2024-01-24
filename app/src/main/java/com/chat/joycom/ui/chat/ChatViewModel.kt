@@ -38,17 +38,30 @@ class ChatViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val PAGING_SIZE = 30
+    private val isGroup = savedStateHandle.get<Boolean>(IS_GROUP) ?: false
+    private val contact = savedStateHandle.get<Contact>(CONTACT_INFO)
+    private val group = savedStateHandle.get<Group>(GROUP_INFO)
+
     val memberInfo = MemberFlow.stateFlow
     var groupContactList = flowOf(emptyList<GroupContact>())
     var contactInfo = MutableStateFlow<Contact?>(null)
+
+    // 目前先用這個展示訊息好與db切開
+    var protoTypeMessage: MutableList<Message> =
+        mutableListOf(
+            Message.getFakeMsg(isGroup),
+            Message.getFakeMsg(isGroup, msgType = 3),
+            Message.getFakeMsg(isGroup, msgType = 3),
+            Message.getFakeMsg(isGroup, msgType = 4),
+            Message.getFakeMsg(isGroup, msgType = 4),
+            Message.getFakeMsg(isGroup)
+        )
+
 
     var pagingMessage: Flow<PagingData<Message>> =
         emptyFlow<PagingData<Message>>().cachedIn(viewModelScope)
 
     init {
-        val isGroup = savedStateHandle.get<Boolean>(IS_GROUP) ?: false
-        val contact = savedStateHandle.get<Contact>(CONTACT_INFO)
-        val group = savedStateHandle.get<Group>(GROUP_INFO)
         if (isGroup) {
             getGroupContact(groupId = group?.groupId)
             groupContactList = groupContact(groupId = group?.groupId)
@@ -141,7 +154,10 @@ class ChatViewModel @Inject constructor(
         roomUtils.findGroupContact(groupId)
     }
 
-    fun sentMessage(it: Message) = socketUtils.send(it)
+    fun sentMessage(it: Message) = run {
+//        socketUtils.send(it)
+        protoTypeMessage.add(0, it)
+    }
 
     private fun getGroupContact(groupId: Long?) {
         groupId ?: return

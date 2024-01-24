@@ -11,11 +11,14 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -115,7 +118,7 @@ class ChatActivity : BaseActivity() {
                                     Text(title ?: "")
                                 }
                             },
-                            acton = { ChatTopBarAction() }
+                            acton = { ChatTopBarAction(isGroupBool) }
                         )
                     },
                     bottomBar = {
@@ -128,7 +131,10 @@ class ChatActivity : BaseActivity() {
                     modifier = Modifier.navigationBarsPadding()
                 ) { paddingValues ->
                     val memberInfo = viewModel.memberInfo.collectAsState(initial = null).value
-                    val pagingList = viewModel.pagingMessage.collectAsLazyPagingItems()
+//                    val pagingList = viewModel.pagingMessage.collectAsLazyPagingItems()
+                    val protoTypeList = remember {
+                        viewModel.protoTypeMessage
+                    }
                     val lazyState = rememberLazyListState()
 
                     if (memberInfo != null) {
@@ -137,20 +143,23 @@ class ChatActivity : BaseActivity() {
                             state = lazyState,
                             reverseLayout = true
                         ) {
-                            items(count = pagingList.itemCount) { pos ->
-                                val item = pagingList[pos]
-                                item?.let {
-                                    if (pos % 2 == 0) {
-                                        SelfMsg(message = item)
-                                    } else {
-                                        OtherMsg(message = item)
-                                    }
+                            items(protoTypeList) {
+                                when (it.fromUserId) {
+                                    // 目前-1表示自發訊息
+                                    -1L -> SelfMsg(message = it)
+                                    else -> OtherMsg(message = it)
+                                }
+                            }
+                            // for paging-msg
+//                            items(count = pagingList.itemCount) { pos ->
+//                                val item = pagingList[pos]
+//                                item?.let {
 //                                    when (item.fromUserId) {
 //                                        memberInfo.userId -> SelfMsg(message = item)
 //                                        else -> OtherMsg(message = item)
 //                                    }
-                                }
-                            }
+//                                }
+//                            }
                         }
                     }
                 }

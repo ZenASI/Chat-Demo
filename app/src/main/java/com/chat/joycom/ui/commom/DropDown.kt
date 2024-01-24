@@ -1,6 +1,5 @@
 package com.chat.joycom.ui.commom
 
-import androidx.annotation.StringRes
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text

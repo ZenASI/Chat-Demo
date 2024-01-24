@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.chat.joycom.R
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PermissionDescAlert(
@@ -278,18 +279,19 @@ fun GroupIconSelectSheet(showState: (Boolean) -> Unit) {
 
 @Composable
 fun InfoCardDialog(
-    showState: (Boolean) -> Unit,
+    onDismissRequest: (Boolean) -> Unit,
     title: String,
     imgUrl: String,
     callBack: () -> Unit,
 ) {
     val backgroundColor = MaterialTheme.colorScheme.background
     Dialog(
-        onDismissRequest = { showState.invoke(false) },
+        onDismissRequest = { onDismissRequest.invoke(false) },
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            modifier = Modifier.background(backgroundColor)
+            modifier = Modifier
+                .background(backgroundColor)
+                .fillMaxWidth(.8f)
         ) {
             Box(
                 modifier = Modifier
