@@ -228,4 +228,20 @@
     <string name="reset_qrcode">重設QR條碼</string>
 
     <string name="your_contact_list_updated">您的聯絡人清單已更新。</string>
+    
+    <string name="group_info">群組資訊</string>
+    <string name="group_multi_media">群組多媒體</string>
+    <string name="search">搜尋</string>
+    <string name="mute_notification">將通知靜音</string>
+    <string name="background_image">背景圖片</string>
+    
+    <string name="add_to_contact">新增至通訊錄</string>
+    <string name="media_links_and_files">媒體、連結和文件</string>
+    
+    <string name="report">舉報</string>
+    <string name="blockade">封鎖</string>
+    <string name="clear_conversation">清除對話</string>
+    <string name="out_put_conversation">匯出對話</string>
+    <string name="add_shortcut">新增捷徑</string>
+    <string name="exit_group">退出群組</string>
 </resources>

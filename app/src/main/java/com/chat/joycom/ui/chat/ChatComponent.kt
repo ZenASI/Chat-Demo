@@ -87,8 +87,10 @@ import com.chat.joycom.ext.toSendTimeFormat
 import com.chat.joycom.ext.toTopTimeFormat
 import com.chat.joycom.model.Message
 import com.chat.joycom.ui.commom.DefaultInput
+import com.chat.joycom.ui.commom.DropdownColumn
 import com.chat.joycom.ui.commom.Emoji2KeyBoard
 import com.chat.joycom.ui.commom.IconTextV
+import com.chat.joycom.ui.commom.InfoCardDialog
 import com.chat.joycom.ui.commom.OtherBubbleShape
 import com.chat.joycom.ui.commom.SelfBubbleShape
 import com.chat.joycom.ui.commom.SimpleUrlImage
@@ -247,17 +249,24 @@ fun ChatInput(
                 painterResource(id = sendIconType),
                 "",
                 modifier = Modifier
-                    .size(60.dp)
-                    .clip(CircleShape)
-                    .background(Color.Green, CircleShape)
+                    .size(55.dp)
+                    .background(Color(0xFF00A884), CircleShape)
                     .clickable {
-                        // TODO: send msg
+                        viewModel.sentMessage(
+                            Message.getFakeMsg(
+                                isGroup,
+                                fromUserId = -1,
+                                content = inputText.text
+                            )
+                        )
+                        focusManager.clearFocus()
+                        keyboardController?.hide()
+                        bottomHeightDp = 0f
                         inputText = TextFieldValue("", TextRange.Zero)
                         isTypeKeyBoard = false
-                        focusManager.clearFocus()
-                        bottomHeightDp = 0f
                     }
-                    .padding(10.dp)
+                    .padding(10.dp),
+                tint = Color.White
             )
         }
         Box(
@@ -443,6 +452,9 @@ fun SelfMsg(message: Message, modifier: Modifier = Modifier) {
 @Composable
 fun OtherMsg(message: Message, modifier: Modifier = Modifier) {
     val viewModel: ChatViewModel = viewModel()
+    var cardShowState by remember {
+        mutableStateOf(false)
+    }
     val fromUserId = remember { mutableLongStateOf(message.fromUserId) }
     val groupContactList = viewModel.groupContactList.collectAsState(initial = mutableListOf())
     val groupContact = remember(fromUserId, groupContactList) {
@@ -501,7 +513,7 @@ fun OtherMsg(message: Message, modifier: Modifier = Modifier) {
                                 .clip(CircleShape)
                                 .align(Alignment.Top)
                                 .clickable {
-
+                                    cardShowState = true
                                 },
                             placeholder = painterResource(id = R.drawable.ic_def_user),
                             contentScale = ContentScale.Crop,
@@ -587,14 +599,78 @@ fun OtherMsg(message: Message, modifier: Modifier = Modifier) {
             }
         }
     }
+
+    if (cardShowState) {
+        InfoCardDialog(
+            onDismissRequest = { cardShowState = it },
+            title = "Jeff",
+            imgUrl = "https://media.tenor.com/TTHVXG5NRGgAAAAM/subaru-dancing.gif",
+            callBack = {}
+        )
+    }
 }
 
 @Composable
-fun ChatTopBarAction() {
+fun ChatTopBarAction(isGroupBool: Boolean) {
+    var showState by remember {
+        mutableStateOf(false)
+    }
+    var moreShowState by remember {
+        mutableStateOf(false)
+    }
+    val itemList = if (isGroupBool) {
+        listOf(
+            R.string.group_info,
+            R.string.group_multi_media,
+        )
+    } else {
+        listOf(
+            R.string.add_to_contact,
+            R.string.media_links_and_files,
+        )
+    } + listOf(
+        R.string.search,
+        R.string.mute_notification,
+        R.string.limited_time_msg,
+        R.string.background_image,
+        R.string.more
+    )
+    val itemMoreList = listOf(
+        R.string.report,
+        if (isGroupBool) {
+            R.string.exit_group
+        } else {
+            R.string.blockade
+        },
+        R.string.clear_conversation,
+        R.string.out_put_conversation,
+        R.string.add_shortcut,
+    )
     Row(horizontalArrangement = Arrangement.spacedBy(15.dp)) {
         TopBarIcon(R.drawable.ic_videocam, onClick = {})
         TopBarIcon(R.drawable.ic_phone, onClick = {})
-        TopBarIcon(R.drawable.ic_more_vert, onClick = {})
+        Box {
+            TopBarIcon(R.drawable.ic_more_vert, onClick = { showState = true })
+            DropdownColumn(
+                showState = showState,
+                onDismissRequest = { showState = false },
+                itemList = itemList,
+                itemClick = { stringResId ->
+                    showState = false
+                    when (stringResId) {
+                        R.string.more -> {
+                            moreShowState = true
+                        }
+                    }
+                }
+            )
+            DropdownColumn(
+                showState = moreShowState,
+                onDismissRequest = { moreShowState = false },
+                itemList = itemMoreList,
+                itemClick = { moreShowState = false }
+            )
+        }
     }
 }
 

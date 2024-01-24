@@ -74,12 +74,15 @@ import com.chat.joycom.ui.commom.SimpleUrlImage
 import com.chat.joycom.ui.commom.TopBarIcon
 import com.chat.joycom.ui.main.contacts.add.group.NewGroupActivity
 import com.chat.joycom.ui.setting.SettingActivity
+import com.chat.joycom.ui.theme.FabDark
+import com.chat.joycom.ui.theme.FabLight
 import com.chat.joycom.ui.theme.OnTabSelectDark
 import com.chat.joycom.ui.theme.OnTabSelectLight
 import com.chat.joycom.ui.theme.OnTabUnSelectDark
 import com.chat.joycom.ui.theme.OnTabUnSelectLight
 import com.chat.joycom.ui.theme.TabRowDark
 import com.chat.joycom.ui.theme.TabRowLight
+import com.chat.joycom.ui.web.WebActivity
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 
@@ -134,6 +137,7 @@ fun CallScene(viewModel: MainActivityViewModel = viewModel()) {
 
 @Composable
 fun CommunityScene(viewModel: MainActivityViewModel = viewModel()) {
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -149,7 +153,17 @@ fun CommunityScene(viewModel: MainActivityViewModel = viewModel()) {
             fontSize = 26.sp
         )
         Text(text = stringResource(id = R.string.keep_community_linking_desc))
-        Text(text = stringResource(id = R.string.keep_community_linking_sample))
+        Text(
+            text = stringResource(id = R.string.keep_community_linking_sample),
+            modifier = Modifier.clickable {
+                WebActivity.start(
+                    context,
+                    "https://faq.whatsapp.com/cxt?entrypointid=community-examples-article&lg=zh&lc=TW&platform=android"
+                )
+            },
+            color = if (isSystemInDarkTheme()) FabDark else FabLight
+        )
+        Spacer(modifier = Modifier.size(10.dp))
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
@@ -421,7 +435,7 @@ fun ContactMsgItem(contact: Contact) {
     }
     if (infoShowState) {
         InfoCardDialog(
-            showState = { infoShowState = it },
+            onDismissRequest = { infoShowState = it },
             contact.nickname,
             imgUrl = contact.avatar,
             callBack = { infoShowState = false },
@@ -480,7 +494,7 @@ private fun GroupMsgItem(group: Group) {
     }
     if (infoShowState) {
         InfoCardDialog(
-            showState = { infoShowState = it },
+            onDismissRequest = { infoShowState = it },
             group.groupName,
             imgUrl = group.avatar,
             callBack = { infoShowState = false },
