@@ -165,6 +165,9 @@
     <string name="modify_phone_desc">變更您的號碼會轉移您的帳戶資訊、群組和設定。</string>
     <string name="modify_phone_sub_desc1">執行操作之前，請確認您的新號碼可以接收到訊息或來電。</string>
     <string name="modify_phone_sub_desc2">若您同時使用新手機與新號碼，請先在舊手機上變更您的號碼。</string>
+    <string name="enter_old_phone">輸入您附國碼的舊手機號碼</string>
+    <string name="enter_new_phone">輸入您附國碼的新手機號碼</string>
+    <string name="enter_phone_hint">手機電話號碼</string>
     <string name="require_account_info">要求帳號資訊</string>
     <string name="delete_account">刪除帳號</string>
 

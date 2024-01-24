@@ -1,4 +1,4 @@
-package com.chat.joycom.ui.setting.account
+package com.chat.joycom.ui.setting.account.modifyphone
 
 import android.content.Context
 import android.content.Intent
@@ -15,6 +15,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -45,6 +46,7 @@ class ModifyPhoneNumActivity : BaseActivity() {
                         JoyComAppBar(title = { Text(text = stringResource(id = R.string.modify_phone)) })
                     }
                 ) { paddingValues ->
+                    val context = LocalContext.current
                     Column(
                         modifier = Modifier
                             .padding(paddingValues)
@@ -66,7 +68,9 @@ class ModifyPhoneNumActivity : BaseActivity() {
                         Text(text = stringResource(id = R.string.modify_phone_sub_desc2))
                         Spacer(modifier = Modifier.weight(1f))
                         Button(
-                            onClick = {}
+                            onClick = {
+                                EnterPhoneNumActivity.start(context)
+                            }
                         ) {
                             Text(text = stringResource(id = R.string.next_step))
                         }

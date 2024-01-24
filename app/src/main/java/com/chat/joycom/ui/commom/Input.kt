@@ -119,3 +119,56 @@ fun DefaultInput(
         },
     )
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PhoneInput(
+    modifier: Modifier = Modifier,
+    inputText: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
+    textStyle: TextStyle = LocalTextStyle.current.copy(fontSize = 18.sp),
+    @StringRes hint: Int? = null,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    prefixText: String? = null,
+) {
+
+    val interactionSource = remember { MutableInteractionSource() }
+    BasicTextField(
+        value = inputText,
+        onValueChange = { onValueChange.invoke(it) },
+        textStyle = textStyle,
+        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+        modifier = modifier,
+        singleLine = true,
+        interactionSource = interactionSource,
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
+        decorationBox = @Composable { innerTextField ->
+            // places leading icon, text field with label and placeholder, trailing icon
+            TextFieldDefaults.DecorationBox(
+                value = inputText.text,
+                innerTextField = innerTextField,
+                placeholder = {
+                    if (hint != null) Text(
+                        text = stringResource(id = hint),
+                        fontSize = textStyle.fontSize
+                    )
+                },
+                enabled = true,
+                singleLine = true,
+                visualTransformation = VisualTransformation.None,
+                interactionSource = interactionSource,
+                contentPadding = PaddingValues(0.dp),
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                    unfocusedIndicatorColor = MaterialTheme.colorScheme.secondary,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    disabledContainerColor = Color.Transparent
+                ),
+                prefix = { Text(text = prefixText ?: "") }
+            )
+        },
+    )
+}
