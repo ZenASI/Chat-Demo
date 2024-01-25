@@ -83,6 +83,7 @@ class AccountActivity : BaseActivity() {
                                             1 -> EmailActivity.start(context)
                                             2 -> TwoStepVerifyActivity.start(context)
                                             3 -> ModifyPhoneNumActivity.start(context)
+                                            4 -> RequireAccountInfoActivity.start(context)
                                             else -> {}
                                         }
                                     }

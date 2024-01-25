@@ -169,6 +169,16 @@
     <string name="enter_new_phone">輸入您附國碼的新手機號碼</string>
     <string name="enter_phone_hint">手機電話號碼</string>
     <string name="require_account_info">要求帳號資訊</string>
+    <string name="account_info">帳號資訊</string>
+    <string name="require_account_report">申請帳號報告</string>
+    <string name="require_account_sent">要求已送出</string>
+    <string name="require_account_sent_note">您的報告會在3天內備妥</string>
+    <string name="account_info_file_will_ready_three_day_later">您的報告會在3天內備妥。您可在報告產生後幾週內下載。\n\n如您變更您的帳號，例如變更電話號碼或刪除帳號，您的請求將予取消。</string>
+    <string name="account_info_report_note">建立您的JoyCom帳號資訊和設定報告。您可以存取此報告或轉移至其他應用程式。此報告不會記錄您收發的訊息。</string>
+    <string name="channel_activity">頻道活動</string>
+    <string name="require_channel_activity_report">要求頻道報告</string>
+    <string name="channel_activity_report_note">建立頻道的更新與資訊報告，您可以存取此報告或轉移至其他應用程式。</string>
+    <string name="learn_more_info">瞭解更多資訊</string>
     <string name="delete_account">刪除帳號</string>
 
     <string name="keep_community_linking">與社群保持聯絡</string>

@@ -64,3 +64,45 @@ fun IconTextH(
         action()
     }
 }
+
+@Composable
+fun IconTextH2Line(
+    modifier: Modifier = Modifier,
+    text: @Composable () -> Unit = {},
+    description: @Composable () -> Unit = {},
+    icon: @Composable () -> Unit = {},
+    action: @Composable () -> Unit = {},
+    textFullWeightEnable: Boolean = false,
+    spaceWeightEnable: Pair<Boolean, Boolean> = Pair(false, false),
+    verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(10.dp),
+    height: Dp = 80.dp,
+) {
+    Row(
+        modifier = modifier.heightIn(min = height),
+        verticalAlignment = verticalAlignment,
+        horizontalArrangement = horizontalArrangement,
+    ) {
+        icon()
+        if (spaceWeightEnable.first) Spacer(modifier = Modifier.weight(1f))
+        if (textFullWeightEnable) {
+            Box(
+                modifier = Modifier.weight(1f),
+                content = {
+                    Column {
+                        text()
+                        description()
+                    }
+                },
+                contentAlignment = Alignment.Center
+            )
+        } else {
+            Column {
+                text()
+                description()
+            }
+        }
+        if (spaceWeightEnable.second) Spacer(modifier = Modifier.weight(1f))
+        action()
+    }
+}

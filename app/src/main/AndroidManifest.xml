@@ -62,6 +62,7 @@
         <activity android:name="com.chat.joycom.ui.setting.account.TwoStepVerifyActivity" />
         <activity android:name="com.chat.joycom.ui.setting.account.modifyphone.ModifyPhoneNumActivity" />
         <activity android:name="com.chat.joycom.ui.setting.account.modifyphone.EnterPhoneNumActivity" />
+        <activity android:name="com.chat.joycom.ui.setting.account.RequireAccountInfoActivity" />
         <activity android:name="com.chat.joycom.ui.setting.invite.InviteFriendsActivity" />
     </application>
 
