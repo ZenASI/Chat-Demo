@@ -1,6 +1,7 @@
 package com.chat.joycom.ui.setting.account
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Divider
@@ -14,7 +15,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.chat.joycom.R
 import com.chat.joycom.ui.commom.IconTextH
-import com.chat.joycom.ui.commom.IconTextH2Line
 
 @Composable
 fun RequireAccountInfo(
@@ -29,50 +29,36 @@ fun RequireAccountInfo(
         text = textTitle,
         modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)
     )
-    Divider(thickness = 1.dp, color = MaterialTheme.colorScheme.secondary)
-    if (required) {
-        IconTextH2Line(
-            icon = {
-                Icon(
-                    painterResource(id = R.drawable.ic_doc),
-                    "",
-                    modifier = Modifier.size(40.dp)
-                )
-            },
-            text = {
-                Text(text = textAfter)
-            },
-            description = {
-                Text(
-                    text = stringResource(id = R.string.require_account_sent_note),
-                    color = MaterialTheme.colorScheme.secondary
-                )
-            },
-            spaceWeightEnable = Pair(false, true),
-            modifier = Modifier.padding(horizontal = 20.dp)
-        )
-    } else {
-        IconTextH(
-            icon = {
-                Icon(
-                    painterResource(id = R.drawable.ic_doc),
-                    "",
-                    modifier = Modifier.size(40.dp)
-                )
-            },
-            text = {
-                Text(text = textBefore)
-            },
-            spaceWeightEnable = Pair(false, true),
-            modifier = Modifier
-                .clickable {
-                    clickAction?.invoke()
+    Divider(thickness = 0.2.dp, color = MaterialTheme.colorScheme.secondary.copy(.3f))
+    IconTextH(
+        icon = {
+            Icon(
+                painterResource(id = R.drawable.ic_doc),
+                "",
+                modifier = Modifier.size(40.dp)
+            )
+        },
+        text = {
+            if (required) {
+                Column {
+                    Text(text = textAfter)
+                    Text(
+                        text = stringResource(id = R.string.require_account_sent_note),
+                        color = MaterialTheme.colorScheme.secondary
+                    )
                 }
-                .padding(horizontal = 20.dp)
-        )
-
-    }
-    Divider(thickness = 1.dp, color = MaterialTheme.colorScheme.secondary)
+            } else {
+                Text(text = textBefore)
+            }
+        },
+        spaceWeightEnable = Pair(false, true),
+        modifier = Modifier
+            .clickable {
+                clickAction?.invoke()
+            }
+            .padding(horizontal = 20.dp)
+    )
+    Divider(thickness = 0.2.dp, color = MaterialTheme.colorScheme.secondary.copy(.3f))
     if (required) {
         Text(
             text = stringResource(id = R.string.account_info_file_will_ready_three_day_later),
