@@ -77,10 +77,10 @@ fun PermissionDescAlert(
             val iconArray = when (type) {
                 PermissionType.Camera -> intArrayOf(R.drawable.ic_camera)
                 PermissionType.Contacts -> intArrayOf(R.drawable.ic_contacts)
-                PermissionType.Storage -> intArrayOf(R.drawable.ic_file)
+                PermissionType.Storage -> intArrayOf(R.drawable.ic_folder)
                 PermissionType.StorageWithCamera -> intArrayOf(
                     R.drawable.ic_camera,
-                    R.drawable.ic_file
+                    R.drawable.ic_folder
                 )
 
                 PermissionType.Qrcode -> intArrayOf(R.drawable.ic_camera)
@@ -458,7 +458,7 @@ fun ImagePickerSheet(showState: (Boolean) -> Unit) {
             }
             HorizontalPager(
                 state = pagerState,
-                userScrollEnabled = true,
+                userScrollEnabled = false,
             ) {
                 when (it) {
                     0 -> ImageVGridBySAF(

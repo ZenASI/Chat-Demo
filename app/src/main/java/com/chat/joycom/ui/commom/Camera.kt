@@ -89,7 +89,7 @@ fun QrcodeCamera() {
 }
 
 @Composable
-fun TakePictureCamera() {
+fun TakePictureCamera(modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
@@ -107,13 +107,9 @@ fun TakePictureCamera() {
     }
 
     AndroidView(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier,
         factory = { context ->
             PreviewView(context).apply {
-                layoutParams = LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-                )
                 scaleType = PreviewView.ScaleType.FILL_START
                 implementationMode = PreviewView.ImplementationMode.COMPATIBLE
                 val maineExecutor = ContextCompat.getMainExecutor(context)
@@ -138,7 +134,7 @@ fun TakePictureCamera() {
                     cameraProviderFuture.addListener({
                         val cameraProvider = cameraProviderFuture.get()
                         val preview: Preview = Preview.Builder()
-                            .setTargetAspectRatio(AspectRatio.RATIO_16_9)
+                            .setTargetAspectRatio(AspectRatio.RATIO_4_3)
                             .build()
 
                         val cameraSelector: CameraSelector = CameraSelector.Builder()

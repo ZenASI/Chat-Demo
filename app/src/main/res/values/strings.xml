@@ -256,4 +256,7 @@
     <string name="exit_group">退出群組</string>
 
     <string name="recent_used">最近使用</string>
+
+    <string name="shot">拍照</string>
+    <string name="record">錄影</string>
 </resources>

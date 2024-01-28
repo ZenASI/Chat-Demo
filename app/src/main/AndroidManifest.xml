@@ -64,6 +64,7 @@
         <activity android:name="com.chat.joycom.ui.setting.account.modifyphone.EnterPhoneNumActivity" />
         <activity android:name="com.chat.joycom.ui.setting.account.RequireAccountInfoActivity" />
         <activity android:name="com.chat.joycom.ui.setting.invite.InviteFriendsActivity" />
+        <activity android:name="com.chat.joycom.ui.camera.CameraActivity" />
     </application>
 
 </manifest>

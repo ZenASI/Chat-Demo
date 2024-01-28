@@ -64,11 +64,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chat.joycom.R
 import com.chat.joycom.model.Contact
 import com.chat.joycom.model.Group
+import com.chat.joycom.ui.camera.CameraActivity
 import com.chat.joycom.ui.chat.ChatActivity
 import com.chat.joycom.ui.commom.BadgeView
 import com.chat.joycom.ui.commom.DropdownColumn
 import com.chat.joycom.ui.commom.IconTextH
 import com.chat.joycom.ui.commom.InfoCardDialog
+import com.chat.joycom.ui.commom.PermissionDescAlert
 import com.chat.joycom.ui.commom.PermissionType
 import com.chat.joycom.ui.commom.SimpleDataImage
 import com.chat.joycom.ui.commom.TopBarIcon
@@ -324,7 +326,17 @@ fun MainTopBarAction(pagerState: PagerState, viewModel: MainActivityViewModel = 
     ) {
         TopBarIcon(
             R.drawable.ic_camera,
-            onClick = {},
+            onClick = {
+                if (permissionState.allPermissionsGranted) {
+                    CameraActivity.start(context)
+                } else {
+                    if (permissionState.shouldShowRationale) {
+                        showPermissionDesc = true
+                    } else {
+                        permissionState.launchMultiplePermissionRequest()
+                    }
+                }
+            },
         )
 
         AnimatedVisibility(
@@ -360,6 +372,15 @@ fun MainTopBarAction(pagerState: PagerState, viewModel: MainActivityViewModel = 
                 }
             )
         }
+    }
+    if (showPermissionDesc) {
+        PermissionDescAlert(
+            type = permissionType,
+            showState = { showPermissionDesc = false },
+            acceptCallback = {
+                permissionState.launchMultiplePermissionRequest()
+            }
+        )
     }
 }
 
