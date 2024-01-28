@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chat.joycom.R
 import com.chat.joycom.ui.commom.IconTextH
-import com.chat.joycom.ui.commom.SimpleUrlImage
+import com.chat.joycom.ui.commom.SimpleDataImage
 import com.chat.joycom.ui.setting.account.AccountActivity
 import com.chat.joycom.ui.setting.invite.InviteFriendsActivity
 import com.chat.joycom.ui.setting.qrcode.QRCodeActivity
@@ -70,8 +70,8 @@ fun UserInfo(viewModel: SettingViewModel = viewModel()) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Spacer(modifier = Modifier.size(10.dp))
-        SimpleUrlImage(
-            url = "https://picsum.photos/200",
+        SimpleDataImage(
+            data = "https://picsum.photos/200",
             modifier = Modifier
                 .clip(CircleShape)
                 .size(70.dp),

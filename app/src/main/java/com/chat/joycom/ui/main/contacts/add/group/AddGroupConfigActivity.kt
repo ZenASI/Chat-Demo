@@ -47,6 +47,7 @@ import com.chat.joycom.ui.commom.DefaultInput
 import com.chat.joycom.ui.commom.GroupIconSelectSheet
 import com.chat.joycom.ui.commom.IconTextH
 import com.chat.joycom.ui.commom.IconTextV
+import com.chat.joycom.ui.commom.ImagePickerSheet
 import com.chat.joycom.ui.commom.JoyComAppBar
 import com.chat.joycom.ui.commom.LimitedTimeAlert
 import com.chat.joycom.ui.theme.JoyComFabTheme
@@ -220,7 +221,8 @@ class AddGroupActivity : BaseActivity() {
                                 selectCallback = { selectTimeId = it })
                         }
                         if (groupIconShowState) {
-                            GroupIconSelectSheet(showState = { groupIconShowState = it })
+                            ImagePickerSheet(showState = { groupIconShowState = it })
+//                            GroupIconSelectSheet(showState = { groupIconShowState = it })
                         }
                     }
                 }

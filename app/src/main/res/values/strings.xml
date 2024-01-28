@@ -254,4 +254,6 @@
     <string name="out_put_conversation">匯出對話</string>
     <string name="add_shortcut">新增捷徑</string>
     <string name="exit_group">退出群組</string>
+
+    <string name="recent_used">最近使用</string>
 </resources>

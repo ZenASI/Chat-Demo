@@ -70,7 +70,7 @@ import com.chat.joycom.ui.commom.DropdownColumn
 import com.chat.joycom.ui.commom.IconTextH
 import com.chat.joycom.ui.commom.InfoCardDialog
 import com.chat.joycom.ui.commom.PermissionType
-import com.chat.joycom.ui.commom.SimpleUrlImage
+import com.chat.joycom.ui.commom.SimpleDataImage
 import com.chat.joycom.ui.commom.TopBarIcon
 import com.chat.joycom.ui.main.contacts.add.group.NewGroupActivity
 import com.chat.joycom.ui.setting.SettingActivity
@@ -394,8 +394,8 @@ fun ContactMsgItem(contact: Contact) {
             }
             .padding(horizontal = 10.dp, vertical = 20.dp)
     ) {
-        SimpleUrlImage(
-            url = contact.avatar,
+        SimpleDataImage(
+            data = contact.avatar,
             modifier = Modifier
                 .size(55.dp)
                 .clip(CircleShape)
@@ -459,8 +459,8 @@ private fun GroupMsgItem(group: Group) {
             }
             .padding(horizontal = 10.dp, vertical = 20.dp)
     ) {
-        SimpleUrlImage(
-            url = group.avatar,
+        SimpleDataImage(
+            data = group.avatar,
             modifier = Modifier
                 .size(55.dp)
                 .clip(CircleShape)

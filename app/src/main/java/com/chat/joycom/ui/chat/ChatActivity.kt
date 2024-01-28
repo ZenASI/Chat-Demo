@@ -34,7 +34,7 @@ import com.chat.joycom.model.Contact
 import com.chat.joycom.model.Group
 import com.chat.joycom.ui.BaseActivity
 import com.chat.joycom.ui.commom.JoyComAppBar
-import com.chat.joycom.ui.commom.SimpleUrlImage
+import com.chat.joycom.ui.commom.SimpleDataImage
 import com.chat.joycom.ui.theme.JoyComTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -107,8 +107,8 @@ class ChatActivity : BaseActivity() {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
                                 ) {
-                                    SimpleUrlImage(
-                                        url = "https://picsum.photos/200",
+                                    SimpleDataImage(
+                                        data = "https://picsum.photos/200",
                                         modifier = Modifier
                                             .size(50.dp)
                                             .clip(CircleShape),

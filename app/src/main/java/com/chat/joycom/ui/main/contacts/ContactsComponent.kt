@@ -41,7 +41,7 @@ import com.chat.joycom.R
 import com.chat.joycom.ext.startShareIntent
 import com.chat.joycom.ui.commom.DropdownColumn
 import com.chat.joycom.ui.commom.IconTextH
-import com.chat.joycom.ui.commom.SimpleUrlImage
+import com.chat.joycom.ui.commom.SimpleDataImage
 import com.chat.joycom.ui.commom.TopBarIcon
 import com.chat.joycom.ui.main.contacts.add.contacts.AddContactActivity
 import com.chat.joycom.ui.main.contacts.add.group.NewGroupActivity
@@ -161,8 +161,8 @@ fun ContactMergeColumn(viewModel: ContactsViewModel = viewModel()) {
     onContactList.forEach {
         IconTextH(
             icon = {
-                SimpleUrlImage(
-                    url = it.avatar,
+                SimpleDataImage(
+                    data = it.avatar,
                     modifier = Modifier
                         .size(55.dp)
                         .clip(CircleShape),
@@ -185,8 +185,8 @@ fun ContactMergeColumn(viewModel: ContactsViewModel = viewModel()) {
     inviteList.forEach {
         IconTextH(
             icon = {
-                SimpleUrlImage(
-                    url = it.avatar,
+                SimpleDataImage(
+                    data = it.avatar,
                     modifier = Modifier
                         .size(55.dp)
                         .clip(CircleShape),

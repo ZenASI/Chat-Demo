@@ -1,6 +1,8 @@
 package com.chat.joycom.ui.commom
 
+import android.provider.MediaStore
 import androidx.annotation.StringRes
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +19,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
@@ -28,17 +32,21 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -46,6 +54,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.chat.joycom.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -298,8 +308,8 @@ fun InfoCardDialog(
                     .fillMaxWidth()
                     .aspectRatio(1f)
             ) {
-                SimpleUrlImage(
-                    url = imgUrl ,
+                SimpleDataImage(
+                    data = imgUrl,
                     modifier = Modifier
                         .fillMaxSize(),
                     placeholder = painterResource(id = R.drawable.ic_def_user),
@@ -315,9 +325,11 @@ fun InfoCardDialog(
                     color = Color.White
                 )
             }
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .height(40.dp), verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(40.dp), verticalAlignment = Alignment.CenterVertically
+            ) {
                 Icon(
                     painterResource(id = R.drawable.ic_chat),
                     "",
@@ -358,6 +370,108 @@ fun InfoCardDialog(
                             callBack.invoke()
                         }
                 )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@Composable
+fun ImagePickerSheet(showState: (Boolean) -> Unit) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    var isLoading by remember {
+        mutableStateOf(false)
+    }
+    val imageIdList = remember { mutableListOf<Long>() }
+    val imageFolderMap = remember { mutableMapOf<String, MutableList<Long>>() }
+    val bottomSheetState = rememberModalBottomSheetState()
+
+    val columns = arrayOf(
+        MediaStore.Images.Media._ID,
+        MediaStore.Images.Media.DISPLAY_NAME,
+        MediaStore.Images.Media.RELATIVE_PATH,
+        MediaStore.Images.Media.BUCKET_DISPLAY_NAME
+    )
+
+    LaunchedEffect(Unit) {
+        val orderBy = MediaStore.Images.Media.DATE_ADDED
+        scope.launch(Dispatchers.IO) {
+            context.contentResolver.query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                columns,
+                null,
+                null,
+                "$orderBy DESC"
+            )?.use { cursor ->
+                isLoading = true
+                val idColumn = cursor.getColumnIndex(MediaStore.Images.Media._ID)
+                val folderColumn =
+                    cursor.getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
+                while (cursor.moveToNext()) {
+                    val id = cursor.getLong(idColumn)
+                    val folder = cursor.getString(folderColumn)
+
+                    imageIdList.add(id)
+                    // for gallery
+                    val folderList = imageFolderMap.getOrPut(folder) { mutableListOf() }
+                    folderList.add(id)
+                }
+                isLoading = false
+            }
+        }
+    }
+
+    ModalBottomSheet(
+        onDismissRequest = { showState.invoke(false) },
+        modifier = Modifier.fillMaxSize(),
+        sheetState = bottomSheetState
+    ) {
+        if (!isLoading) {
+            val tabList = listOf(
+                Pair(0, R.string.recent_used),
+                Pair(1, R.string.gallery)
+            )
+            var currentScene by remember {
+                mutableStateOf(tabList.first())
+            }
+            val pagerState = rememberPagerState { tabList.size }
+            JoyComTabRow(
+                selectIndex = currentScene.first,
+            ) {
+                tabList.forEachIndexed { index, item ->
+                    JoyComTab(
+                        selected = currentScene.first == index,
+                        onClick = {
+                            scope.launch {
+                                currentScene = item
+                                pagerState.animateScrollToPage(index)
+                            }
+                        },
+                    ) {
+                        Text(
+                            text = stringResource(id = item.second),
+                            modifier = Modifier.padding(15.dp)
+                        )
+                    }
+                }
+            }
+            HorizontalPager(
+                state = pagerState,
+                userScrollEnabled = true,
+            ) {
+                when (it) {
+                    0 -> ImageVGridBySAF(
+                        imageIdList = imageIdList,
+                        modifier = Modifier.fillMaxSize(),
+                        pickUri = {uri -> }
+                    )
+                    else -> ImageFolderVGridBySAF(
+                        imageFolderMap = imageFolderMap,
+                        modifier = Modifier.fillMaxSize(),
+                        pickUri = {uri -> }
+                    )
+                }
             }
         }
     }

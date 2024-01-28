@@ -93,7 +93,7 @@ import com.chat.joycom.ui.commom.IconTextV
 import com.chat.joycom.ui.commom.InfoCardDialog
 import com.chat.joycom.ui.commom.OtherBubbleShape
 import com.chat.joycom.ui.commom.SelfBubbleShape
-import com.chat.joycom.ui.commom.SimpleUrlImage
+import com.chat.joycom.ui.commom.SimpleDataImage
 import com.chat.joycom.ui.commom.TopBarIcon
 import com.chat.joycom.ui.commom.UrlType
 import timber.log.Timber
@@ -506,8 +506,8 @@ fun OtherMsg(message: Message, modifier: Modifier = Modifier) {
                     horizontalArrangement = Arrangement.spacedBy(1.dp)
                 ) {
                     if (message.showIcon) {
-                        SimpleUrlImage(
-                            url = "https://picsum.photos/200",
+                        SimpleDataImage(
+                            data = "https://picsum.photos/200",
                             modifier = Modifier
                                 .size(30.dp)
                                 .clip(CircleShape)
@@ -727,8 +727,8 @@ private fun Content(modifier: Modifier = Modifier, message: Message) {
                 // image
                 // https://i.pinimg.com/originals/82/c4/8e/82c48eb9a933331ace3ed7e5ed172270.gif
                 val configuration = LocalConfiguration.current
-                SimpleUrlImage(
-                    url = "https://i.pinimg.com/originals/82/c4/8e/82c48eb9a933331ace3ed7e5ed172270.gif",
+                SimpleDataImage(
+                    data = "https://i.pinimg.com/originals/82/c4/8e/82c48eb9a933331ace3ed7e5ed172270.gif",
                     modifier = Modifier
                         .padding(top = 3.dp)
                         .clip(RoundedCornerShape(8.dp))
@@ -744,8 +744,8 @@ private fun Content(modifier: Modifier = Modifier, message: Message) {
                 // video
                 // "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
                 val configuration = LocalConfiguration.current
-                SimpleUrlImage(
-                    url = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                SimpleDataImage(
+                    data = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
                     modifier = Modifier
                         .padding(top = 3.dp)
                         .clip(RoundedCornerShape(8.dp))
